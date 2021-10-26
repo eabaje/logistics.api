@@ -45,7 +45,7 @@ exports.signup = (req, res) => {
     Country: req.body.Country,
     UserPicUrl: req.body.UserPicUrl,
     UserName: req.body.Email,
-    Password: '',
+    // Password: '',
     // UserDocs: req.body.UserDocs
   };
   // Save User in the database
@@ -142,9 +142,10 @@ exports.signin = (req, res) => {
       var authorities = [];
       user.getRoles().then((roles) => {
         for (let i = 0; i < roles.length; i++) {
-          authorities.push('ROLE_' + roles[i].name.toUpperCase());
+          authorities.push(roles[i].name.toUpperCase());
         }
         res.status(200).send({
+          message: 'Success',
           UserId: user.UserId,
           UserName: user.UserName,
           Email: user.Email,

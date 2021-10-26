@@ -51,8 +51,12 @@ exports.findAll = (req, res) => {
   var condition = CompanyId ? { CompanyId: { [Op.eq]: CompanyId } } : null;
 
   Driver.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -66,8 +70,12 @@ exports.findOne = (req, res) => {
   const id = req.params.driverId;
 
   Driver.findByPk(id)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -185,8 +193,12 @@ exports.AssignDriverToVehicle = (req, res) => {
       //Assign New Driver To Vehicle
 
       AssignDriver.create({ VehicleId: vehicleId, DriverId: driverId, Assigned: true })
+
         .then((data) => {
-          res.send(data);
+          res.status(200).send({
+            message: 'Success',
+            data: data,
+          });
         })
         .catch((err) => {
           res.status(500).send({
@@ -202,8 +214,12 @@ exports.findAllDriversByDriverName = (req, res) => {
   const driverName = req.params.driverName;
 
   Driver.findAll({ where: { DriverName: driverName } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -216,8 +232,12 @@ exports.findAllDriversByVehicle = (req, res) => {
   const vehicleId = req.params.vehicleId;
 
   AssignDriver.findAll({ where: { VehicleId: vehicleId } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -230,8 +250,12 @@ exports.findAllAssignedDrivers = (req, res) => {
   //  const vehicleId = req.query.VehicleId;
 
   AssignDriver.findAll({ where: { Assigned: true } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -243,8 +267,12 @@ exports.findAllAssignedDrivers = (req, res) => {
 // find all Licensed Driver
 exports.findAllDriversLicensed = (req, res) => {
   Driver.findAll({ where: { Licensed: true } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -265,9 +293,17 @@ exports.findAllDriversByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Drivers.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
     });
-  });
 };

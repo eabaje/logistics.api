@@ -28,8 +28,12 @@ exports.create = (req, res) => {
 
   // Save Payment in the database
   Payment.create(payment)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -116,8 +120,12 @@ exports.findOne = (req, res) => {
   const id = req.params.paymentId;
 
   Payment.findByPk(id)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -204,9 +212,18 @@ exports.findAllPaymentsByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Payments.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Payments.',
+      });
     });
-  });
 };

@@ -148,8 +148,12 @@ exports.findAllShipmentsByStatus = (req, res) => {
     : { ShipmentStatus: status };
 
   Shipment.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -167,7 +171,10 @@ exports.findAllShipmentsAssigned = (req, res) => {
 
   Shipment.findAll({ where: condition })
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -188,11 +195,19 @@ exports.findAllShipmentsByDeliveryDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Shipments.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Shipments.',
+      });
     });
-  });
 };
 
 exports.findAllShipmentsByPickUpDate = (req, res) => {
@@ -207,8 +222,12 @@ exports.findAllShipmentsByPickUpDate = (req, res) => {
     },
     order: [['createdAt', 'ASC']],
   })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -229,8 +248,12 @@ exports.findAllShipmentsByRecordDate = (req, res) => {
     },
     order: [['createdAt', 'ASC']],
   })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({

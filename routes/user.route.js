@@ -21,6 +21,8 @@ module.exports = function (app) {
 
   app.get('/api/user/findAll', controller.findAll);
 
+  app.get('/api/user/findAllBySearch/:name', controller.findAllBySearch);
+
   app.get('/api/user/findAllUsersByDate/:fromDate/:toDate', controller.findAllUsersByDate);
 
   app.put('/api/user/update/:userId', controller.update);

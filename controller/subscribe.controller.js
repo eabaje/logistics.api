@@ -25,8 +25,12 @@ exports.create = (req, res) => {
 
   // Save Subscription in the database
   Subscription.create(subscription)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -41,8 +45,12 @@ exports.findAll = (req, res) => {
   var condition = SubscriptionName ? { SubscriptionName: { [Op.iLike]: `%${SubscriptionName}%` } } : null;
 
   Subscription.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -56,8 +64,12 @@ exports.findOne = (req, res) => {
   const id = req.params.SubscriptionId;
 
   Subscription.findByPk(id)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -136,8 +148,12 @@ exports.deleteAll = (req, res) => {
 exports.findAllSubscriptionsByActive = (req, res) => {
   const status = req.params.Active;
   Subscription.findAll({ where: { Active: status } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -158,11 +174,19 @@ exports.findAllSubscriptionsByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Subscriptions.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Subscriptions.',
+      });
     });
-  });
 };
 
 exports.findAllSubscriptionsByRecordDate = (req, res) => {
@@ -177,8 +201,12 @@ exports.findAllSubscriptionsByRecordDate = (req, res) => {
     },
     order: [['createdAt', 'ASC']],
   })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({

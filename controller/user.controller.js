@@ -89,12 +89,33 @@ exports.create = (req, res) => {
 
 // Retrieve all Users from the database.
 exports.findAll = (req, res) => {
-  // const userType = req.query.UserType;
-  // var condition = UserType ? { UserType: { [Op.iLike]: `%${userType}%` } } : null;{ where: condition }
+  // const name = req.params.name;
+  //var condition = name ? { FullName: { [Op.iLike]: `%${name}%` } } : null;{ where: condition }
 
   User.findAll()
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Users.',
+      });
+    });
+};
+
+exports.findAllBySearch = (req, res) => {
+  const name = req.params.name;
+  var condition = name ? { FullName: { [Op.iLike]: `%${name}%` } } : null;
+
+  User.findAll({ where: condition })
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -109,7 +130,10 @@ exports.findOne = (req, res) => {
 
   User.findByPk(id)
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -197,11 +221,19 @@ exports.findAllUsersByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Users.',
+  })
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Users.',
+      });
     });
-  });
 };
 
 exports.createCompany = (req, res) => {
@@ -224,8 +256,12 @@ exports.createCompany = (req, res) => {
 
   // Save Order in the database
   Company.create(company)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -262,8 +298,12 @@ exports.findCompany = (req, res) => {
   const id = req.params.CompanyId;
 
   Company.findByPk(id)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -277,8 +317,12 @@ exports.findAllCompanys = (req, res) => {
   var condition = CompanyType ? { CompanyType: { [Op.iLike]: `%${CompanyType}%` } } : null;
 
   Company.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -298,11 +342,20 @@ exports.findAllCompanysByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Users.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Users.',
+      });
     });
-  });
 };
 
 exports.deleteCompany = (req, res) => {
@@ -382,7 +435,6 @@ exports.subscribe = (req, res) => {
 };
 
 exports.upgradeUserSubscription = (req, res) => {
-
   const subscribe = {
     SubscriptionId: req.body.SubscriptionId,
     SubscriptionName: req.body.SubscriptionName,
@@ -392,35 +444,28 @@ exports.upgradeUserSubscription = (req, res) => {
     EndDate: req.body.EndDate,
   };
 
-
-  
   const id = req.body.UserSubscriptionId;
 
   const UserId = req.body.UserId;
 
-
   const IsSubscribed = UserSubscription.findAll({ where: { UserId: UserId } && { Active: true } });
 
   if (IsSubscribed) {
-    UserSubscription.update({ Active: false }, {
-      where: {
-        UserId: UserId
-      }
-    });
-
-
+    UserSubscription.update(
+      { Active: false },
+      {
+        where: {
+          UserId: UserId,
+        },
+      },
+    );
 
     const UserSubscribed = UserSubscription.create(subscribe);
-    
-    if(UserSubscribed){ 
 
-      return res.status(201).send(`User Subscribed to  ${UserSubscribed.SubscriptionName} package.`);
+    if (UserSubscribed) {
+      return res.status(201).send({ message: `User Subscribed to  ${UserSubscribed.SubscriptionName} package.` });
     }
-
-    
   }
-  
- 
 };
 
 exports.updateUserSubscription = (req, res) => {
@@ -450,9 +495,13 @@ exports.updateUserSubscription = (req, res) => {
 exports.findUserSubscription = (req, res) => {
   const id = req.params.UserId;
 
-  UserSubscription.findByPk(id)
+  UserSubscription.findOne({ where: { UserId: id } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -466,8 +515,12 @@ exports.findAllUserSubscriptions = (req, res) => {
   var condition = SubscriptionType ? { SubscriptionType: { [Op.iLike]: `%${SubscriptionType}%` } } : null;
 
   UserSubscription.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -487,11 +540,20 @@ exports.findAllUserSubscriptionsByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Users.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Users.',
+      });
     });
-  });
 };
 
 exports.findAllUserSubscriptionsByStartDate = (req, res) => {
@@ -505,11 +567,20 @@ exports.findAllUserSubscriptionsByStartDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Users.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Users.',
+      });
     });
-  });
 };
 
 exports.findAllUserSubscriptionsByEndDate = (req, res) => {
@@ -523,11 +594,20 @@ exports.findAllUserSubscriptionsByEndDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Users.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Users.',
+      });
     });
-  });
 };
 
 exports.deleteUserSubscription = (req, res) => {

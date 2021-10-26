@@ -27,8 +27,12 @@ exports.create = (req, res) => {
 
   // Save Trip in the database
   Trip.create(trip)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -43,8 +47,12 @@ exports.findAll = (req, res) => {
   var condition = trackId ? { trackId: { [Op.iLike]: `%${trackId}%` } } : null;
 
   Trip.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -58,8 +66,12 @@ exports.findOne = (req, res) => {
   const id = req.params.tripId;
 
   Trip.findByPk(id)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -139,8 +151,12 @@ exports.findTripByShipment = (req, res) => {
   const id = req.params.driverId;
 
   Trip.findOne({ where: { ShipmentId: id } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -153,8 +169,12 @@ exports.findTripByShipment = (req, res) => {
 exports.findAllTripsByPickUpLocation = (req, res) => {
   const pickUpLocation = req.params.pickUpLocation;
   Trip.findAll({ where: { PickUpLocation: pickUpLocation } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({

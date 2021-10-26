@@ -31,8 +31,12 @@ exports.create = (req, res) => {
 
   // Save Vehicle in the database
   Vehicle.create(vehicle)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -47,8 +51,12 @@ exports.findAll = (req, res) => {
   var condition = VehicleType ? { VehicleType: { [Op.iLike]: `%${vehicleType}%` } } : null;
 
   Vehicle.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -62,8 +70,12 @@ exports.findOne = (req, res) => {
   const id = req.params.vehicleId;
 
   Vehicle.findByPk(id)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -141,8 +153,12 @@ exports.deleteAll = (req, res) => {
 // find all insured Vehicle
 exports.findAllVehiclesInsured = (req, res) => {
   Vehicle.findAll({ where: { Insured: true } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -153,8 +169,12 @@ exports.findAllVehiclesInsured = (req, res) => {
 
 exports.findAllVehiclesByCategory = (req, res) => {
   Vehicle.findAll({ where: { Insured: true } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -175,9 +195,18 @@ exports.findAllVehiclesByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Vehicles.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Vehicles.',
+      });
     });
-  });
 };

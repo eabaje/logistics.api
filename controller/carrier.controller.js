@@ -26,8 +26,12 @@ exports.create = (req, res) => {
 
   // Save Carrier in the database
   Carrier.create(carrier)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -42,8 +46,12 @@ exports.findAll = (req, res) => {
   var condition = CarrierType ? { CarrierType: { [Op.iLike]: `%${carrierType}%` } } : null;
 
   Carrier.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -57,8 +65,12 @@ exports.findOne = (req, res) => {
   const id = req.params.carrierId;
 
   Carrier.findByPk(id)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -136,8 +148,12 @@ exports.deleteAll = (req, res) => {
 // find all insured Carrier
 exports.findAllCarriersLicensed = (req, res) => {
   Carrier.findAll({ where: { Licensed: true } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -158,9 +174,17 @@ exports.findAllCarriersByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Carriers.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Carriers.',
+      });
     });
-  });
 };

@@ -26,8 +26,12 @@ exports.create = (req, res) => {
 
   // Save Order in the database
   Order.create(order)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -42,8 +46,12 @@ exports.findAll = (req, res) => {
   var condition = OrderType ? { OrderType: { [Op.iLike]: `%${orderType}%` } } : null;
 
   Order.findAll({ where: condition })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -57,8 +65,12 @@ exports.findOne = (req, res) => {
   const id = req.params.orderId;
 
   Order.findByPk(id)
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -136,8 +148,12 @@ exports.deleteAll = (req, res) => {
 // find all insured Order
 exports.findAllOrdersLicensed = (req, res) => {
   Order.findAll({ where: { Licensed: true } })
+
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -158,9 +174,18 @@ exports.findAllOrdersByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
-  }).catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Orders.',
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Orders.',
+      });
     });
-  });
 };
