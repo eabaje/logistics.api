@@ -1,0 +1,19 @@
+{
+  "development": {
+    "username": "salon",
+    "password": "salon@2021",
+    "database": "logistics.db",
+    "host": "localhost",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  },
+  "production": {
+    "username": "load_dispatch_user",
+    "password": "salon@2021",
+    "database": "logistics.db",
+    "host": "localhost",
+    "dialect": "postgres",
+    "operatorsAliases": false,
+    "use_env_variable": "DATABASE_URL"
+  }
+}

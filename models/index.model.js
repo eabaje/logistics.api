@@ -1,19 +1,34 @@
 const dbConfig = require('../config/db.postgres.config.js');
 
-const isProduction = process.env.NODE_ENV === 'production';
+const env = process.env.NODE_ENV || 'development';
+
+const config = require('../config/config.json')[env];
+
+const isProduction = process.env.NODE_ENV;
 
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-  host: dbConfig.HOST,
-  dialect: dbConfig.dialect,
 
-  pool: {
-    max: dbConfig.pool.max,
-    min: dbConfig.pool.min,
-    acquire: dbConfig.pool.acquire,
-    idle: dbConfig.pool.idle,
-  },
-});
+let sequelize;
+if (isProduction) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+
+// if (isProduction === 'production') {
+// } else {
+//   sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+//     host: dbConfig.HOST,
+//     dialect: dbConfig.dialect,
+
+//     pool: {
+//       max: dbConfig.pool.max,
+//       min: dbConfig.pool.min,
+//       acquire: dbConfig.pool.acquire,
+//       idle: dbConfig.pool.idle,
+//     },
+//   });
+// }
 
 const db = {};
 

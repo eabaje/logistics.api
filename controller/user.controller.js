@@ -1,4 +1,6 @@
 require('dotenv').config();
+import path from 'path';
+var fs = require('fs');
 require('../config/nodemailer.config');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
@@ -147,7 +149,11 @@ exports.update = (req, res) => {
   const user = ({ UserId, FullName, Email, Phone, Address, City, Country, UserPicUrl } = req.body);
   const id = req.body.UserId;
 
-  User.update(req.body, {
+  const imagePath = req.file.filename;
+
+  await fs.unlink(path.resolve('src/uploads/Profile/' + imagedb[0].image));
+
+  User.update(user, {
     where: { id: id },
   })
     .then((num) => {
@@ -166,6 +172,28 @@ exports.update = (req, res) => {
         message: 'Error updating User with id=' + id,
       });
     });
+};
+
+export const changeImageProfile = async (req, res = response) => {
+  try {
+    const imagePath = req.file.filename;
+
+    const imagedb = await pool.query('SELECT image FROM person WHERE uid = ?', [req.uid]);
+
+    await fs.unlink(path.resolve('src/Uploads/Profile/' + imagedb[0].image));
+
+    await pool.query('UPDATE person SET image = ? WHERE uid = ?', [imagePath, req.uid]);
+
+    res.json({
+      resp: true,
+      msg: 'Picture changed',
+    });
+  } catch (e) {
+    return res.status(500).json({
+      resp: false,
+      msg: e,
+    });
+  }
 };
 
 // Delete a User with the specified id in the request
