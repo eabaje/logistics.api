@@ -3,7 +3,7 @@ const dbConfig = require('../config/db.postgres.config.js');
 
 const env = process.env.NODE_ENV.trim() || 'development';
 
-console.log(env);
+//console.log(env);
 
 const config = require('../config/config.json')[env];
 
