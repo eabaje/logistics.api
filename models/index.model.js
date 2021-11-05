@@ -1,6 +1,7 @@
+require('dotenv').config();
 const dbConfig = require('../config/db.postgres.config.js');
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV.trim() || 'development';
 
 const config = require('../config/config.json')[env];
 
@@ -9,7 +10,7 @@ const isProduction = process.env.NODE_ENV;
 const Sequelize = require('sequelize');
 
 let sequelize;
-if (isProduction) {
+if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);

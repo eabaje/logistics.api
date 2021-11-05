@@ -1,5 +1,5 @@
 require('dotenv').config();
-import path from 'path';
+const path = require('path');
 var fs = require('fs');
 require('../config/nodemailer.config');
 const nodemailer = require('nodemailer');
@@ -151,7 +151,7 @@ exports.update = (req, res) => {
 
   const imagePath = req.file.filename;
 
-  await fs.unlink(path.resolve('src/uploads/Profile/' + imagedb[0].image));
+  // await fs.unlink(path.resolve('src/uploads/Profile/' + imagedb[0].image));
 
   User.update(user, {
     where: { id: id },
@@ -174,7 +174,7 @@ exports.update = (req, res) => {
     });
 };
 
-export const changeImageProfile = async (req, res = response) => {
+exports.changeImageProfile = async (req, res = response) => {
   try {
     const imagePath = req.file.filename;
 
