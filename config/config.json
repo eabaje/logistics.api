@@ -13,6 +13,9 @@
     "database": "dcfbt9vnh1tndr",
     "host": "ec2-18-211-194-36.compute-1.amazonaws.com",
     "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": true
+    },
     "operatorsAliases": false,
     "use_env_variable": "DATABASE_URL"
   }
