@@ -4,8 +4,7 @@
     "password": "salon@2021",
     "database": "logistics.db",
     "host": "localhost",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "production": {
     "username": "tsaqczghsrqebp",
@@ -16,7 +15,6 @@
     "dialectOptions": {
       "ssl": true
     },
-    "operatorsAliases": false,
     "use_env_variable": "DATABASE_URL"
   }
 }
