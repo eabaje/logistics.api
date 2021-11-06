@@ -1,7 +1,7 @@
 const { verifySignUp } = require('../middleware');
 const controller = require('../controller/auth.controller');
-var passportFacebook = require('../middleware/facebook');
-var passportGoogle = require('../middleware/google');
+// var passportFacebook = require('../middleware/facebook');
+// var passportGoogle = require('../middleware/google');
 
 module.exports = function (app) {
   app.use(function (req, res, next) {

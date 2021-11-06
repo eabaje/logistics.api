@@ -4,8 +4,8 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger_output.json');
 var uuid = require('uuid');
 const bcrypt = require('bcryptjs');
-const passport = require('passport');
-const session = require('express-session');
+// const passport = require('passport');
+// const session = require('express-session');
 //cors
 const cors = require('cors');
 app.use(cors());
@@ -69,9 +69,9 @@ function initial() {
   User.create({
     UserId: uuidv4(),
     FullName: 'Ebi Abaje',
-    Email: 'ebi.abaje@loardboard.io',
+    Email: 'ebi.abaje@loaddispatch.com.ng',
     Phone: '08057886381',
-    UserName: 'ebi.abje@loardboard.io',
+    UserName: 'ebi.abje@loaddispatch.com.ng',
     Password: encryptedPassword,
     Address: 'Lagos',
     City: 'Lagos',
@@ -82,7 +82,7 @@ function initial() {
   Company.create({
     ComapnyId: 1,
     CompanyName: 'Loadboard logistics',
-    ContactEmail: 'ebi.abaje@loardboard.io',
+    ContactEmail: 'ebi.abaje@loaddispatch.com.ng',
     ContactPhone: '08057886381',
     CompanyType: 'Shipper',
     Address: 'Lagos',
