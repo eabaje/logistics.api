@@ -5,7 +5,7 @@ const env = process.env.NODE_ENV.trim() || 'development';
 
 //console.log(env);
 
-const config = require('../config/config.json')[env];
+const config = require(__dirname + '/../config/config.json')[env];
 
 const isProduction = process.env.NODE_ENV;
 
