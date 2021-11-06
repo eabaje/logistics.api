@@ -3,9 +3,9 @@ const dbConfig = require('../config/db.postgres.config.js');
 
 const env = process.env.NODE_ENV.trim() || 'development';
 
-//console.log(env);
-
 const config = require(__dirname + '/../config/config.json')[env];
+
+console.log(process.env[config.use_env_variable]);
 
 const isProduction = process.env.NODE_ENV;
 
