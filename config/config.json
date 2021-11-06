@@ -11,8 +11,8 @@
     "password": "2884c41b5de3a9fa5c98ff668d3f6f606cba51b841bccbdbfa37dddc5aebd57c",
     "database": "dcfbt9vnh1tndr",
     "host": "ec2-18-211-194-36.compute-1.amazonaws.com",
-    "ssl": true,
-    "native": true,
+    "port": 5432,
+
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": {
