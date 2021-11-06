@@ -28,15 +28,15 @@ db.sequelize.sync({ force: true }).then(() => {
   initial();
 });
 
-app.use(
-  session({
-    secret: 's3cr3t',
-    resave: true,
-    saveUninitialized: true,
-  }),
-);
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(
+//   session({
+//     secret: 's3cr3t',
+//     resave: true,
+//     saveUninitialized: true,
+//   }),
+// );
+// app.use(passport.initialize());
+// app.use(passport.session());
 // simple route
 app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to Loadboard Logistics api.' });
