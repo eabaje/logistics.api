@@ -15,7 +15,7 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Carrier = sequelize.define('Carriers', {
-    Carrier: {
+    CarrierId: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1,

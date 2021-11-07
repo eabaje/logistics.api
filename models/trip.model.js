@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV1,
     },
     TrackId: { type: DataTypes.STRING },
+    ShipmentId: { type: DataTypes.STRING },
     VehicleId: { type: DataTypes.STRING },
     DriverId: { type: DataTypes.STRING },
     PickUpLocation: { type: DataTypes.STRING },
@@ -14,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     Duration: { type: DataTypes.STRING },
     DeliveryDate: { type: DataTypes.DATE },
     DriverNote: { type: DataTypes.STRING },
-    ShipmentId: { type: DataTypes.STRING },
+    Rating: { type: DataTypes.INTEGER },
   });
 
   return Trip;

@@ -49,6 +49,7 @@ db.order = require('./order.model.js')(sequelize, Sequelize);
 db.payment = require('./payment.model.js')(sequelize, Sequelize);
 db.subscribe = require('./subscription.model.js')(sequelize, Sequelize);
 db.trip = require('./trip.model.js')(sequelize, Sequelize);
+db.track = require('./track.model.js')(sequelize, Sequelize);
 db.assigndriver = require('./assign.driver.model.js')(sequelize, Sequelize);
 db.usersubscription = require('./user.subscription.model.js')(sequelize, Sequelize);
 db.insurance = require('./insurance.model.js')(sequelize, Sequelize);

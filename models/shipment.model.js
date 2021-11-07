@@ -36,6 +36,8 @@ module.exports = (sequelize, DataTypes) => {
     ExpectedPickUpDate: { type: DataTypes.DATE },
     ExpectedDeliveryDate: { type: DataTypes.DATE },
     RequestForShipment: { type: DataTypes.STRING },
+    DeliveryContactPhone: { type: DataTypes.STRING },
+    DeliveryEmail: { type: DataTypes.STRING },
     AssignedShipment: { type: DataTypes.BOOLEAN },
     ShipmentDate: { type: DataTypes.DATE },
     ShipmentDocs: { type: DataTypes.STRING },

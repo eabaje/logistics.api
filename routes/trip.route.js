@@ -13,6 +13,18 @@ module.exports = function (app) {
 
   app.get('/api/trip/findAll', controller.findAll);
 
+  app.post('/api/trip/addtrack', controller.addTrack);
+
+  app.get('/api/trip/findallTrack/:tripId', controller.findAllTrack);
+
+  app.get('/api/trip/findonetrack/:tripId', controller.findOneTrack);
+
+  app.put('/api/trip/updatetrack/:trackId', controller.updateTrack);
+
+  app.delete('/api/trip/deletetrack/:trackId', controller.deleteTrack);
+
+  app.get('/api/trip/findAll', controller.findAll);
+
   app.get('/api/trip/findTripByShipment/:shipmentId', controller.findTripByShipment);
 
   app.get('/api/trip/findAllTripsByVehicle/:vehicleId/:fromDate/:endDate', controller.findAllTripsByVehicle);
