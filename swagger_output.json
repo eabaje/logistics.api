@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "LOADBOARD REST API",
-    "description": ""
+    "title": "LOAD DISPACH REST API",
+    "description": "This is the REST API for the Load Dispatch System"
   },
   "host": "localhost:8000",
   "basePath": "/",
