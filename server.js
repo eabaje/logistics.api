@@ -38,6 +38,9 @@ const Company = db.company;
 // app.use(passport.initialize());
 // app.use(passport.session());
 // simple route
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to Loadboard Logistics api.' });
+});
 app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to Loadboard Logistics api.' });
 });
