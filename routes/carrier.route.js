@@ -17,9 +17,9 @@ module.exports = function (app) {
 
   app.post('/api/carrier/create', [authJwt.verifyToken], controller.create);
 
-  app.post('/api/carrier/update/:carrierId', controller.update);
+  app.post('/api/carrier/update/:carrierId', [authJwt.verifyToken], controller.update);
 
-  app.delete('/api/carrier/delete/:carrierId', controller.delete);
+  app.delete('/api/carrier/delete/:carrierId', [authJwt.verifyToken], controller.delete);
 
-  app.delete('/api/carrier/deleteAll', controller.deleteAll);
+  app.delete('/api/carrier/deleteAll', [authJwt.verifyToken], controller.deleteAll);
 };

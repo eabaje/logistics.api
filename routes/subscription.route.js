@@ -15,7 +15,7 @@ module.exports = function (app) {
 
   // app.get("/api/user/admin",[authJwt.verifyToken, authJwt.isAdmin],controller.adminBoard);
 
-  app.post('/api/subscription/create', controller.create);
+  app.post('/api/subscription/create', [authJwt.verifyToken], controller.create);
 
   app.get('/api/subscription/findOne/:subscriptionId', controller.findOne);
 
@@ -26,9 +26,9 @@ module.exports = function (app) {
     controller.findAllUserSubscriptionsByDate,
   );
 
-  app.put('/api/subscription/update/:subscriptionId', controller.update);
+  app.put('/api/subscription/update/:subscriptionId', [authJwt.verifyToken], controller.update);
 
-  app.delete('/api/subscription/delete/:subscriptionId', controller.delete);
+  app.delete('/api/subscription/delete/:subscriptionId', [authJwt.verifyToken], controller.delete);
 
   app.delete('/api/subscription/deleteAll', controller.deleteAll);
 };

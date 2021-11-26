@@ -21,11 +21,11 @@ module.exports = function (app) {
 
   app.get('/api/shipment/findAllShipmentsAssigned/:shipmentid/:assignedshipment', controller.findAllShipmentsAssigned);
 
-  app.post('/api/shipment/create', controller.create);
+  app.post('/api/shipment/create', [authJwt.verifyToken], controller.create);
 
-  app.put('/api/shipment/update/:id', controller.update);
+  app.put('/api/shipment/update/:shipmentId', [authJwt.verifyToken], controller.update);
 
-  app.delete('/api/shipment/delete/:id', controller.delete);
+  app.delete('/api/shipment/delete/:shipmentId', [authJwt.verifyToken], controller.delete);
 
   app.delete('/api/shipment/deleteAll', controller.deleteAll);
 };

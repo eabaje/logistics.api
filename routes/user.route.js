@@ -27,7 +27,7 @@ module.exports = function (app) {
 
   app.put('/api/user/update/:userId', controller.update);
 
-  app.post('/api/user/delete', controller.delete);
+  app.post('/api/user/delete', [authJwt.verifyToken], controller.delete);
 
   app.post('/api/user/deleteAll', controller.deleteAll);
 
@@ -62,8 +62,6 @@ module.exports = function (app) {
   app.get('/api/user/findCompany/:CompanyId', controller.findCompany);
 
   app.get('/api/user/findAllCompanys/', controller.findAllCompanys);
-
-  app.get('/api/user/findAllCompanysByDate/:fromDate/:toDate', controller.findAllCompanysByDate);
 
   app.get('/api/user/findAllCompanysByDate/:fromDate/:toDate', controller.findAllCompanysByDate);
 

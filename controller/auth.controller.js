@@ -64,20 +64,20 @@ exports.signup = (req, res) => {
     password: encryptedPassword,
   })
     .then((user) => {
-      if (req.body.roles) {
+      if (req.body.Roles) {
         Role.findAll({
           where: {
             name: {
-              [Op.or]: req.body.roles,
+              [Op.or]: req.body.Roles,
             },
           },
         }).then((roles) => {
           user.setRoles(roles).then(() => {
-            const token = jwt.sign({ userid: User.UserId, email }, process.env.TOKEN_KEY, {
+            const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
               expiresIn: '2h',
             });
             // save user token
-            user.token = token;
+            user.Token = token;
 
             const transporter = nodemailer.createTransport({
               service: 'Gmail',
@@ -86,7 +86,7 @@ exports.signup = (req, res) => {
                 pass: process.env.EMAIL_PASSWORD,
               },
             });
-
+            //  mailgun
             // Step 2 - Generate a verification token with the user's ID
             const verificationToken = user.generateVerificationToken();
             // Step 3 - Email the user a unique verification link
@@ -94,13 +94,14 @@ exports.signup = (req, res) => {
             transporter.sendMail({
               to: email,
               subject: 'Verify Account',
-              html: `Click <a href = '${url}'>here</a> to confirm your email.`,
-            });
-            return res.status(201).send({
-              message: `Sent a verification email to ${email}`,
+              html: `<h1>Email Confirmation</h1>
+              <h2>Hello ${FirstName + ' ' + LastName}</h2>
+              <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+              <a href = '${url}'>Click here</a>
+              </div>`,
             });
 
-            res.send({ message: 'User registered successfully!' });
+            //   res.send({ message: 'User registered successfully!' });
           });
         });
       } else {
@@ -130,7 +131,7 @@ exports.signin = (req, res) => {
 
       if (!passwordIsValid) {
         return res.status(401).send({
-          accessToken: null,
+          //  Token: null,
           message: 'Invalid Password!',
         });
       }
@@ -146,11 +147,13 @@ exports.signin = (req, res) => {
         }
         res.status(200).send({
           message: 'Success',
-          UserId: user.UserId,
-          UserName: user.UserName,
-          Email: user.Email,
-          Roles: authorities,
-          AccessToken: token,
+          data: {
+            UserId: user.UserId,
+            UserName: user.UserName,
+            Email: user.Email,
+            Roles: authorities,
+            Token: token,
+          },
         });
       });
     })
@@ -170,24 +173,25 @@ exports.verify = async (req, res) => {
   // Step 1 -  Verify the token from the URL
   let payload = null;
   try {
-    payload = jwt.verify(token, process.env.USER_VERIFICATION_TOKEN_SECRET);
+    payload = jwt.verify(token, process.env.TOKEN_KEY);
   } catch (err) {
     return res.status(500).send(err);
   }
   try {
     // Step 2 - Find user with matching ID
-    const user = await User.findOne({ _id: payload.ID }).exec();
+    const user = await User.findOne({ UserId: payload.UserId }).exec();
     if (!user) {
       return res.status(404).send({
         message: 'User does not  exist',
       });
     }
     // Step 3 - Update user verification status to true
-    user.verified = true;
+    user.IsActivated = true;
     await user.save();
-    return res.status(200).send({
-      message: 'Account Verified',
-    });
+    return res.redirect(process.env.ADMIN_URL);
+    // return res.status(200).send({
+    //   message: 'Account Verified',
+    // });
   } catch (err) {
     return res.status(500).send(err);
   }
@@ -222,7 +226,7 @@ exports.activation = (req, res) => {
           } else {
             return res.json({
               success: true,
-              message: user,
+              data: user,
               message: 'Signup success',
             });
           }

@@ -19,8 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     UserPicUrl: { type: DataTypes.STRING },
     Token: { type: DataTypes.STRING },
     IsActivated: { type: DataTypes.BOOLEAN },
-
-    LoginType: { type: DataTypes.STRING },
   });
 
   return User;
