@@ -20,6 +20,7 @@ app.use(bodyParser());
 const db = require('./models/index.model');
 const Role = db.role;
 const User = db.user;
+const UserRole = db.userrole;
 const Company = db.company;
 //db.sequelize.sync();
 // force: true will drop the table if it already exists
@@ -69,8 +70,15 @@ const { v1: uuidv1, v4: uuidv4 } = require('uuid');
 //bcrypt.hashSync(req.body.password, 8)
 function initial() {
   encryptedPassword = bcrypt.hashSync('Web@6790', 8);
+  initialUserId = uuidv4();
+  shipperRoleId = uuidv4();
+  carrierRoleId = uuidv4();
+  adminRoleId = uuidv4();
+  auditorRoleId = uuidv4();
+  driverRoleId = uuidv4();
+  brokerRoleId = uuidv4();
   User.create({
-    UserId: uuidv4(),
+    UserId: initialUserId,
     FullName: 'Ebi Abaje',
     Email: 'ebi.abaje@loaddispatch.com.ng',
     Phone: '08057886381',
@@ -94,30 +102,35 @@ function initial() {
   });
 
   Role.create({
-    RoleId: uuidv4(),
+    RoleId: shipperRoleId,
     Name: 'shipper',
   });
 
   Role.create({
-    RoleId: uuidv4(),
+    RoleId: driverRoleId,
     Name: 'driver',
   });
 
   Role.create({
-    RoleId: uuidv4(),
+    RoleId: carrierRoleId,
     Name: 'carrier',
   });
   Role.create({
-    RoleId: uuidv4(),
+    RoleId: brokerRoleId,
     Name: 'broker',
   });
   Role.create({
-    RoleId: uuidv4(),
+    RoleId: adminRoleId,
     Name: 'admin',
   });
 
   Role.create({
-    RoleId: uuidv4(),
+    RoleId: auditorRoleId,
     Name: 'auditor',
+  });
+
+  UserRole.create({
+    UserId: initialUserId,
+    RoleId: adminRoleId,
   });
 }

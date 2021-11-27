@@ -10,7 +10,7 @@ const db = require('../models/index.model');
 const User = db.user;
 const Role = db.role;
 
-const authware = require('../middleware/auth');
+//const authware = require('../middleware/auth');
 
 const auth = express();
 

@@ -44,6 +44,7 @@ db.driver = require('./driver.model.js')(sequelize, Sequelize);
 db.vehicle = require('./vehicle.model.js')(sequelize, Sequelize);
 db.user = require('./user.model.js')(sequelize, Sequelize);
 db.role = require('./role.model.js')(sequelize, Sequelize);
+db.userrole = require('./user.role.model.js')(sequelize, Sequelize);
 db.shipment = require('./shipment.model.js')(sequelize, Sequelize);
 db.order = require('./order.model.js')(sequelize, Sequelize);
 db.payment = require('./payment.model.js')(sequelize, Sequelize);
