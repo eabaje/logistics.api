@@ -62,10 +62,10 @@ exports.signup = (req, res) => {
     CompanyType: req.body.Roles,
   });
 
-  const company = await Company.save();
+  //const company = Company.save();
 
   User.create({
-    CompanyId: company.CompanyId,
+    CompanyId: Company.CompanyId,
     FullName: FirstName + ' ' + LastName,
     Email: Email.toLowerCase(),
     Phone: Phone,
