@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('../config/db.postgres.config');
+var generator = require('generate-password');
 
 const nodemailer = require('nodemailer');
 const express = require('express');
@@ -42,7 +43,7 @@ exports.signup = (req, res) => {
     Email: req.body.Email,
     Phone: req.body.Phone,
     Address: req.body.Address,
-    City: req.body.City,
+    City: req.body.Region,
     Country: req.body.Country,
     UserPicUrl: req.body.UserPicUrl,
     UserName: req.body.Email,
@@ -50,6 +51,10 @@ exports.signup = (req, res) => {
     // UserDocs: req.body.UserDocs
   };
   // Save User in the database
+  var password = generator.generate({
+    length: 8,
+    numbers: true,
+  });
 
   encryptedPassword = bcrypt.hash(password, 10);
 
@@ -59,29 +64,29 @@ exports.signup = (req, res) => {
     ContactPhone: req.body.Phone,
     Address: req.body.Address,
     Country: req.body.Country,
-    CompanyType: req.body.Roles,
+    CompanyType: req.body.CompanyType,
   });
 
   //const company = Company.save();
 
   User.create({
     CompanyId: Company.CompanyId,
-    FullName: FirstName + ' ' + LastName,
-    Email: Email.toLowerCase(),
-    Phone: Phone,
-    Address: Address,
-    City: City,
-    Country: Country,
-    UserName: Email.toLowerCase(),
+    FullName: req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName,
+    Email: req.body.Email.toLowerCase(),
+    Phone: req.body.Phone,
+    Address: req.body.Address,
+    City: req.body.Region,
+    Country: req.body.Country,
+    UserName: req.body.Email.toLowerCase(),
     // sanitize: convert email to lowercase
     password: encryptedPassword,
   })
     .then((user) => {
-      if (req.body.Roles) {
+      if (req.body.CompanyType) {
         Role.findAll({
           where: {
             name: {
-              [Op.or]: req.body.Roles,
+              [Op.or]: req.body.CompanyType,
             },
           },
         }).then((roles) => {
