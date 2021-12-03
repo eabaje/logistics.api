@@ -13,12 +13,14 @@ module.exports = (sequelize, DataTypes) => {
     Phone: { type: DataTypes.STRING },
     Address: { type: DataTypes.STRING },
     City: { type: DataTypes.STRING },
+    Region: { type: DataTypes.STRING },
     Country: { type: DataTypes.STRING },
     UserName: { type: DataTypes.STRING },
     Password: { type: DataTypes.STRING },
     UserPicUrl: { type: DataTypes.STRING },
     Token: { type: DataTypes.STRING },
     IsActivated: { type: DataTypes.BOOLEAN },
+    LoginCount: { type: DataTypes.INTEGER, defaultValue: 0 },
   });
 
   return User;

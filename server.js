@@ -65,10 +65,11 @@ require('./routes/subscription.route')(app);
 
 app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-const { v1: uuidv1, v4: uuidv4 } = require('uuid');
+//const { v1: uuidv1, v4: uuidv4 } = require('uuid');
 
 //bcrypt.hashSync(req.body.password, 8)
 function initial() {
+  const { v1: uuidv1, v4: uuidv4 } = require('uuid');
   encryptedPassword = bcrypt.hashSync('Web@6790', 8);
   initialUserId = uuidv4();
   shipperRoleId = uuidv4();

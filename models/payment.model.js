@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     ReferenceId: { type: DataTypes.STRING },
     OrderStatus: { type: DataTypes.STRING },
     PaymentMethod: { type: DataTypes.STRING },
+    Currency: { type: DataTypes.STRING },
   });
 
   return Payment;

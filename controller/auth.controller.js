@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../models/index.model');
 const User = db.user;
 const Role = db.role;
+const Company = db.company;
 
 //const authware = require('../middleware/auth');
 
@@ -52,7 +53,19 @@ exports.signup = (req, res) => {
 
   encryptedPassword = bcrypt.hash(password, 10);
 
+  Company.create({
+    CompanyName: req.body.CompanyName,
+    ContactEmail: req.body.Email,
+    ContactPhone: req.body.Phone,
+    Address: req.body.Address,
+    Country: req.body.Country,
+    CompanyType: req.body.Roles,
+  });
+
+  const company = await Company.save();
+
   User.create({
+    CompanyId: company.CompanyId,
     FullName: FirstName + ' ' + LastName,
     Email: Email.toLowerCase(),
     Phone: Phone,
@@ -96,8 +109,9 @@ exports.signup = (req, res) => {
               subject: 'Verify Account',
               html: `<h1>Email Confirmation</h1>
               <h2>Hello ${FirstName + ' ' + LastName}</h2>
-              <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
-              <a href = '${url}'>Click here</a>
+             
+              <p>Thank you for subscribing. Below is your temporary password <br/>Password:${encryptedPassword}.<br/>Use that to login and afterwards change in your profile area.</p>
+              To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
               </div>`,
             });
 
@@ -136,7 +150,7 @@ exports.signin = (req, res) => {
         });
       }
 
-      var token = jwt.sign({ id: user.id }, config.secret, {
+      var token = jwt.sign({ id: user.UserId }, config.secret, {
         expiresIn: 86400, // 24 hours
       });
 
@@ -145,14 +159,17 @@ exports.signin = (req, res) => {
         for (let i = 0; i < roles.length; i++) {
           authorities.push(roles[i].name.toUpperCase());
         }
+
         res.status(200).send({
           message: 'Success',
+          token: token,
+          roles: authorities,
+
           data: {
             UserId: user.UserId,
             UserName: user.UserName,
+            FullName: FullName,
             Email: user.Email,
-            Roles: authorities,
-            Token: token,
           },
         });
       });
@@ -187,6 +204,7 @@ exports.verify = async (req, res) => {
     }
     // Step 3 - Update user verification status to true
     user.IsActivated = true;
+
     await user.save();
     return res.redirect(process.env.ADMIN_URL);
     // return res.status(200).send({

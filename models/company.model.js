@@ -1,16 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
-    const Company = sequelize.define("Companys", {
-      CompanyId: {
-        type:  DataTypes.INTEGER,autoIncrement:true,primaryKey: true 
-      },
-      CompanyName: { type: DataTypes.STRING },
-      ContactEmail: { type: DataTypes.STRING },
-      ContactPhone: { type: DataTypes.STRING },
-      Address: { type: DataTypes.STRING },
-      Country: { type: DataTypes.STRING },
-      CompanyType: { type: DataTypes.STRING }      
-    });
-  
-    return Company;
-  };
-  
+  const Company = sequelize.define('Companys', {
+    CompanyId: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    CompanyName: { type: DataTypes.STRING },
+    ContactEmail: { type: DataTypes.STRING },
+    ContactPhone: { type: DataTypes.STRING },
+    Address: { type: DataTypes.STRING },
+    Country: { type: DataTypes.STRING },
+    Region: { type: DataTypes.STRING },
+    CompanyType: { type: DataTypes.STRING },
+  });
+
+  return Company;
+};
