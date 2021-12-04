@@ -6,6 +6,8 @@ const nodemailer = require('nodemailer');
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const db = require('../models/index.model');
 const User = db.user;
@@ -63,6 +65,7 @@ exports.signup = (req, res) => {
     ContactEmail: req.body.Email,
     ContactPhone: req.body.Phone,
     Address: req.body.Address,
+    Region: req.body.Region,
     Country: req.body.Country,
     CompanyType: req.body.CompanyType,
   });
@@ -97,19 +100,30 @@ exports.signup = (req, res) => {
             // save user token
             user.Token = token;
 
-            const transporter = nodemailer.createTransport({
-              service: 'Gmail',
-              auth: {
-                user: process.env.EMAIL_USERNAME,
-                pass: process.env.EMAIL_PASSWORD,
-              },
-            });
-            //  mailgun
-            // Step 2 - Generate a verification token with the user's ID
-            const verificationToken = user.generateVerificationToken();
-            // Step 3 - Email the user a unique verification link
-            const url = process.env.BASE_URL + '/verify/${token}';
-            transporter.sendMail({
+            // const transporter = nodemailer.createTransport({
+            //   service: 'Gmail',
+            //   auth: {
+            //     user: process.env.EMAIL_USERNAME,
+            //     pass: process.env.EMAIL_PASSWORD,
+            //   },
+            // });
+            // //  mailgun
+            // // Step 2 - Generate a verification token with the user's ID
+            // const verificationToken = user.generateVerificationToken();
+            // // Step 3 - Email the user a unique verification link
+            // const url = process.env.BASE_URL + '/verify/${token}';
+            // transporter.sendMail({
+            //   to: email,
+            //   subject: 'Verify Account',
+            //   html: `<h1>Email Confirmation</h1>
+            //   <h2>Hello ${FirstName + ' ' + LastName}</h2>
+
+            //   <p>Thank you for subscribing. Below is your temporary password <br/>Password:${encryptedPassword}.<br/>Use that to login and afterwards change in your profile area.</p>
+            //   To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+            //   </div>`,
+            // });
+
+            const msg = {
               to: email,
               subject: 'Verify Account',
               html: `<h1>Email Confirmation</h1>
@@ -118,8 +132,18 @@ exports.signup = (req, res) => {
               <p>Thank you for subscribing. Below is your temporary password <br/>Password:${encryptedPassword}.<br/>Use that to login and afterwards change in your profile area.</p>
               To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
               </div>`,
-            });
+            };
 
+            sgMail.send(msg).then(
+              () => {},
+              (error) => {
+                console.error(error);
+
+                if (error.response) {
+                  console.error(error.response.body);
+                }
+              },
+            );
             //   res.send({ message: 'User registered successfully!' });
           });
         });
