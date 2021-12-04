@@ -88,9 +88,7 @@ exports.signup = (req, res) => {
       if (req.body.CompanyType) {
         Role.findAll({
           where: {
-            name: {
-              [Op.or]: req.body.CompanyType,
-            },
+            Name: req.body.CompanyType,
           },
         }).then((roles) => {
           user.setRoles(roles).then(() => {
@@ -111,7 +109,7 @@ exports.signup = (req, res) => {
             // // Step 2 - Generate a verification token with the user's ID
             // const verificationToken = user.generateVerificationToken();
             // // Step 3 - Email the user a unique verification link
-            // const url = process.env.BASE_URL + '/verify/${token}';
+            const url = process.env.BASE_URL + '/verify/${token}';
             // transporter.sendMail({
             //   to: email,
             //   subject: 'Verify Account',
@@ -161,9 +159,7 @@ exports.signup = (req, res) => {
 
 exports.signin = (req, res) => {
   User.findOne({
-    where: {
-      UserName: req.body.UserName,
-    },
+    where: { [Op.and]: [{ Email: req.body.UserName }, { IsActivated: true }] },
   })
     .then((user) => {
       if (!user) {
