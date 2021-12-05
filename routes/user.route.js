@@ -31,6 +31,14 @@ module.exports = function (app) {
 
   app.post('/api/user/deleteAll', controller.deleteAll);
 
+  app.get('/api/user/findRoles', controller.findRoles);
+
+  app.get('/api/user/findUserRoles', controller.findUserRoles);
+
+  app.put('/api/user/updateRole/:RoleId', controller.updateRole);
+
+  app.delete('/api/user/deleteRole/:RoleId', [authJwt.verifyToken], controller.deleteRole);
+
   app.post('/api/user/subscribe', controller.subscribe);
 
   app.post('/api/user/upgradeUserSubscription', controller.upgradeUserSubscription);

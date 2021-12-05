@@ -10,6 +10,8 @@ const db = require('../models/index.model');
 const User = db.user;
 const UserSubscription = db.usersubscription;
 const Company = db.company;
+const Role = db.role;
+const UserRole = db.userrole;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new User
@@ -260,6 +262,92 @@ exports.findAllUsersByDate = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: err.message || 'Some error occurred while retrieving Users.',
+      });
+    });
+};
+
+//get Roles
+
+exports.findRoles = (req, res) => {
+  const name = req.params.Name;
+  var condition = name ? { Name: { [Op.iLike]: `%${name}%` } } : null;
+
+  Role.findAll({ where: condition })
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Users.',
+      });
+    });
+};
+
+exports.findUserRoles = (req, res) => {
+  const userId = req.params.UserId;
+  var condition = userId ? { UserId: userId } : null;
+
+  UserRole.findAll({ where: condition })
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Users.',
+      });
+    });
+};
+
+exports.updateRole = (req, res) => {
+  const id = req.body.UserRoleId;
+
+  Company.update(req.body, {
+    where: { RoleId: id },
+  })
+    .then((num) => {
+      if (num == 1) {
+        res.send({
+          message: 'Role was updated successfully.',
+        });
+      } else {
+        res.send({
+          message: `Cannot update Role with id=${id}. Maybe Company was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: 'Error updating Role with id=' + id,
+      });
+    });
+};
+
+exports.deleteRole = (req, res) => {
+  const id = req.params.RoleId;
+
+  Role.destroy({
+    where: { RoleId: id },
+  })
+    .then((num) => {
+      if (num == 1) {
+        res.send({
+          message: 'Role was deleted successfully!',
+        });
+      } else {
+        res.send({
+          message: `Cannot delete Role with id=${id}. Maybe Company was not found!`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: 'Could not delete Role with id=' + id,
       });
     });
 };
