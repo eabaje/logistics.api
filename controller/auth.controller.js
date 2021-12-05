@@ -10,6 +10,7 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const db = require('../models/index.model');
+const { userrole } = require('../models/index.model');
 const User = db.user;
 const Role = db.role;
 const UserRole = db.userrole;
@@ -92,67 +93,69 @@ exports.signup = (req, res) => {
             Name: req.body.CompanyType,
           },
         }).then((roles) => {
-          user.setRoles(roles).then(() => {
-            const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
-              expiresIn: '2h',
-            });
-            // save user token
-            user.Token = token;
+          userrole.create({ UserId: User.UserId, RoleId: roles.RoleId });
+          // user.setRoles(roles).then(() => {
+          const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
+            expiresIn: '2h',
+          });
+          // save user token
+          //   user.Token = token;
 
-            // const transporter = nodemailer.createTransport({
-            //   service: 'Gmail',
-            //   auth: {
-            //     user: process.env.EMAIL_USERNAME,
-            //     pass: process.env.EMAIL_PASSWORD,
-            //   },
-            // });
-            // //  mailgun
-            // // Step 2 - Generate a verification token with the user's ID
-            // const verificationToken = user.generateVerificationToken();
-            // // Step 3 - Email the user a unique verification link
-            const url = process.env.BASE_URL + '/verify/${token}';
-            // transporter.sendMail({
-            //   to: email,
-            //   subject: 'Verify Account',
-            //   html: `<h1>Email Confirmation</h1>
-            //   <h2>Hello ${FirstName + ' ' + LastName}</h2>
+          // const transporter = nodemailer.createTransport({
+          //   service: 'Gmail',
+          //   auth: {
+          //     user: process.env.EMAIL_USERNAME,
+          //     pass: process.env.EMAIL_PASSWORD,
+          //   },
+          // });
+          // //  mailgun
+          // // Step 2 - Generate a verification token with the user's ID
+          // const verificationToken = user.generateVerificationToken();
+          // // Step 3 - Email the user a unique verification link
+          const url = process.env.BASE_URL + '/verify/${token}';
+          // transporter.sendMail({
+          //   to: email,
+          //   subject: 'Verify Account',
+          //   html: `<h1>Email Confirmation</h1>
+          //   <h2>Hello ${FirstName + ' ' + LastName}</h2>
 
-            //   <p>Thank you for subscribing. Below is your temporary password <br/>Password:${encryptedPassword}.<br/>Use that to login and afterwards change in your profile area.</p>
-            //   To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-            //   </div>`,
-            // });
+          //   <p>Thank you for subscribing. Below is your temporary password <br/>Password:${encryptedPassword}.<br/>Use that to login and afterwards change in your profile area.</p>
+          //   To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+          //   </div>`,
+          // });
 
-            const msg = {
-              to: email,
-              subject: 'Verify Account',
-              html: `<h1>Email Confirmation</h1>
+          const msg = {
+            to: email,
+            subject: 'Verify Account',
+            html: `<h1>Email Confirmation</h1>
               <h2>Hello ${FirstName + ' ' + LastName}</h2>
              
               <p>Thank you for subscribing. Below is your temporary password <br/>Password:${encryptedPassword}.<br/>Use that to login and afterwards change in your profile area.</p>
               To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
               </div>`,
-            };
+          };
 
-            sgMail.send(msg).then(
-              () => {},
-              (error) => {
-                console.error(error);
+          sgMail.send(msg).then(
+            () => {},
+            (error) => {
+              console.error(error);
 
-                if (error.response) {
-                  console.error(error.response.body);
-                }
-              },
-            );
-            //   res.send({ message: 'User registered successfully!' });
-          });
-        });
-      } else {
-        // user role = 1
-        user.setRoles([1]).then(() => {
+              if (error.response) {
+                console.error(error.response.body);
+              }
+            },
+          );
           res.send({ message: 'User registered successfully!' });
+          // });
         });
+        // } else {
+        //   // user role = 1
+        //   user.setRoles([1]).then(() => {
+        //     res.send({ message: 'User registered successfully!' });
+        //   });
       }
     })
+
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
