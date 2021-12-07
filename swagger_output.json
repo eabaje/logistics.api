@@ -2,14 +2,13 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "LOAD DISPACH REST API",
-    "description": "This is the REST API for the Global Load Dispatch System"
+    "title": "REST API",
+    "description": ""
   },
-  "host": "loadboard-api.herokuapp.com",
+  "host": "localhost:8000",
   "basePath": "/",
   "tags": [],
-  "schemes": ["https"],
-
+  "schemes": ["http"],
   "consumes": [],
   "produces": [],
   "paths": {
@@ -24,13 +23,13 @@
             "schema": {
               "type": "object",
               "properties": {
+                "Email": {
+                  "example": "any"
+                },
                 "FirstName": {
                   "example": "any"
                 },
                 "LastName": {
-                  "example": "any"
-                },
-                "Email": {
                   "example": "any"
                 },
                 "Phone": {
@@ -62,6 +61,9 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }

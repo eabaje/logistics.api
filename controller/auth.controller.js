@@ -41,6 +41,13 @@ auth.use(express.json({ limit: '50mb' }));
 // module.exports = auth;
 
 exports.signup = (req, res) => {
+  const Isuser = User.findOne({ Email: req.body.Email }).exec();
+  if (Isuser) {
+    return res.status(404).send({
+      message: 'Email already exists!',
+    });
+  }
+
   const user = {
     FirstName: req.body.FirstName,
     LasttName: req.body.LastName,
@@ -51,7 +58,7 @@ exports.signup = (req, res) => {
     Country: req.body.Country,
     UserPicUrl: req.body.UserPicUrl,
     UserName: req.body.Email,
-    // Password: '',
+    //Password:  req.body.Password,
     // UserDocs: req.body.UserDocs
   };
   // Save User in the database
@@ -145,7 +152,7 @@ exports.signup = (req, res) => {
               }
             },
           );
-          res.send({ message: 'User registered successfully!' });
+          res.status(404).send({ message: 'User registered successfully!' });
           // });
         });
         // } else {
@@ -184,24 +191,28 @@ exports.signin = (req, res) => {
       });
 
       var authorities = [];
-      user.getRoles().then((roles) => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push(roles[i].name.toUpperCase());
-        }
+      userRole
+        .findOne({
+          where: { UserId: user.UserId },
+        })
+        .then((userrole) => {
+          for (let i = 0; i < userrole.length; i++) {
+            authorities.push(userrole[i].name.toUpperCase());
+          }
 
-        res.status(200).send({
-          message: 'Success',
-          token: token,
-          roles: authorities,
+          res.status(200).send({
+            message: 'Success',
+            token: token,
+            roles: authorities,
 
-          data: {
-            UserId: user.UserId,
-            UserName: user.UserName,
-            FullName: FullName,
-            Email: user.Email,
-          },
+            data: {
+              UserId: user.UserId,
+              UserName: user.UserName,
+              FullName: FullName,
+              Email: user.Email,
+            },
+          });
         });
-      });
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
