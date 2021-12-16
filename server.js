@@ -23,7 +23,7 @@ const User = db.user;
 const UserRole = db.userrole;
 const Company = db.company;
 //db.sequelize.sync();
-// force: true will drop the table if it already exists
+//force: true will drop the table if it already exists
 // db.sequelize.sync({ force: true }).then(() => {
 //   console.log('Drop and Resync Database with { force: true }');
 //   initial();
@@ -86,7 +86,7 @@ function initial() {
     UserName: 'ebi.abje@loaddispatch.com.ng',
     Password: encryptedPassword,
     Address: 'Lagos',
-    City: 'Lagos',
+    City: 'LG',
     Country: 'NG',
     IsActivated: false,
   });

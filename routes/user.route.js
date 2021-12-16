@@ -23,7 +23,7 @@ module.exports = function (app) {
 
   app.get('/api/user/findAllBySearch/:name', controller.findAllBySearch);
 
-  app.get('/api/user/findAllUsersByDate/:fromDate/:toDate', controller.findAllUsersByDate);
+  app.get('/api/user/findAllUsersByDate/:startDate/:toDate', controller.findAllUsersByDate);
 
   app.put('/api/user/update/:userId', controller.update);
 
@@ -49,15 +49,15 @@ module.exports = function (app) {
 
   app.get('/api/user/findAllUserSubscriptions/', controller.findAllUserSubscriptions);
 
-  app.get('/api/user/findAllUserSubscriptionsByDate/:fromDate/:toDate', controller.findAllUserSubscriptionsByDate);
+  app.get('/api/user/findAllUserSubscriptionsByDate/:startDate/:toDate', controller.findAllUserSubscriptionsByDate);
 
   app.get(
-    '/api/user/findAllUserSubscriptionsByStartDate/:fromDate/:toDate',
+    '/api/user/findAllUserSubscriptionsByStartDate/:startDate/:toDate',
     controller.findAllUserSubscriptionsByStartDate,
   );
 
   app.get(
-    '/api/user/findAllUserSubscriptionsByEndDate/:fromDate/:toDate',
+    '/api/user/findAllUserSubscriptionsByEndDate/:startDate/:toDate',
     controller.findAllUserSubscriptionsByEndDate,
   );
 
@@ -71,7 +71,7 @@ module.exports = function (app) {
 
   app.get('/api/user/findAllCompanys/', controller.findAllCompanys);
 
-  app.get('/api/user/findAllCompanysByDate/:fromDate/:toDate', controller.findAllCompanysByDate);
+  app.get('/api/user/findAllCompanysByDate/:startDate/:toDate', controller.findAllCompanysByDate);
 
   app.delete('/api/user/deleteCompany/:CompanyId', controller.deleteCompany);
 };

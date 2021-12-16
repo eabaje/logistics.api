@@ -5,12 +5,12 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Shipment
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: 'Content can not be empty!',
-    });
-    return;
-  }
+  // if (!req.body.title) {
+  //   res.status(400).send({
+  //     message: 'Content can not be empty!',
+  //   });
+  //   return;
+  // }
 
   // Create a Shipment
   const shipment = {
@@ -23,8 +23,19 @@ exports.create = (req, res) => {
     Description: req.body.Description,
     PickUpLocation: req.body.PickUpLocation,
     DeliveryLocation: req.body.DeliveryLocation,
-    PickUpDate: req.body.PickUpDate,
-    DeliveryDate: req.body.DeliveryDate,
+    PickUpCountry: req.body.PickUpCountry,
+    PickUpRegion: req.body.PickUpRegion,
+    PickUpLocation: req.body.PickUpLocation,
+    DeliveryCountry: req.body.DeliveryCountry,
+    DeliveryRegion: req.body.DeliveryRegion,
+    DeliveryLocation: req.body.DeliveryLocation,
+    ExpectedPickUpDate: req.body.ExpectedPickUpDate,
+    ExpectedDeliveryDate: req.body.ExpectedDeliveryDate,
+    RequestForShipment: req.body.RequestForShipment,
+    ShipmentRequestPrice: req.body.ShipmentRequestPrice,
+    DeliveryContactName: req.body.DeliveryContactName,
+    DeliveryContactPhone: req.body.DeliveryContactPhone,
+    AssignedShipment: req.body.AssignedShipment,
     ShipmentDate: req.body.ShipmentDate,
     ShipmentDocs: req.body.ShipmentDocs,
     ShipmentStatus: req.body.ShipmentStatus,
@@ -33,19 +44,23 @@ exports.create = (req, res) => {
   // Save Shipment in the database
   Shipment.create(shipment)
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
+      console.log('error:', err.message);
       res.status(500).send({
         message: err.message || 'Some error occurred while creating the Shipment.',
       });
     });
 };
 
-// Retrieve all Shipments from the database.
+// Retrieve all Shipments start the database.
 exports.findAll = (req, res) => {
-  const loadCategory = req.query.LoadCategory;
-  var condition = LoadCategory ? { LoadCategory: { [Op.iLike]: `%${loadCategory}%` } } : null;
+  const loadCategory = req.params.LoadCategory;
+  var condition = loadCategory ? { LoadCategory: { [Op.iLike]: `%${loadCategory}%` } } : null;
 
   Shipment.findAll({ where: condition })
     .then((data) => {
@@ -123,7 +138,7 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all Shipments from the database.
+// Delete all Shipments start the database.
 exports.deleteAll = (req, res) => {
   Shipment.destroy({
     where: {},

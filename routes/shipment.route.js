@@ -13,15 +13,18 @@ module.exports = function (app) {
 
   app.get('/api/shipment/findAllShipmentsByStatus/:shipmentStatus/:shipmentid', controller.findAllShipmentsByStatus);
 
-  app.get('/api/shipment/findAllShipmentsByDeliveryDate/:fromDate/:endDate', controller.findAllShipmentsByDeliveryDate);
+  app.get(
+    '/api/shipment/findAllShipmentsByDeliveryDate/:startDate/:endDate',
+    controller.findAllShipmentsByDeliveryDate,
+  );
+  // [authJwt.verifyToken],
+  app.get('/api/shipment/findAllShipmentsByPickUpDate/:startDate/:endDate', controller.findAllShipmentsByPickUpDate);
 
-  app.get('/api/shipment/findAllShipmentsByPickUpDate/:fromDate/:endDate', controller.findAllShipmentsByPickUpDate);
-
-  app.get('/api/shipment/findAllShipmentsByRecordDate/:fromDate/:endDate', controller.findAllShipmentsByRecordDate);
+  app.get('/api/shipment/findAllShipmentsByRecordDate/:startDate/:endDate', controller.findAllShipmentsByRecordDate);
 
   app.get('/api/shipment/findAllShipmentsAssigned/:shipmentid/:assignedshipment', controller.findAllShipmentsAssigned);
 
-  app.post('/api/shipment/create', [authJwt.verifyToken], controller.create);
+  app.post('/api/shipment/create', controller.create);
 
   app.put('/api/shipment/update/:shipmentId', [authJwt.verifyToken], controller.update);
 

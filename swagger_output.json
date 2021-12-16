@@ -26,6 +26,36 @@
                 "Email": {
                   "example": "any"
                 },
+                "CompanyName": {
+                  "example": "any"
+                },
+                "ContactEmail": {
+                  "example": "any"
+                },
+                "ContactPhone": {
+                  "example": "any"
+                },
+                "CompanyAddress": {
+                  "example": "any"
+                },
+                "Region": {
+                  "example": "any"
+                },
+                "Country": {
+                  "example": "any"
+                },
+                "CompanyType": {
+                  "example": "any"
+                },
+                "Password\r": {
+                  "example": "any"
+                },
+                "Password": {
+                  "example": "any"
+                },
+                "FullName": {
+                  "example": "any"
+                },
                 "FirstName": {
                   "example": "any"
                 },
@@ -38,22 +68,10 @@
                 "Address": {
                   "example": "any"
                 },
-                "Region": {
+                "AcceptTerms": {
                   "example": "any"
                 },
-                "Country": {
-                  "example": "any"
-                },
-                "UserPicUrl": {
-                  "example": "any"
-                },
-                "CompanyName": {
-                  "example": "any"
-                },
-                "CompanyType": {
-                  "example": "any"
-                },
-                "FullName": {
+                "PaymentMethod": {
                   "example": "any"
                 }
               }
@@ -61,6 +79,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "404": {
             "description": "Not Found"
           },
@@ -81,7 +102,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "UserName": {
+                "Email": {
                   "example": "any"
                 },
                 "Password": {
@@ -226,13 +247,13 @@
         }
       }
     },
-    "/api/user/findAllUsersByDate/{fromDate}/{toDate}": {
+    "/api/user/findAllUsersByDate/{startDate}/{toDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -582,13 +603,13 @@
         }
       }
     },
-    "/api/user/findAllUserSubscriptionsByDate/{fromDate}/{toDate}": {
+    "/api/user/findAllUserSubscriptionsByDate/{startDate}/{toDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -610,13 +631,13 @@
         }
       }
     },
-    "\r/api/user/findAllUserSubscriptionsByStartDate/{fromDate}/{toDate}": {
+    "\r/api/user/findAllUserSubscriptionsByStartDate/{startDate}/{toDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -638,13 +659,13 @@
         }
       }
     },
-    "\r/api/user/findAllUserSubscriptionsByEndDate/{fromDate}/{toDate}": {
+    "\r/api/user/findAllUserSubscriptionsByEndDate/{startDate}/{toDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -789,13 +810,13 @@
         }
       }
     },
-    "/api/user/findAllCompanysByDate/{fromDate}/{toDate}": {
+    "/api/user/findAllCompanysByDate/{startDate}/{toDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1147,13 +1168,13 @@
         }
       }
     },
-    "/api/driver/findAllDriversByDate/{fromDate}/{endDate}": {
+    "/api/driver/findAllDriversByDate/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1490,13 +1511,13 @@
         }
       }
     },
-    "/api/vehicle/findAllVehiclesByDate/{fromDate}/{toDate}": {
+    "/api/vehicle/findAllVehiclesByDate/{startDate}/{toDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1645,13 +1666,13 @@
         }
       }
     },
-    "/api/shipment/findAllShipmentsByDeliveryDate/{fromDate}/{endDate}": {
+    "\r/api/shipment/findAllShipmentsByDeliveryDate/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1673,13 +1694,13 @@
         }
       }
     },
-    "/api/shipment/findAllShipmentsByPickUpDate/{fromDate}/{endDate}": {
+    "/api/shipment/findAllShipmentsByPickUpDate/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1701,13 +1722,13 @@
         }
       }
     },
-    "/api/shipment/findAllShipmentsByRecordDate/{fromDate}/{endDate}": {
+    "/api/shipment/findAllShipmentsByRecordDate/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -2234,25 +2255,22 @@
                 "title": {
                   "example": "any"
                 },
-                "FullName": {
+                "SubscriptionType": {
                   "example": "any"
                 },
-                "Email": {
+                "SubscriptionName": {
                   "example": "any"
                 },
-                "Phone": {
+                "Amount": {
                   "example": "any"
                 },
-                "Address": {
+                "Description": {
                   "example": "any"
                 },
-                "City": {
+                "Active": {
                   "example": "any"
                 },
-                "Country": {
-                  "example": "any"
-                },
-                "UserPicUrl": {
+                "Duration": {
                   "example": "any"
                 }
               }
@@ -2260,8 +2278,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK"
           },
           "400": {
             "description": "Bad Request"
@@ -2272,8 +2290,8 @@
           "403": {
             "description": "Forbidden"
           },
-          "409": {
-            "description": "Conflict"
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -2304,7 +2322,13 @@
       "get": {
         "tags": [],
         "description": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "SubscriptionName",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -2315,19 +2339,41 @@
         }
       }
     },
-    "\r/api/subscription/findAllUserSubscriptionsByDate/{fromDate}/{toDate}": {
+    "/api/subscription/findAllSubscriptionsByActive/{Active}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "Active",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/subscription/findAllSubscriptionsByDate/{startDate}/{endDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "toDate",
+            "name": "endDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -2353,39 +2399,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "UserId": {
-                  "example": "any"
-                },
-                "FullName": {
-                  "example": "any"
-                },
-                "Email": {
-                  "example": "any"
-                },
-                "Phone": {
-                  "example": "any"
-                },
-                "Address": {
-                  "example": "any"
-                },
-                "City": {
-                  "example": "any"
-                },
-                "Country": {
-                  "example": "any"
-                },
-                "UserPicUrl": {
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {
@@ -2595,11 +2608,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "TripId",
-            "in": "query",
-            "type": "string"
           }
         ],
         "responses": {
@@ -2706,7 +2714,7 @@
         }
       }
     },
-    "/api/trip/findAllTripsByVehicle/{vehicleId}/{fromDate}/{endDate}": {
+    "/api/trip/findAllTripsByVehicle/{vehicleId}/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
@@ -2718,7 +2726,7 @@
             "type": "string"
           },
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -2737,7 +2745,7 @@
         }
       }
     },
-    "/api/trip/findAllTripsByDriver/{driverId}/{fromDate}/{endDate}": {
+    "/api/trip/findAllTripsByDriver/{driverId}/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
@@ -2749,7 +2757,7 @@
             "type": "string"
           },
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -2809,13 +2817,13 @@
         }
       }
     },
-    "/api/trip/findAllTripsByPickUpDate/{fromDate}/{endDate}": {
+    "/api/trip/findAllTripsByPickUpDate/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -2834,13 +2842,13 @@
         }
       }
     },
-    "/api/trip/findAllTripsByDeliveryDate/{fromDate}/{endDate}": {
+    "/api/trip/findAllTripsByDeliveryDate/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"
@@ -2859,13 +2867,13 @@
         }
       }
     },
-    "/api/trip/findAllTripsByDate/{fromDate}/{endDate}": {
+    "/api/trip/findAllTripsByDate/{startDate}/{endDate}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "fromDate",
+            "name": "startDate",
             "in": "path",
             "required": true,
             "type": "string"

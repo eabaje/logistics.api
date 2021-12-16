@@ -13,6 +13,8 @@ module.exports = function (app) {
 
   app.post('/api/auth/signin', controller.signin);
 
+  app.post('/api/auth/verify', controller.verify);
+
   app.get('/api/auth/logout', controller.logout);
 
   //  app.get('/api/auth/facebook',passportFacebook.authenticate('facebook'));

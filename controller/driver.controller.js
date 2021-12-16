@@ -45,7 +45,7 @@ exports.create = (req, res) => {
     });
 };
 
-// Retrieve all Drivers from the database.
+// Retrieve all Drivers start the database.
 exports.findAll = (req, res) => {
   const CompanyId = req.params.CompanyId;
   var condition = CompanyId ? { CompanyId: { [Op.eq]: CompanyId } } : null;
@@ -134,7 +134,7 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all Drivers from the database.
+// Delete all Drivers start the database.
 exports.deleteAll = (req, res) => {
   Driver.destroy({
     where: {},

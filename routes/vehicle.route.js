@@ -15,7 +15,7 @@ module.exports = function (app) {
 
   app.get('/api/vehicle/findAllVehiclesInsured', controller.findAllVehiclesInsured);
 
-  app.get('/api/vehicle/findAllVehiclesByDate/:fromDate/:toDate', controller.findAllVehiclesByDate);
+  app.get('/api/vehicle/findAllVehiclesByDate/:startDate/:toDate', controller.findAllVehiclesByDate);
 
   app.put('/api/vehicle/update/:vehicleId', [authJwt.verifyToken], controller.update);
 

@@ -1,5 +1,5 @@
 const { authJwt } = require('../middleware');
-const controller = require('../controller/user.controller');
+const controller = require('../controller/subscribe.controller');
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -14,17 +14,17 @@ module.exports = function (app) {
   // app.get("/api/user/mod",[authJwt.verifyToken, authJwt.isModerator],controller.moderatorBoard);
 
   // app.get("/api/user/admin",[authJwt.verifyToken, authJwt.isAdmin],controller.adminBoard);
+  // [authJwt.verifyToken],
 
-  app.post('/api/subscription/create', [authJwt.verifyToken], controller.create);
+  app.post('/api/subscription/create', controller.create);
 
   app.get('/api/subscription/findOne/:subscriptionId', controller.findOne);
 
   app.get('/api/subscription/findAll', controller.findAll);
 
-  app.get(
-    '/api/subscription/findAllUserSubscriptionsByDate/:fromDate/:toDate',
-    controller.findAllUserSubscriptionsByDate,
-  );
+  app.get('/api/subscription/findAllSubscriptionsByActive/:Active', controller.findAllSubscriptionsByActive);
+
+  app.get('/api/subscription/findAllSubscriptionsByDate/:startDate/:endDate', controller.findAllSubscriptionsByDate);
 
   app.put('/api/subscription/update/:subscriptionId', [authJwt.verifyToken], controller.update);
 

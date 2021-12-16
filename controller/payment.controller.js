@@ -68,8 +68,8 @@ exports.StripecheckoutFirst = async (req, res) => {
 };
 
 // exports.stripecheckoutSecond = (req, res) => {
-//   // Moreover you can take more details from user
-//   // like Address, Name, etc from form
+//   // Moreover you can take more details start user
+//   // like Address, Name, etc start form
 //   stripe.customers
 //     .create({
 //       email: req.body.stripeEmail,
@@ -99,7 +99,7 @@ exports.StripecheckoutFirst = async (req, res) => {
 //     });
 // };
 
-// // Retrieve all Payments from the database.
+// // Retrieve all Payments start the database.
 // exports.findAll = (req, res) => {
 //   const paymentType = req.query.PaymentType;
 //   var condition = PaymentType ? { PaymentType: { [Op.iLike]: `%${paymentType}%` } } : null;
@@ -139,7 +139,7 @@ exports.update = (req, res) => {
   const id = req.params.paymentId;
 
   Payment.update(req.body, {
-    where: { id: id },
+    where: { PaymentId: id },
   })
     .then((num) => {
       if (num == 1) {
@@ -184,7 +184,7 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all Payments from the database.
+// Delete all Payments start the database.
 exports.deleteAll = (req, res) => {
   Payment.destroy({
     where: {},

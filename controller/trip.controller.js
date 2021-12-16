@@ -41,7 +41,7 @@ exports.create = (req, res) => {
     });
 };
 
-// Retrieve all Trips from the database.
+// Retrieve all Trips start the database.
 exports.findAll = (req, res) => {
   const trackId = req.query.trackId;
   var condition = trackId ? { trackId: { [Op.iLike]: `%${trackId}%` } } : null;
@@ -130,7 +130,7 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all Trips from the database.
+// Delete all Trips start the database.
 exports.deleteAll = (req, res) => {
   Trip.destroy({
     where: {},
@@ -334,9 +334,9 @@ exports.addTrack = (req, res) => {
     });
 };
 
-// Retrieve all Trips from the database.
+// Retrieve all Trips start the database.
 exports.findAllTrack = (req, res) => {
-  const tripId = req.query.TripId;
+  const tripId = req.query.tripId;
   var condition = tripId ? { TripId: tripId } : null;
 
   Track.findAll({ where: condition })

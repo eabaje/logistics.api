@@ -17,7 +17,7 @@ module.exports = function (app) {
 
   app.get('/api/driver/findAllDriversLicensed', controller.findAllDriversLicensed);
 
-  app.get('/api/driver/findAllDriversByDate/:fromDate/:endDate', controller.findAllDriversByDate);
+  app.get('/api/driver/findAllDriversByDate/:startDate/:endDate', controller.findAllDriversByDate);
 
   app.get('/api/driver/findAllAssignedDrivers', [authJwt.verifyToken], controller.findAllAssignedDrivers);
 

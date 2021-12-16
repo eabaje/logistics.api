@@ -7,10 +7,11 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
+const hbs = require('nodemailer-express-handlebars');
+const path = require('path');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const db = require('../models/index.model');
-const { userrole } = require('../models/index.model');
 const User = db.user;
 const Role = db.role;
 const UserRole = db.userrole;
@@ -41,136 +42,171 @@ auth.use(express.json({ limit: '50mb' }));
 // module.exports = auth;
 
 exports.signup = (req, res) => {
-  const Isuser = User.findOne({ Email: req.body.Email }).exec();
-  if (Isuser) {
-    return res.status(404).send({
-      message: 'Email already exists!',
-    });
-  }
-
-  const user = {
-    FirstName: req.body.FirstName,
-    LasttName: req.body.LastName,
-    Email: req.body.Email,
-    Phone: req.body.Phone,
-    Address: req.body.Address,
-    City: req.body.Region,
-    Country: req.body.Country,
-    UserPicUrl: req.body.UserPicUrl,
-    UserName: req.body.Email,
-    //Password:  req.body.Password,
-    // UserDocs: req.body.UserDocs
-  };
-  // Save User in the database
-  var password = generator.generate({
-    length: 8,
-    numbers: true,
+  User.findOne({
+    where: {
+      Email: req.body.Email,
+    },
+  }).then((user) => {
+    if (user) {
+      return res.status(404).send({ message: 'Email already exists' });
+    }
   });
 
-  encryptedPassword = bcrypt.hash(password, 10);
+  //  var password = generator.generate({length: 8,numbers: true,})
+
+  // const company = Company.create({
+  //   CompanyName: req.body.CompanyName,
+  //   ContactEmail: req.body.ContactEmail,
+  //   ContactPhone: req.body.ContactPhone,
+  //   Address: req.body.CompanyAddress,
+  //   Region: req.body.Region,
+  //   Country: req.body.Country,
+  //   CompanyType: req.body.CompanyType,
+  // });
 
   Company.create({
     CompanyName: req.body.CompanyName,
-    ContactEmail: req.body.Email,
-    ContactPhone: req.body.Phone,
-    Address: req.body.Address,
+    ContactEmail: req.body.ContactEmail,
+    ContactPhone: req.body.ContactPhone,
+    Address: req.body.CompanyAddress,
     Region: req.body.Region,
     Country: req.body.Country,
     CompanyType: req.body.CompanyType,
-  });
-
-  //const company = Company.save();
-
-  User.create({
-    CompanyId: Company.CompanyId,
-    FullName: req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName,
-    Email: req.body.Email.toLowerCase(),
-    Phone: req.body.Phone,
-    Address: req.body.Address,
-    City: req.body.Region,
-    Country: req.body.Country,
-    UserName: req.body.Email.toLowerCase(),
-    // sanitize: convert email to lowercase
-    password: encryptedPassword,
   })
-    .then((user) => {
-      if (req.body.CompanyType) {
-        Role.findAll({
-          where: {
-            Name: req.body.CompanyType,
-          },
-        }).then((roles) => {
-          userrole.create({ UserId: User.UserId, RoleId: roles.RoleId });
-          // user.setRoles(roles).then(() => {
-          const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
-            expiresIn: '2h',
-          });
-          // save user token
-          //   user.Token = token;
+    .then((company) => {
+      //const company = Company.save();
+      encryptedPassword = req.body.Password
+        ? bcrypt.hashSync(req.body.Password, 10)
+        : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);
 
-          // const transporter = nodemailer.createTransport({
-          //   service: 'Gmail',
-          //   auth: {
-          //     user: process.env.EMAIL_USERNAME,
-          //     pass: process.env.EMAIL_PASSWORD,
-          //   },
-          // });
-          // //  mailgun
-          // // Step 2 - Generate a verification token with the user's ID
-          // const verificationToken = user.generateVerificationToken();
-          // // Step 3 - Email the user a unique verification link
-          const url = process.env.BASE_URL + '/verify/${token}';
-          // transporter.sendMail({
-          //   to: email,
-          //   subject: 'Verify Account',
-          //   html: `<h1>Email Confirmation</h1>
-          //   <h2>Hello ${FirstName + ' ' + LastName}</h2>
+      //console.log('Password:', encryptedPassword);
+      const email = req.body.ContactEmail ? req.body.ContactEmail : req.body.Email;
+      const fullname = req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName;
 
-          //   <p>Thank you for subscribing. Below is your temporary password <br/>Password:${encryptedPassword}.<br/>Use that to login and afterwards change in your profile area.</p>
-          //   To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-          //   </div>`,
-          // });
+      User.create({
+        CompanyId: company.CompanyId,
+        FullName: req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName,
+        Email: req.body.Email.toLowerCase(),
+        Phone: req.body.Phone,
+        Address: req.body.Address,
+        City: req.body.Region,
+        Country: req.body.Country,
+        UserName: req.body.Email.toLowerCase(),
+        AcceptTerms: req.body.AcceptTerms,
+        PaymentMethod: req.body.PaymentMethod,
+        Password: encryptedPassword,
+      })
+        .then((user) => {
+          if (req.body.CompanyType) {
+            Role.findOne({
+              where: {
+                Name: req.body.CompanyType,
+              },
+            }).then((role) => {
+              UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });
 
-          const msg = {
-            to: email,
-            subject: 'Verify Account',
-            html: `<h1>Email Confirmation</h1>
-              <h2>Hello ${FirstName + ' ' + LastName}</h2>
-             
-              <p>Thank you for subscribing. Below is your temporary password <br/>Password:${encryptedPassword}.<br/>Use that to login and afterwards change in your profile area.</p>
-              To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-              </div>`,
-          };
+              // Add User Subscription
+              // user.setRoles(roles).then(() => {
+              const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
+                expiresIn: '2h',
+              });
+              // save user token
+              //   user.Token = token;
 
-          sgMail.send(msg).then(
-            () => {},
-            (error) => {
-              console.error(error);
+              const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  user: process.env.EMAIL_USERNAME,
+                  pass: process.env.EMAIL_PASSWORD,
+                },
+              });
+              // //  mailgun
+              // // Step 2 - Generate a verification token with the user's ID
+              // const verificationToken = user.generateVerificationToken();
+              // // Step 3 - Email the user a unique verification link
 
-              if (error.response) {
-                console.error(error.response.body);
-              }
-            },
-          );
-          res.status(404).send({ message: 'User registered successfully!' });
-          // });
+              // point to the template folder
+              const handlebarOptions = {
+                viewEngine: {
+                  partialsDir: path.resolve('./views/'),
+                  defaultLayout: false,
+                },
+                viewPath: path.resolve('./views/'),
+              };
+
+              // use a template file with nodemailer
+              transporter.use('compile', hbs(handlebarOptions));
+
+              const url = process.env.BASE_URL + `auth/verify/${token}`;
+              transporter
+                .sendMail({
+                  from: process.env.FROM_EMAIL,
+                  to: email,
+                  template: 'email2', // the name of the template file i.e email.handlebars
+                  context: {
+                    name: fullname,
+                    url: url,
+                  },
+                  subject: 'Welcome to Global Load Dispatch',
+                  //     html: `<h1>Email Confirmation</h1>
+                  // <h2>Hello ${fullname}</h2>
+
+                  // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+                  // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+                  // </div>`,
+                })
+                .then((info) => {
+                  console.log({ info });
+                })
+                .catch(console.error);
+
+              // const msg = {
+              //   from: process.env.FROM_EMAIL,
+              //   to: email,
+              //   subject: 'Welcome to Global Load Dispatch',
+              //   html: `<h1>Email Confirmation</h1>
+              // <h2>Hello ${fullname}</h2>
+
+              // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+              // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+              // </div>`,
+              // };
+
+              // sgMail.send(msg).then(
+              //   () => {},
+              //   (error) => {
+              //     console.error(error);
+
+              //     if (error.response) {
+              //       console.error(error.response.body);
+              //     }
+              //   },
+              // );
+              res.status(200).send({ message: 'User registered successfully!' });
+              // });
+            });
+            // } else {
+            //   // user role = 1
+            //   user.setRoles([1]).then(() => {
+            //     res.send({ message: 'User registered successfully!' });
+            //   });
+          }
+        })
+
+        .catch((err) => {
+          res.status(500).send({ message: err.message });
         });
-        // } else {
-        //   // user role = 1
-        //   user.setRoles([1]).then(() => {
-        //     res.send({ message: 'User registered successfully!' });
-        //   });
-      }
     })
 
     .catch((err) => {
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: 'Company Error:' + err.message });
     });
 };
 
 exports.signin = (req, res) => {
+  // where: { [Op.and]: [{ Email: req.body.Email }, { IsActivated: true }] },
   User.findOne({
-    where: { [Op.and]: [{ Email: req.body.UserName }, { IsActivated: true }] },
+    where: { Email: req.body.Email },
   })
     .then((user) => {
       if (!user) {
@@ -186,35 +222,40 @@ exports.signin = (req, res) => {
         });
       }
 
-      var token = jwt.sign({ id: user.UserId }, config.secret, {
-        expiresIn: 86400, // 24 hours
+      // var token = jwt.sign({ id: user.UserId }, process.env, {
+      //   expiresIn: 86400, // 24 hours
+      // });
+      const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
+        expiresIn: '86400',
       });
-
       var authorities = [];
-      userRole
-        .findOne({
-          where: { UserId: user.UserId },
-        })
-        .then((userrole) => {
-          for (let i = 0; i < userrole.length; i++) {
-            authorities.push(userrole[i].name.toUpperCase());
-          }
+      UserRole.findOne({
+        where: { UserId: user.UserId },
+      }).then((userrole) => {
+        if (!userrole) {
+          return res.status(404).send({ message: 'User Not found.' });
+        }
+        for (let i = 0; i < userrole.length; i++) {
+          authorities.push(userrole[i].name.toUpperCase());
+        }
 
-          res.status(200).send({
-            message: 'Success',
-            token: token,
-            roles: authorities,
+        res.status(200).send({
+          message: 'Success',
+          token: token,
+          roles: authorities,
 
-            data: {
-              UserId: user.UserId,
-              UserName: user.UserName,
-              FullName: FullName,
-              Email: user.Email,
-            },
-          });
+          data: {
+            UserId: user.UserId,
+            UserName: user.UserName,
+            FullName: user.FullName,
+            Email: user.Email,
+            CompanyId: user.CompanyId,
+          },
         });
+      });
     })
     .catch((err) => {
+      console.log('state:', err.message);
       res.status(500).send({ message: err.message });
     });
 };
@@ -236,7 +277,7 @@ exports.verify = async (req, res) => {
   }
   try {
     // Step 2 - Find user with matching ID
-    const user = await User.findOne({ UserId: payload.UserId }).exec();
+    const user = await User.findOne({ UserId: payload.UserId });
     if (!user) {
       return res.status(404).send({
         message: 'User does not  exist',

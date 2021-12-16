@@ -27,19 +27,19 @@ module.exports = function (app) {
 
   app.get('/api/trip/findTripByShipment/:shipmentId', controller.findTripByShipment);
 
-  app.get('/api/trip/findAllTripsByVehicle/:vehicleId/:fromDate/:endDate', controller.findAllTripsByVehicle);
+  app.get('/api/trip/findAllTripsByVehicle/:vehicleId/:startDate/:endDate', controller.findAllTripsByVehicle);
 
-  app.get('/api/trip/findAllTripsByDriver/:driverId/:fromDate/:endDate', controller.findAllTripsByDriver);
+  app.get('/api/trip/findAllTripsByDriver/:driverId/:startDate/:endDate', controller.findAllTripsByDriver);
 
   app.get('/api/trip/findAllTripsByPickUpLocation/:pickUpLocation', controller.findAllTripsByPickUpLocation);
 
   app.get('/api/trip/findAllTripsByDeliveryLocation/:deliveryLocation', controller.findAllTripsByDeliveryLocation);
 
-  app.get('/api/trip/findAllTripsByPickUpDate/:fromDate/:endDate', controller.findAllTripsByPickUpDate);
+  app.get('/api/trip/findAllTripsByPickUpDate/:startDate/:endDate', controller.findAllTripsByPickUpDate);
 
-  app.get('/api/trip/findAllTripsByDeliveryDate/:fromDate/:endDate', controller.findAllTripsByDeliveryDate);
+  app.get('/api/trip/findAllTripsByDeliveryDate/:startDate/:endDate', controller.findAllTripsByDeliveryDate);
 
-  app.get('/api/trip/findAllTripsByDate/:fromDate/:endDate', controller.findAllTripsByDate);
+  app.get('/api/trip/findAllTripsByDate/:startDate/:endDate', controller.findAllTripsByDate);
 
   app.put('/api/trip/update/:tripId', [authJwt.verifyToken], controller.update);
 
