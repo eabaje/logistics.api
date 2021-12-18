@@ -8,7 +8,9 @@
   "host": "localhost:8000",
   "basePath": "/",
   "tags": [],
-  "schemes": ["http"],
+  "schemes": [
+    "http"
+  ],
   "consumes": [],
   "produces": [],
   "paths": {
@@ -121,6 +123,24 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/auth/verify": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1624,13 +1644,7 @@
       "get": {
         "tags": [],
         "description": "",
-        "parameters": [
-          {
-            "name": "LoadCategory",
-            "in": "query",
-            "type": "string"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "500": {
             "description": "Internal Server Error"
@@ -1789,9 +1803,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "title": {
-                  "example": "any"
-                },
                 "CompanyId": {
                   "example": "any"
                 },
@@ -1819,10 +1830,37 @@
                 "DeliveryLocation": {
                   "example": "any"
                 },
-                "PickUpDate": {
+                "PickUpCountry": {
                   "example": "any"
                 },
-                "DeliveryDate": {
+                "PickUpRegion": {
+                  "example": "any"
+                },
+                "DeliveryCountry": {
+                  "example": "any"
+                },
+                "DeliveryRegion": {
+                  "example": "any"
+                },
+                "ExpectedPickUpDate": {
+                  "example": "any"
+                },
+                "ExpectedDeliveryDate": {
+                  "example": "any"
+                },
+                "RequestForShipment": {
+                  "example": "any"
+                },
+                "ShipmentRequestPrice": {
+                  "example": "any"
+                },
+                "DeliveryContactName": {
+                  "example": "any"
+                },
+                "DeliveryContactPhone": {
+                  "example": "any"
+                },
+                "AssignedShipment": {
                   "example": "any"
                 },
                 "ShipmentDate": {
@@ -1839,14 +1877,8 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "OK"
           },
           "500": {
             "description": "Internal Server Error"
@@ -2252,9 +2284,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "title": {
-                  "example": "any"
-                },
                 "SubscriptionType": {
                   "example": "any"
                 },
@@ -2280,15 +2309,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -2322,13 +2342,7 @@
       "get": {
         "tags": [],
         "description": "",
-        "parameters": [
-          {
-            "name": "SubscriptionName",
-            "in": "query",
-            "type": "string"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"

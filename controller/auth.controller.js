@@ -264,7 +264,7 @@ exports.signin = (req, res) => {
 };
 
 exports.verify = async (req, res) => {
-  const { token } = req.params;
+  const { token } = req.params.token;
   // Check we have an id
   if (!token) {
     return res.status(422).send({
