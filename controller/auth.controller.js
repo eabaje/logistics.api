@@ -224,7 +224,7 @@ exports.signin = (req, res) => {
 
       // var token = jwt.sign({ id: user.UserId }, process.env, {
       //   expiresIn: 86400, // 24 hours
-      // });
+      // }); .toUpperCase()
       const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
         expiresIn: '86400',
       });
@@ -233,24 +233,27 @@ exports.signin = (req, res) => {
         where: { UserId: user.UserId },
       }).then((userrole) => {
         if (!userrole) {
-          return res.status(404).send({ message: 'User Not found.' });
+          return res.status(404).send({ message: 'User Role Not found.' });
         }
-        for (let i = 0; i < userrole.length; i++) {
-          authorities.push(userrole[i].name.toUpperCase());
-        }
+        Role.findOne({
+          where: { RoleId: userrole.RoleId },
+        }).then((role) => {
+          // for (let i = 0; i < userrole.length; i++) {
+          //   authorities.push(userrole[i].Name);
+          // }
 
-        res.status(200).send({
-          message: 'Success',
-          token: token,
-          roles: authorities,
+          res.status(200).send({
+            message: 'Success',
+            token: token,
+            roles: role.Name,
 
-          data: {
-            UserId: user.UserId,
-            UserName: user.UserName,
-            FullName: user.FullName,
-            Email: user.Email,
-            CompanyId: user.CompanyId,
-          },
+            data: {
+              UserId: user.UserId,
+              FullName: user.FullName,
+              Email: user.Email,
+              CompanyId: user.CompanyId,
+            },
+          });
         });
       });
     })
