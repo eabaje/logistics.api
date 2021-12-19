@@ -111,7 +111,8 @@ exports.signup = (req, res) => {
                 expiresIn: '2h',
               });
               // save user token
-              //   user.Token = token;
+                 user.Token = token;
+                 user.save();
 
               const transporter = nodemailer.createTransport({
                 service: 'gmail',
@@ -225,7 +226,7 @@ exports.signin = (req, res) => {
       // var token = jwt.sign({ id: user.UserId }, process.env, {
       //   expiresIn: 86400, // 24 hours
       // }); .toUpperCase()
-      const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
+      const token = jwt.sign({ UserId: user.UserId }, process.env.TOKEN_KEY, {
         expiresIn: '86400',
       });
       var authorities = [];
@@ -264,7 +265,7 @@ exports.signin = (req, res) => {
 };
 
 exports.verify = async (req, res) => {
-  const { token } = req.params.token;
+  const  token  = req.params.token;
   // Check we have an id
   if (!token) {
     return res.status(422).send({
@@ -279,17 +280,25 @@ exports.verify = async (req, res) => {
     return res.status(500).send(err);
   }
   try {
-    // Step 2 - Find user with matching ID
-    const user = await User.findOne({ UserId: payload.UserId });
+    // Step 2 - Find user with matching User ID
+    const user = await User.findOne({where:{ UserId: payload.UserId }});
     if (!user) {
       return res.status(404).send({
         message: 'User does not  exist',
       });
     }
-    // Step 3 - Update user verification status to true
+    // Step 3 - Update user activation status to true
     user.IsActivated = true;
+    user.save();
 
-    await user.save();
+    //check if user is activated
+    const isActivated =  User.findOne({ where: { UserId: payload.UserId } && { Active: true } });
+    if (!isActivated) {
+      return res.status(404).send({
+        message: 'Kindly click to confirm again',
+      });
+    }
+
     return res.redirect(process.env.ADMIN_URL);
     // return res.status(200).send({
     //   message: 'Account Verified',

@@ -130,11 +130,18 @@
         }
       }
     },
-    "/api/auth/verify": {
+    "/api/auth/verify/{token}": {
       "get": {
         "tags": [],
         "description": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "404": {
             "description": "Not Found"
@@ -401,13 +408,13 @@
         }
       }
     },
-    "/api/user/updateRole/{RoleId}": {
+    "/api/user/updateRole/{roleId}": {
       "put": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "RoleId",
+            "name": "roleId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -418,7 +425,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "UserRoleId": {
+                "userRoleId": {
                   "example": "any"
                 }
               }
@@ -432,13 +439,13 @@
         }
       }
     },
-    "/api/user/deleteRole/{RoleId}": {
+    "/api/user/deleteRole/{roleId}": {
       "delete": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "RoleId",
+            "name": "roleId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -549,13 +556,13 @@
         }
       }
     },
-    "/api/user/updateUserSubscription/{UserSubscriptionId}": {
+    "/api/user/updateUserSubscription/{userSubscriptionId}": {
       "put": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "UserSubscriptionId",
+            "name": "userSubscriptionId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -718,9 +725,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "title": {
-                  "example": "any"
-                },
                 "CompanyName": {
                   "example": "any"
                 },
@@ -747,22 +751,19 @@
           "200": {
             "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
-          },
           "500": {
             "description": "Internal Server Error"
           }
         }
       }
     },
-    "/api/user/updateCompany/{CompanyId}": {
+    "/api/user/updateCompany/{companyId}": {
       "put": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "CompanyId",
+            "name": "companyId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -787,13 +788,13 @@
         }
       }
     },
-    "/api/user/findCompany/{CompanyId}": {
+    "/api/user/findCompany/{companyId}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "CompanyId",
+            "name": "companyId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -815,7 +816,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "CompanyType",
+            "name": "companyType",
             "in": "query",
             "type": "string"
           }
@@ -858,13 +859,13 @@
         }
       }
     },
-    "/api/user/deleteCompany/{CompanyId}": {
+    "/api/user/deleteCompany/{companyId}": {
       "delete": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "CompanyId",
+            "name": "companyId",
             "in": "path",
             "required": true,
             "type": "string"

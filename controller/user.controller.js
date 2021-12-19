@@ -269,7 +269,7 @@ exports.findAllUsersByDate = (req, res) => {
 //get Roles
 
 exports.findRoles = (req, res) => {
-  const name = req.params.Name;
+  const name = req.params.name;
   var condition = name ? { Name: { [Op.iLike]: `%${name}%` } } : null;
 
   Role.findAll({ where: condition })
@@ -287,7 +287,7 @@ exports.findRoles = (req, res) => {
 };
 
 exports.findUserRoles = (req, res) => {
-  const userId = req.params.UserId;
+  const userId = req.params.userId;
   var condition = userId ? { UserId: userId } : null;
 
   UserRole.findAll({ where: condition })
@@ -305,7 +305,7 @@ exports.findUserRoles = (req, res) => {
 };
 
 exports.updateRole = (req, res) => {
-  const id = req.body.UserRoleId;
+  const id = req.body.userRoleId;
 
   Company.update(req.body, {
     where: { RoleId: id },
@@ -329,7 +329,7 @@ exports.updateRole = (req, res) => {
 };
 
 exports.deleteRole = (req, res) => {
-  const id = req.params.RoleId;
+  const id = req.params.roleId;
 
   Role.destroy({
     where: { RoleId: id },
@@ -354,12 +354,7 @@ exports.deleteRole = (req, res) => {
 
 exports.createCompany = (req, res) => {
   // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: 'Content can not be empty!',
-    });
-    return;
-  }
+ 
   // Create a Order
   const company = {
     CompanyName: req.body.CompanyName,
@@ -411,7 +406,7 @@ exports.updateCompany = (req, res) => {
 };
 
 exports.findCompany = (req, res) => {
-  const id = req.params.CompanyId;
+  const id = req.params.companyId;
 
   Company.findByPk(id)
 
@@ -429,7 +424,7 @@ exports.findCompany = (req, res) => {
 };
 
 exports.findAllCompanys = (req, res) => {
-  const CompanyType = req.query.CompanyType;
+  const CompanyType = req.query.companyType;
   var condition = CompanyType ? { CompanyType: { [Op.iLike]: `%${CompanyType}%` } } : null;
 
   Company.findAll({ where: condition })
@@ -475,7 +470,7 @@ exports.findAllCompanysByDate = (req, res) => {
 };
 
 exports.deleteCompany = (req, res) => {
-  const id = req.params.CompanyId;
+  const id = req.params.companyId;
 
   Company.destroy({
     where: { CompanyId: id },

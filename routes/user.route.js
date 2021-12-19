@@ -35,15 +35,15 @@ module.exports = function (app) {
 
   app.get('/api/user/findUserRoles', controller.findUserRoles);
 
-  app.put('/api/user/updateRole/:RoleId', controller.updateRole);
+  app.put('/api/user/updateRole/:roleId', controller.updateRole);
 
-  app.delete('/api/user/deleteRole/:RoleId', [authJwt.verifyToken], controller.deleteRole);
+  app.delete('/api/user/deleteRole/:roleId', [authJwt.verifyToken], controller.deleteRole);
 
   app.post('/api/user/subscribe', controller.subscribe);
 
   app.post('/api/user/upgradeUserSubscription', controller.upgradeUserSubscription);
 
-  app.put('/api/user/updateUserSubscription/:UserSubscriptionId', controller.updateUserSubscription);
+  app.put('/api/user/updateUserSubscription/:userSubscriptionId', controller.updateUserSubscription);
 
   app.get('/api/user/findUserSubscription/:userId', controller.findUserSubscription);
 
@@ -65,13 +65,13 @@ module.exports = function (app) {
 
   app.post('/api/user/createCompany', controller.createCompany);
 
-  app.put('/api/user/updateCompany/:CompanyId', controller.updateCompany);
+  app.put('/api/user/updateCompany/:companyId', controller.updateCompany);
 
-  app.get('/api/user/findCompany/:CompanyId', controller.findCompany);
+  app.get('/api/user/findCompany/:companyId', controller.findCompany);
 
   app.get('/api/user/findAllCompanys/', controller.findAllCompanys);
 
   app.get('/api/user/findAllCompanysByDate/:startDate/:toDate', controller.findAllCompanysByDate);
 
-  app.delete('/api/user/deleteCompany/:CompanyId', controller.deleteCompany);
+  app.delete('/api/user/deleteCompany/:companyId', controller.deleteCompany);
 };
