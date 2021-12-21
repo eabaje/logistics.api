@@ -6,7 +6,7 @@ module.exports = function (app) {
     res.header('Access-Control-Allow-Headers', 'x-access-token, Origin, Content-Type, Accept');
     next();
   });
-
+//,[authJwt.verifyToken]
   app.get('/api/carrier/findOne/:carrierId', controller.findOne);
 
   app.get('/api/carrier/findAll', controller.findAll);
@@ -15,11 +15,11 @@ module.exports = function (app) {
 
   app.get('/api/carrier/findAllCarriersByDate/:startDate/:endDate', controller.findAllCarriersByDate);
 
-  app.post('/api/carrier/create', [authJwt.verifyToken], controller.create);
+  app.post('/api/carrier/create',  controller.create);
 
-  app.post('/api/carrier/update/:carrierId', [authJwt.verifyToken], controller.update);
+  app.post('/api/carrier/update/:carrierId',  controller.update);
 
-  app.delete('/api/carrier/delete/:carrierId', [authJwt.verifyToken], controller.delete);
+  app.delete('/api/carrier/delete/:carrierId', controller.delete);
 
-  app.delete('/api/carrier/deleteAll', [authJwt.verifyToken], controller.deleteAll);
+  app.delete('/api/carrier/deleteAll', controller.deleteAll);
 };

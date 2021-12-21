@@ -1,24 +1,41 @@
-import multer from 'multer';
-import path from 'path';
+const multer = require("multer");
+const path = require("path");
 
-var storageProfile = multer.diskStorage({
+
+var storageProfile= multer.diskStorage({
   destination: (req, res, cb) => {
-    cb(null, 'uploads/profile');
+    cb(null, " './uploads/profile");
   },
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   },
 });
 
-export const upLoadsProfile = multer({ storage: storageProfile });
 
-var storageProducts = multer.diskStorage({
+ var upLoadProfile =  multer({
+  storage: storageProfile,
+  fileFilter: (req, file, cb) => {
+      if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+          cb(null, true);
+      } else {
+          cb(null, false);
+          return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+      }
+  }
+});
+
+
+
+
+var storageDocuments = multer.diskStorage({
   destination: (req, res, cb) => {
-    cb(null, 'uploads/Products');
+    cb(null,  './uploads/docs');
   },
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   },
 });
 
-export const upLoadsProducts = multer({ storage: storageProducts });
+ var upLoadDocuments = multer({ storage: storageDocuments });
+
+module.exports = {upLoadProfile,upLoadDocuments};

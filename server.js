@@ -1,4 +1,5 @@
 require('dotenv').config();
+const multer = require("multer");
 const app = require('express')();
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger_output.json');
@@ -62,6 +63,7 @@ require('./routes/trip.route')(app);
 require('./routes/order.route')(app);
 require('./routes/payment.route')(app);
 require('./routes/subscription.route')(app);
+require('./routes/upload.route')(app);
 
 app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 

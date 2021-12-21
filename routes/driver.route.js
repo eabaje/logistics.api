@@ -7,6 +7,9 @@ module.exports = function (app) {
     next();
   });
 
+
+//, [authJwt.verifyToken]
+
   app.get('/api/driver/findOne/:id', controller.findOne);
 
   app.get('/api/driver/findAll', controller.findAll);
@@ -19,15 +22,15 @@ module.exports = function (app) {
 
   app.get('/api/driver/findAllDriversByDate/:startDate/:endDate', controller.findAllDriversByDate);
 
-  app.get('/api/driver/findAllAssignedDrivers', [authJwt.verifyToken], controller.findAllAssignedDrivers);
+  app.get('/api/driver/findAllAssignedDrivers', controller.findAllAssignedDrivers);
 
-  app.post('/api/driver/create', [authJwt.verifyToken], controller.create);
+  app.post('/api/driver/create', controller.create);
 
-  app.post('/api/driver/AssignDriverToVehicle', [authJwt.verifyToken], controller.AssignDriverToVehicle);
+  app.post('/api/driver/AssignDriverToVehicle',  controller.AssignDriverToVehicle);
 
-  app.put('/api/driver/update/:driverId', [authJwt.verifyToken], controller.update);
+  app.put('/api/driver/update/:driverId', controller.update);
 
-  app.delete('/api/driver/delete/:driverId', [authJwt.verifyToken], controller.delete);
+  app.delete('/api/driver/delete/:driverId', controller.delete);
 
   app.delete('/api/driver/deleteAll', [authJwt.verifyToken, authJwt.isAdmin], controller.deleteAll);
 };

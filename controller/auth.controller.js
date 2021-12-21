@@ -107,7 +107,7 @@ exports.signup = (req, res) => {
 
               // Add User Subscription
               // user.setRoles(roles).then(() => {
-              const token = jwt.sign({ UserId: User.UserId }, process.env.TOKEN_KEY, {
+              const token = jwt.sign({ UserId: user.UserId }, process.env.TOKEN_KEY, {
                 expiresIn: '2h',
               });
               // save user token
@@ -248,7 +248,7 @@ exports.signin = (req, res) => {
             token: token,
             roles: role.Name,
 
-            data: {
+            user: {
               UserId: user.UserId,
               FullName: user.FullName,
               Email: user.Email,
@@ -264,7 +264,7 @@ exports.signin = (req, res) => {
     });
 };
 
-exports.verify = async (req, res) => {
+exports.verify =  (req, res) => {
   const  token  = req.params.token;
   // Check we have an id
   if (!token) {
@@ -279,33 +279,48 @@ exports.verify = async (req, res) => {
   } catch (err) {
     return res.status(500).send(err);
   }
-  try {
-    // Step 2 - Find user with matching User ID
-    const user = await User.findOne({where:{ UserId: payload.UserId }});
-    if (!user) {
-      return res.status(404).send({
-        message: 'User does not  exist',
-      });
-    }
-    // Step 3 - Update user activation status to true
-    user.IsActivated = true;
-    user.save();
+ console.log(`payload`, payload.UserId)
+  User.findOne({
+    where: { UserId: payload.UserId },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'User Not found.' });
+      }
 
-    //check if user is activated
-    const isActivated =  User.findOne({ where: { UserId: payload.UserId } && { Active: true } });
-    if (!isActivated) {
-      return res.status(404).send({
-        message: 'Kindly click to confirm again',
-      });
-    }
+    
+      user.IsActivated = true;
+      user.save();
+      console.log(`payload`, payload.UserId)
+      console.log('User:', user.UserId);
+      User.findOne({ where: {  UserId: user.UserId ,  IsActivated: true  } })
+   
+   
+     .then((isActivated) => {
+      if (!isActivated) {
+        return res.status(404).send({
+          message: 'Kindly click to confirm again',
+        });
+      }
 
-    return res.redirect(process.env.ADMIN_URL);
-    // return res.status(200).send({
-    //   message: 'Account Verified',
-    // });
-  } catch (err) {
-    return res.status(500).send(err);
-  }
+      
+
+      })
+    
+      return res.redirect(process.env.ADMIN_URL);
+    
+    
+    
+    
+    })
+    .catch((err) => {
+      console.log('Error:', err.message);
+      return  res.status(500).send({ message: err.message });
+    });
+
+
+
+ 
 };
 
 exports.activation = (req, res) => {

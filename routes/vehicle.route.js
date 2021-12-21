@@ -17,9 +17,9 @@ module.exports = function (app) {
 
   app.get('/api/vehicle/findAllVehiclesByDate/:startDate/:toDate', controller.findAllVehiclesByDate);
 
-  app.put('/api/vehicle/update/:vehicleId', [authJwt.verifyToken], controller.update);
+  app.put('/api/vehicle/update/:vehicleId',  controller.update);
 
-  app.delete('/api/vehicle/delete/:vehicleId', [authJwt.verifyToken], controller.delete);
+  app.delete('/api/vehicle/delete/:vehicleId',  controller.delete);
 
   app.delete('/api/vehicle/deleteAll', controller.deleteAll);
 };

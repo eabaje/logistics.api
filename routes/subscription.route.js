@@ -26,9 +26,9 @@ module.exports = function (app) {
 
   app.get('/api/subscription/findAllSubscriptionsByDate/:startDate/:endDate', controller.findAllSubscriptionsByDate);
 
-  app.put('/api/subscription/update/:subscriptionId', [authJwt.verifyToken], controller.update);
+  app.put('/api/subscription/update/:subscriptionId', controller.update);
 
-  app.delete('/api/subscription/delete/:subscriptionId', [authJwt.verifyToken], controller.delete);
+  app.delete('/api/subscription/delete/:subscriptionId', controller.delete);
 
   app.delete('/api/subscription/deleteAll', controller.deleteAll);
 };

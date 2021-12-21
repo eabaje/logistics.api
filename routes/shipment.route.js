@@ -26,9 +26,9 @@ module.exports = function (app) {
 
   app.post('/api/shipment/create', controller.create);
 
-  app.put('/api/shipment/update/:shipmentId', [authJwt.verifyToken], controller.update);
+  app.put('/api/shipment/update/:shipmentId', controller.update);
 
-  app.delete('/api/shipment/delete/:shipmentId', [authJwt.verifyToken], controller.delete);
+  app.delete('/api/shipment/delete/:shipmentId', controller.delete);
 
   app.delete('/api/shipment/deleteAll', controller.deleteAll);
 };

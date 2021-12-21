@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     FleetNumber: { type: DataTypes.STRING },
     AboutUs: { type: DataTypes.STRING },
     ServiceDescription: { type: DataTypes.STRING },
-    Rating: { type: DataTypes.INTEGER },
+    Rating: { type: DataTypes.INTEGER , defaultValue: 0},
     Licensed: { type: DataTypes.BOOLEAN },
   });
 

@@ -6,22 +6,22 @@ module.exports = function (app) {
     res.header('Access-Control-Allow-Headers', 'x-access-token, Origin, Content-Type, Accept');
     next();
   });
-
+//, [authJwt.verifyToken]
   app.post('/api/trip/create', controller.create);
 
   app.get('/api/trip/findOne/:tripId', controller.findOne);
 
   app.get('/api/trip/findAll', controller.findAll);
 
-  app.post('/api/trip/addtrack', [authJwt.verifyToken], controller.addTrack);
+  app.post('/api/trip/addtrack', controller.addTrack);
 
   app.get('/api/trip/findallTrack/:tripId', controller.findAllTrack);
 
   app.get('/api/trip/findonetrack/:trackId', controller.findOneTrack);
 
-  app.put('/api/trip/updatetrack/:trackId', [authJwt.verifyToken], controller.updateTrack);
+  app.put('/api/trip/updatetrack/:trackId', controller.updateTrack);
 
-  app.delete('/api/trip/deletetrack/:trackId', [authJwt.verifyToken], controller.deleteTrack);
+  app.delete('/api/trip/deletetrack/:trackId',  controller.deleteTrack);
 
   app.get('/api/trip/findAll', controller.findAll);
 
@@ -41,9 +41,9 @@ module.exports = function (app) {
 
   app.get('/api/trip/findAllTripsByDate/:startDate/:endDate', controller.findAllTripsByDate);
 
-  app.put('/api/trip/update/:tripId', [authJwt.verifyToken], controller.update);
+  app.put('/api/trip/update/:tripId',  controller.update);
 
-  app.delete('/api/trip/delete/:tripId', [authJwt.verifyToken], controller.delete);
+  app.delete('/api/trip/delete/:tripId',  controller.delete);
 
   app.delete('/api/trip/deleteAll', controller.deleteAll);
 };
