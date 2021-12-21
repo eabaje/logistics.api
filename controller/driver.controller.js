@@ -14,10 +14,6 @@ exports.create = (req, res) => {
   //   return;
   // }
 
-
-  
-
-
   // Create a Driver
   const driver = {
     CompanyId: req.body.CompanyId,
@@ -29,7 +25,7 @@ exports.create = (req, res) => {
     Country: req.body.Country,
     PicUrl: req.body.PicUrl,
     Licensed: req.body.Licensed,
-    LicenseUrl: req.File.LicenseUrl,
+    LicenseUrl: req.body.LicenseUrl,
     Rating: req.body.Rating,
     DriverDocs: req.body.DriverDocs,
   };
