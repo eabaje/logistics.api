@@ -5,14 +5,21 @@ const Vehicle = db.vehicle;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
-exports.create = (req, res) => {
-  // // Validate request
-  // if (!req.body.title) {
-  //   res.status(400).send({
-  //     message: 'Content can not be empty!',
-  //   });
-  //   return;
-  // }
+exports.create =async (req, res) => {
+  
+  const picpath = path.resolve(`uploads/pics/${req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname)}`);
+  console.log(`imagefile0`, picpath);
+  
+  await sharp(req.PicUrl.buffer)
+  .resize(200, 200)
+  .toFormat("jpeg")
+  .jpeg({ quality: 90 })
+  .toFile(picpath);
+
+  console.log(`imagefile`, req.PicUrl);
+
+
+
 
   // Create a Driver
   const driver = {
@@ -23,9 +30,9 @@ exports.create = (req, res) => {
     Address: req.body.Address,
     City: req.body.City,
     Country: req.body.Country,
-    PicUrl: req.body.PicUrl,
+    PicUrl: req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
     Licensed: req.body.Licensed,
-    LicenseUrl: req.body.LicenseUrl,
+    LicenseUrl: req.LicenseUrl.path,
     Rating: req.body.Rating,
     DriverDocs: req.body.DriverDocs,
   };

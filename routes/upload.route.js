@@ -4,6 +4,7 @@ const controller = require('../controller/upload.controller');
 
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 storageProfile = multer.diskStorage({
   destination: (req, res, cb) => {
@@ -12,6 +13,20 @@ storageProfile = multer.diskStorage({
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   },
+});
+
+const storage = multer.memoryStorage();
+
+const filter = (req, file, cb) => {
+    if (file.mimetype.split("/")[0] === 'image') {
+        cb(null, true);
+    } else {
+        cb(new Error("Only images are allowed!"));
+    }
+};
+const imageUploader = multer({
+  storage,
+  fileFilter: filter
 });
 
 const upLoadPics = multer({
@@ -24,7 +39,7 @@ const upLoadPics = multer({
       return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
     }
   },
-}).single('file');
+});
 
 //const upLoadPics = multer({ storage: storageProfile }).single('file');
 
@@ -46,8 +61,8 @@ module.exports = function (app) {
     res.header('Access-Control-Allow-Headers', 'x-access-token, Origin, Content-Type, Accept');
     next();
   });
-  //[verifySignUp.checkDuplicateUsernameOrEmail,verifySignUp.checkRolesExisted],
-  app.post('/api/upload/uploadImage', upLoadPics, controller.uploadImage);
+  //[verifySignUp.checkDuplicateUsernameOrEmail,verifySignUp.checkRolesExisted],upLoadPics,
+  app.post('/api/upload/uploadImage',imageUploader.single('file'),  controller.uploadImage);
 
   app.post('/api/upload/uploadDocument', upLoadDocuments, controller.uploadDocument);
 };
