@@ -1,5 +1,5 @@
 require('dotenv').config();
-const multer = require("multer");
+const multer = require('multer');
 const app = require('express')();
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger_output.json');
@@ -19,10 +19,12 @@ app.use(bodyParser());
 
 // database
 const db = require('./models/index.model');
+const { subscribe } = require('./models/index.model');
 const Role = db.role;
 const User = db.user;
 const UserRole = db.userrole;
 const Company = db.company;
+const Subscription = db.subscribe;
 //db.sequelize.sync();
 //force: true will drop the table if it already exists
 // db.sequelize.sync({ force: true }).then(() => {
@@ -91,19 +93,29 @@ function initial() {
     City: 'LG',
     Country: 'NG',
     IsActivated: false,
+    CompanyId: 1,
   });
 
   Company.create({
-    ComapnyId: 1,
-    CompanyName: 'Loadboard logistics',
+    CompanyId: 1,
+    CompanyName: 'Global Load dispatch',
     ContactEmail: 'ebi.abaje@loaddispatch.com.ng',
     ContactPhone: '08057886381',
-    CompanyType: 'Shipper',
+    CompanyType: 'admin',
     Address: 'Lagos',
     City: 'Lagos',
     Country: 'NG',
   });
 
+  Subscription.create({
+    SubscribeId: 1,
+    SubscriptionType: 'free Trial',
+    SubscriptionName: 'Free 90 Day Trial',
+    Amount: 0.0,
+    Description: 'Basic ',
+    Active: true,
+    Duration: 90,
+  });
   Role.create({
     RoleId: shipperRoleId,
     Name: 'shipper',

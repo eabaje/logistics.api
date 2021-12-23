@@ -18,15 +18,15 @@ storageProfile = multer.diskStorage({
 const storage = multer.memoryStorage();
 
 const filter = (req, file, cb) => {
-    if (file.mimetype.split("/")[0] === 'image') {
-        cb(null, true);
-    } else {
-        cb(new Error("Only images are allowed!"));
-    }
+  if (file.mimetype.split('/')[0] === 'image') {
+    cb(null, true);
+  } else {
+    cb(new Error('Only images are allowed!'));
+  }
 };
 const imageUploader = multer({
   storage,
-  fileFilter: filter
+  fileFilter: filter,
 });
 
 const upLoadPics = multer({
@@ -52,7 +52,7 @@ storageDocuments = multer.diskStorage({
   },
 });
 
-const upLoadDocuments = multer({ storage: storageDocuments }).single('file');
+const upLoadDocuments = multer({ storage: storageDocuments });
 
 var upload = multer({ storage: storageProfile }).single('file');
 
@@ -62,7 +62,7 @@ module.exports = function (app) {
     next();
   });
   //[verifySignUp.checkDuplicateUsernameOrEmail,verifySignUp.checkRolesExisted],upLoadPics,
-  app.post('/api/upload/uploadImage',imageUploader.single('file'),  controller.uploadImage);
+  app.post('/api/upload/uploadImage', imageUploader.single('PicUrl'), controller.uploadImage);
 
-  app.post('/api/upload/uploadDocument', upLoadDocuments, controller.uploadDocument);
+  app.post('/api/upload/uploadDocument', upLoadDocuments.single('LicenseUrl'), controller.uploadDocument);
 };

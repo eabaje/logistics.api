@@ -5,21 +5,17 @@ const Vehicle = db.vehicle;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
-exports.create =async (req, res) => {
-  
-  const picpath = path.resolve(`uploads/pics/${req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname)}`);
-  console.log(`imagefile0`, picpath);
-  
-  await sharp(req.PicUrl.buffer)
-  .resize(200, 200)
-  .toFormat("jpeg")
-  .jpeg({ quality: 90 })
-  .toFile(picpath);
+exports.create = async (req, res) => {
+  // const picpath = path.resolve(`uploads/pics/${req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)}`);
+  // console.log(`imagefile0`, picpath);
 
-  console.log(`imagefile`, req.PicUrl);
+  // await sharp(req.file.buffer)
+  // .resize(200, 200)
+  // .toFormat("jpeg")
+  // .jpeg({ quality: 90 })
+  // .toFile(picpath);
 
-
-
+  // console.log(`imagefile`, req.file);
 
   // Create a Driver
   const driver = {
@@ -29,10 +25,11 @@ exports.create =async (req, res) => {
     Phone: req.body.Phone,
     Address: req.body.Address,
     City: req.body.City,
+    // Region: req.body.Region,
     Country: req.body.Country,
-    PicUrl: req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
+    PicUrl: req.body.PicUrl, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
     Licensed: req.body.Licensed,
-    LicenseUrl: req.LicenseUrl.path,
+    LicenseUrl: req.body.LicenseUrl, // req.LicenseUrl.path,
     Rating: req.body.Rating,
     DriverDocs: req.body.DriverDocs,
   };
@@ -46,6 +43,7 @@ exports.create =async (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(`err.message`, err.message);
       res.status(500).send({
         message: err.message || 'Some error occurred while creating the Driver.',
       });

@@ -111,8 +111,8 @@ exports.signup = (req, res) => {
                 expiresIn: '2h',
               });
               // save user token
-                 user.Token = token;
-                 user.save();
+              user.Token = token;
+              user.save();
 
               const transporter = nodemailer.createTransport({
                 service: 'gmail',
@@ -234,7 +234,7 @@ exports.signin = (req, res) => {
         where: { UserId: user.UserId },
       }).then((userrole) => {
         if (!userrole) {
-          return res.status(404).send({ message: 'User Role Not found.' });
+          return res.status(404).send({ message: 'User does not have a Role.' });
         }
         Role.findOne({
           where: { RoleId: userrole.RoleId },
@@ -242,18 +242,22 @@ exports.signin = (req, res) => {
           // for (let i = 0; i < userrole.length; i++) {
           //   authorities.push(userrole[i].Name);
           // }
+          Company.findOne({
+            where: { CompanyId: user.CompanyId },
+          }).then((company) => {
+            res.status(200).send({
+              message: 'Success',
+              token: token,
 
-          res.status(200).send({
-            message: 'Success',
-            token: token,
-            roles: role.Name,
-
-            user: {
-              UserId: user.UserId,
-              FullName: user.FullName,
-              Email: user.Email,
-              CompanyId: user.CompanyId,
-            },
+              user: {
+                UserId: user.UserId,
+                FullName: user.FullName,
+                Email: user.Email,
+                CompanyId: user.CompanyId,
+                CompanyName: company.CompanyName,
+                roles: role.Name,
+              },
+            });
           });
         });
       });
@@ -264,8 +268,8 @@ exports.signin = (req, res) => {
     });
 };
 
-exports.verify =  (req, res) => {
-  const  token  = req.params.token;
+exports.verify = (req, res) => {
+  const token = req.params.token;
   // Check we have an id
   if (!token) {
     return res.status(422).send({
@@ -279,7 +283,7 @@ exports.verify =  (req, res) => {
   } catch (err) {
     return res.status(500).send(err);
   }
- console.log(`payload`, payload.UserId)
+  console.log(`payload`, payload.UserId);
   User.findOne({
     where: { UserId: payload.UserId },
   })
@@ -288,39 +292,24 @@ exports.verify =  (req, res) => {
         return res.status(404).send({ message: 'User Not found.' });
       }
 
-    
       user.IsActivated = true;
       user.save();
-      console.log(`payload`, payload.UserId)
+      console.log(`payload`, payload.UserId);
       console.log('User:', user.UserId);
-      User.findOne({ where: {  UserId: user.UserId ,  IsActivated: true  } })
-   
-   
-     .then((isActivated) => {
-      if (!isActivated) {
-        return res.status(404).send({
-          message: 'Kindly click to confirm again',
-        });
-      }
+      User.findOne({ where: { UserId: user.UserId, IsActivated: true } }).then((isActivated) => {
+        if (!isActivated) {
+          return res.status(404).send({
+            message: 'Kindly click to confirm again',
+          });
+        }
+      });
 
-      
-
-      })
-    
       return res.redirect(process.env.ADMIN_URL);
-    
-    
-    
-    
     })
     .catch((err) => {
       console.log('Error:', err.message);
-      return  res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
-
-
-
- 
 };
 
 exports.activation = (req, res) => {

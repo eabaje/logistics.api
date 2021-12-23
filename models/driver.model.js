@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     SecondaryPhone: { type: DataTypes.STRING },
     Address: { type: DataTypes.STRING },
     City: { type: DataTypes.STRING },
-    Region: { type: DataTypes.STRING },
+    // Region: { type: DataTypes.STRING },
     Country: { type: DataTypes.STRING },
     PicUrl: { type: DataTypes.STRING },
     Licensed: { type: DataTypes.BOOLEAN },
