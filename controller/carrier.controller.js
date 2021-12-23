@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Carrier
 exports.create = (req, res) => {
   // Validate request
- 
+
   // Create a Carrier
   const carrier = {
     CarrierType: req.body.CarrierType,
@@ -31,7 +31,6 @@ exports.create = (req, res) => {
     .catch((err) => {
       console.log(`error`, err.message);
       res.status(500).send({
-       
         message: err.message || 'Some error occurred while creating the Carrier.',
       });
     });
@@ -56,6 +55,11 @@ exports.findAll = (req, res) => {
       });
     });
 };
+
+// sequelize.query("SELECT * FROM `users`", { type: sequelize.QueryTypes.SELECT})
+//   .then(function(users) {
+//     // We don't need spread here, since only the results will be returned for select queries
+//   })
 
 // Find a single Carrier with an id
 exports.findOne = (req, res) => {
