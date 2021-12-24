@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     DriverId: { type: DataTypes.STRING },
     PickUpLocation: { type: DataTypes.STRING },
     DeliveryLocation: { type: DataTypes.STRING },
-    PickUpDate: { type: DataTypes.DATE },
+    PickUpDate: { type: DataTypes.DATEONLY },
     Duration: { type: DataTypes.STRING },
-    DeliveryDate: { type: DataTypes.DATE },
+    DeliveryDate: { type: DataTypes.DATEONLY },
     DriverNote: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
   });

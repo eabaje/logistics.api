@@ -62,7 +62,8 @@ exports.findAll = (req, res) => {
 
 // Find a single Subscription with an id
 exports.findOne = (req, res) => {
-  const id = req.params.SubscriptionId;
+  const id = req.params.subscribeId;
+  console.log(`id`, id);
 
   Subscription.findByPk(id)
 

@@ -7,7 +7,7 @@ module.exports = function (app) {
     next();
   });
 
-  app.get('/api/shipment/findOne/:shipmentid', controller.findOne);
+  app.get('/api/shipment/findOne/:shipmentId', controller.findOne);
 
   app.get('/api/shipment/findAll', controller.findAll);
 

@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     ReferenceId: { type: DataTypes.STRING },
     OrderStatus: { type: DataTypes.STRING },
     PaymentMethod: { type: DataTypes.STRING },
-    PaymentDate: { type: DataTypes.DATE },
+    PaymentDate: { type: DataTypes.DATEONLY },
     Currency: { type: DataTypes.STRING },
   });
 

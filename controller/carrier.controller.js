@@ -89,11 +89,11 @@ exports.update = (req, res) => {
   })
     .then((num) => {
       if (num == 1) {
-        res.send({
+        res.status(200).send({
           message: 'Carrier was updated successfully.',
         });
       } else {
-        res.send({
+        res.status(200).send({
           message: `Cannot update Carrier with id=${id}. Maybe Carrier was not found or req.body is empty!`,
         });
       }
@@ -114,11 +114,11 @@ exports.delete = (req, res) => {
   })
     .then((num) => {
       if (num == 1) {
-        res.send({
+        res.status(200).send({
           message: 'Carrier was deleted successfully!',
         });
       } else {
-        res.send({
+        res.status(200).send({
           message: `Cannot delete Carrier with id=${id}. Maybe Carrier was not found!`,
         });
       }
@@ -137,7 +137,7 @@ exports.deleteAll = (req, res) => {
     truncate: false,
   })
     .then((nums) => {
-      res.send({ message: `${nums} Carriers were deleted successfully!` });
+      res.status(200).send({ message: `${nums} Carriers were deleted successfully!` });
     })
     .catch((err) => {
       res.status(500).send({

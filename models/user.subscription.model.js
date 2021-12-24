@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     SubscriptionName: { type: DataTypes.STRING },
     UserId: { type: DataTypes.STRING },
     Active: { type: DataTypes.BOOLEAN },
-    StartDate: { type: DataTypes.DATE },
-    EndDate: { type: DataTypes.DATE },
+    StartDate: { type: DataTypes.DATEONLY },
+    EndDate: { type: DataTypes.DATEONLY },
   });
 
   return UserSubscription;

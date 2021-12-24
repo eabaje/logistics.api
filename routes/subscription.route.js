@@ -18,7 +18,7 @@ module.exports = function (app) {
 
   app.post('/api/subscription/create', controller.create);
 
-  app.get('/api/subscription/findOne/:subscriptionId', controller.findOne);
+  app.get('/api/subscription/findOne/:subscribeId', controller.findOne);
 
   app.get('/api/subscription/findAll', controller.findAll);
 

@@ -59,12 +59,15 @@ exports.create = (req, res) => {
 
 // Retrieve all Shipments start the database.
 exports.findAll = (req, res) => {
-  const loadCategory = req.params.LoadCategory;
+  const loadCategory = req.params.loadCategory;
   var condition = loadCategory ? { LoadCategory: { [Op.iLike]: `%${loadCategory}%` } } : null;
 
   Shipment.findAll({ where: condition })
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -75,11 +78,14 @@ exports.findAll = (req, res) => {
 
 // Find a single Shipment with an id
 exports.findOne = (req, res) => {
-  const id = req.params.ShipmentId;
+  const id = req.params.shipmentId;
 
   Shipment.findByPk(id)
     .then((data) => {
-      res.send(data);
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({

@@ -8,9 +8,7 @@
   "host": "localhost:8000",
   "basePath": "/",
   "tags": [],
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["http"],
   "consumes": [],
   "produces": [],
   "paths": {
@@ -2227,13 +2225,13 @@
         }
       }
     },
-    "/api/subscription/findOne/{subscriptionId}": {
+    "/api/subscription/findOne/{subscribeId}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "subscriptionId",
+            "name": "subscribeId",
             "in": "path",
             "required": true,
             "type": "string"
