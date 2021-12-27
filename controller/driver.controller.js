@@ -2,6 +2,7 @@ const db = require('../models/index.model');
 const Driver = db.driver;
 const AssignDriver = db.assigndriver;
 const Vehicle = db.vehicle;
+const Company=db.company;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
@@ -55,7 +56,14 @@ exports.findAll = (req, res) => {
   const CompanyId = req.params.CompanyId;
   var condition = CompanyId ? { CompanyId: { [Op.eq]: CompanyId } } : null;
 
-  Driver.findAll({ where: condition })
+  Driver.findAll({ where: condition,
+  
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
+  
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -74,7 +82,13 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.driverId;
 
-  Driver.findByPk(id)
+  Driver.findByPk({id,
+  
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -218,7 +232,14 @@ exports.AssignDriverToVehicle = (req, res) => {
 exports.findAllDriversByDriverName = (req, res) => {
   const driverName = req.params.driverName;
 
-  Driver.findAll({ where: { DriverName: driverName } })
+  Driver.findAll({ where: { DriverName: driverName },
+  
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
+  
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -236,7 +257,14 @@ exports.findAllDriversByDriverName = (req, res) => {
 exports.findAllDriversByVehicle = (req, res) => {
   const vehicleId = req.params.vehicleId;
 
-  AssignDriver.findAll({ where: { VehicleId: vehicleId } })
+  AssignDriver.findAll({ where: { VehicleId: vehicleId },
+  
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
+  
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -254,7 +282,14 @@ exports.findAllDriversByVehicle = (req, res) => {
 exports.findAllAssignedDrivers = (req, res) => {
   //  const vehicleId = req.query.VehicleId;
 
-  AssignDriver.findAll({ where: { Assigned: true } })
+  AssignDriver.findAll({ where: { Assigned: true },
+  
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
+  
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -271,7 +306,15 @@ exports.findAllAssignedDrivers = (req, res) => {
 
 // find all Licensed Driver
 exports.findAllDriversLicensed = (req, res) => {
-  Driver.findAll({ where: { Licensed: true } })
+  Driver.findAll({ where: { Licensed: true },
+  
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
+  
+  
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -298,6 +341,13 @@ exports.findAllDriversByDate = (req, res) => {
       },
     },
     order: [['createdAt', 'ASC']],
+
+
+
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
   })
 
     .then((data) => {

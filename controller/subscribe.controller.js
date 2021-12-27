@@ -82,7 +82,7 @@ exports.findOne = (req, res) => {
 
 // Update a Subscription by the id in the request
 exports.update = (req, res) => {
-  const id = req.params.SubscriptionId;
+  const id = req.params.subscriptionId;
 
   Subscription.update(req.body, {
     where: { SubscribeId: id },

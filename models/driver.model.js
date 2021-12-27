@@ -19,6 +19,15 @@ module.exports = (sequelize, DataTypes) => {
     LicenseUrl: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
     DriverDocs: { type: DataTypes.STRING },
+
+    CompanyId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Company,
+        key: 'CompanyId'
+      }
+    },
+    
   });
 
   return Driver;

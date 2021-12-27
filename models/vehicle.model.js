@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1,
     },
-    CarrierId: { type: DataTypes.STRING },
+    // CarrierId: { type: DataTypes.STRING },
     VehicleType: { type: DataTypes.STRING, default: null },
     VehicleNumber: { type: DataTypes.STRING },
     SerialNumber: { type: DataTypes.STRING },
@@ -39,6 +39,14 @@ module.exports = (sequelize, DataTypes) => {
     Insured: { type: DataTypes.BOOLEAN },
     PicUrl: { type: DataTypes.STRING },
     VehicleDocs: { type: DataTypes.STRING },
+
+    CarrierId: {
+      type: DataTypes.STRING,
+      references: {
+        model: Carrier,
+        key: 'CarrierId'
+      }
+    },
   });
 
   return Vehicle;

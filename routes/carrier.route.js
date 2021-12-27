@@ -17,7 +17,7 @@ module.exports = function (app) {
 
   app.post('/api/carrier/create',  controller.create);
 
-  app.post('/api/carrier/update/:carrierId',  controller.update);
+  app.put('/api/carrier/update/:carrierId',  controller.update);
 
   app.delete('/api/carrier/delete/:carrierId', controller.delete);
 

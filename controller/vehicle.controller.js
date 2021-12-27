@@ -48,7 +48,7 @@ exports.create = (req, res) => {
 // Retrieve all Vehicles from the database.
 exports.findAll = (req, res) => {
   const vehicleType = req.params.vehicleType;
-  var condition = VehicleType ? { VehicleType: { [Op.iLike]: `%${vehicleType}%` } } : null;
+  var condition = vehicleType ? { VehicleType: { [Op.iLike]: `%${vehicleType}%` } } : null;
 
   Vehicle.findAll({ where: condition })
 

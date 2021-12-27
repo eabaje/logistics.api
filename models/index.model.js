@@ -54,6 +54,8 @@ db.track = require('./track.model.js')(sequelize, Sequelize);
 db.assigndriver = require('./assign.driver.model.js')(sequelize, Sequelize);
 db.usersubscription = require('./user.subscription.model.js')(sequelize, Sequelize);
 db.insurance = require('./insurance.model.js')(sequelize, Sequelize);
+db.interested = require('./shipment.interested.model.js')(sequelize, Sequelize);
+db.media = require('./media.model.js')(sequelize, Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: 'UserRoles',
@@ -72,6 +74,27 @@ db.shipment.belongsTo(db.shipment, {
   as: 'Trips',
 });
 
-db.ROLES = ['shipper', 'admin', 'auditor', 'driver', 'carrier', 'broker'];
+db.company.hasMany(db.carrier, {foreignKey: 'fk_Carrier_CompanyId'});
+db.carrier.belongsTo(db.company, {foreignKey: 'fk_Carrier_CompanyId', targetKey: 'CompanyId'});
+
+db.user.belongsTo(db.company, {foreignKey: 'fk_User_CompanyId', targetKey: 'CompanyId'});
+
+
+//db.company.belongsTo(db.user, {foreignKey: 'CompanyId'});
+
+//db.company.hasMany(db.driver, {foreignKey: 'CompanyId'});
+db.driver.belongsTo(db.company, {foreignKey: 'fk_Driver_CompanyId', targetKey: 'CompanyId'});
+
+db.user.hasMany(db.usersubscription, {foreignKey: 'fk_UserId'});
+db.usersubscription.belongsTo(db.user, {foreignKey: 'fk_UserId' , targetKey: 'UserId'});
+
+
+db.shipment.hasMany(db.interested, {foreignKey: 'fk_Interested_ShipmentId'});
+db.interested.belongsTo(db.shipment, {foreignKey: 'fk_Interested_ShipmentId', targetKey: 'ShipmentId'});
+
+db.interested.belongsTo(db.driver, {foreignKey: 'fk_Interested_DriverId', targetKey: 'DriverId'});
+//db.shipment.belongsTo(db.interested, {foreignKey: 'UserId'});
+
+db.ROLES = ['shipper', 'admin', 'auditor', 'driver', 'carrier', 'broker'];  
 
 module.exports = db;

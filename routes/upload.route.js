@@ -65,4 +65,6 @@ module.exports = function (app) {
   app.post('/api/upload/uploadImage', imageUploader.single('PicUrl'), controller.uploadImage);
 
   app.post('/api/upload/uploadDocument', upLoadDocuments.single('LicenseUrl'), controller.uploadDocument);
+
+  app.post('/api/upload/uploadImageWithData', imageUploader.single('PicUrl'), controller.uploadImageWithData);
 };

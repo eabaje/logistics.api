@@ -28,6 +28,15 @@ module.exports = (sequelize, DataTypes) => {
     ServiceDescription: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER , defaultValue: 0},
     Licensed: { type: DataTypes.BOOLEAN },
+
+    CompanyId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Company,
+        key: 'CompanyId'
+      }
+    }
+
   });
 
   return Carrier;

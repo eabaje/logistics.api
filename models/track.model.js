@@ -5,9 +5,19 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    TripId: { type: DataTypes.STRING },
+    // TripId: { type: DataTypes.STRING },
     Status: { type: DataTypes.STRING },
     TrackNote: { type: DataTypes.STRING },
+
+    TripId: {
+      type: DataTypes.STRING,
+      references: {
+        model: Trip,
+        key: 'TripId'
+      }
+    },
+
+    
   });
 
   return Track;

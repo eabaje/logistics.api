@@ -23,8 +23,8 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1,
     },
-    UserId: { type: DataTypes.STRING },
-    CompanyId: { type: DataTypes.INTEGER },
+    // UserId: { type: DataTypes.STRING },
+    // CompanyId: { type: DataTypes.INTEGER },
     LoadCategory: { type: DataTypes.STRING },
     LoadType: { type: DataTypes.STRING },
     LoadWeight: { type: DataTypes.DECIMAL(10, 2) },
@@ -48,6 +48,21 @@ module.exports = (sequelize, DataTypes) => {
     ShipmentDate: { type: DataTypes.DATEONLY },
     ShipmentDocs: { type: DataTypes.STRING },
     ShipmentStatus: { type: DataTypes.STRING },
+
+    CompanyId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Company,
+        key: 'CompanyId'
+      }
+    },
+    UserId: {
+      type: DataTypes.STRING,
+      references: {
+        model: User,
+        key: 'UserId'
+      }
+    },
   });
 
   return Shipment;

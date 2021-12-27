@@ -8,7 +8,9 @@
   "host": "localhost:8000",
   "basePath": "/",
   "tags": [],
-  "schemes": ["http"],
+  "schemes": [
+    "http"
+  ],
   "consumes": [],
   "produces": [],
   "paths": {
@@ -172,9 +174,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "title": {
-                  "example": "any"
-                },
                 "FullName": {
                   "example": "any"
                 },
@@ -203,9 +202,6 @@
         "responses": {
           "201": {
             "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
           },
           "409": {
             "description": "Conflict"
@@ -607,14 +603,15 @@
         }
       }
     },
-    "/api/user/findAllUserSubscriptions/": {
+    "/api/user/findAllUserSubscriptions/{subscriptionType}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "SubscriptionType",
-            "in": "query",
+            "name": "subscriptionType",
+            "in": "path",
+            "required": true,
             "type": "string"
           }
         ],
@@ -1006,7 +1003,7 @@
       }
     },
     "/api/carrier/update/{carrierId}": {
-      "post": {
+      "put": {
         "tags": [],
         "description": "",
         "parameters": [
@@ -1018,6 +1015,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1037,6 +1037,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1049,6 +1052,9 @@
         "description": "",
         "parameters": [],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1542,19 +1548,22 @@
         }
       }
     },
-    "/api/shipment/findOne/{shipmentid}": {
+    "/api/shipment/findOne/{shipmentId}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "shipmentid",
+            "name": "shipmentId",
             "in": "path",
             "required": true,
             "type": "string"
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1567,6 +1576,9 @@
         "description": "",
         "parameters": [],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "500": {
             "description": "Internal Server Error"
           }

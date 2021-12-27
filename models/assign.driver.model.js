@@ -5,11 +5,31 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1,
     },
-    VehicleId: { type: DataTypes.STRING },
-    DriverId: { type: DataTypes.STRING, default: null },
+    // VehicleId: { type: DataTypes.STRING },
+    // DriverId: { type: DataTypes.STRING, default: null },
     Assigned: { type: DataTypes.BOOLEAN },
 
     AssignedDate: { type: DataTypes.DATE },
+
+    VehicleId: {
+      type: DataTypes.STRING,
+      references: {
+        model: Vehicle,
+        key: 'VehicleId'
+      }
+    },
+
+    DriverId: {
+      type: DataTypes.STRING,
+      references: {
+        model: Driver,
+        key: 'DriverId'
+      }
+    },
+
+
+
+
   });
 
   return AssignDriver;

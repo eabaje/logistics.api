@@ -1,5 +1,6 @@
 const db = require('../models/index.model');
 const Carrier = db.carrier;
+const Company = db.company;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Carrier
@@ -24,7 +25,7 @@ exports.create = (req, res) => {
 
     .then((data) => {
       res.status(200).send({
-        message: 'Success',
+        message: 'Carrier information added successfully',
         data: data,
       });
     })
@@ -41,7 +42,20 @@ exports.findAll = (req, res) => {
   const carrierType = req.params.carrierType;
   var condition = carrierType ? { CarrierType: { [Op.iLike]: `%${carrierType}%` } } : null;
 
-  Carrier.findAll({ where: condition })
+ // Carrier.findAll({ where: condition })
+
+  Carrier.findAll({
+    // where: {
+    //   condition
+    // },
+    // attributes: {
+    //     exclude: ['createdAt', 'updatedAt']   DairyId: req.query.dairyid
+    // },
+    include: {
+        model: Company,
+        attributes:['CompanyName']
+    }
+})
 
     .then((data) => {
       res.status(200).send({
@@ -65,7 +79,19 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.carrierId;
 
-  Carrier.findByPk(id)
+  Carrier.findByPk({id,
+  
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
+  
+  
+  
+  })
+
+ 
+
 
     .then((data) => {
       res.status(200).send({
@@ -85,7 +111,7 @@ exports.update = (req, res) => {
   const id = req.params.carrierId;
 
   Carrier.update(req.body, {
-    where: { id: id },
+    where: { CarrierId: id },
   })
     .then((num) => {
       if (num == 1) {
@@ -110,7 +136,7 @@ exports.delete = (req, res) => {
   const id = req.params.carrierId;
 
   Carrier.destroy({
-    where: { id: id },
+    where: { CarrierId: id },
   })
     .then((num) => {
       if (num == 1) {
@@ -148,7 +174,14 @@ exports.deleteAll = (req, res) => {
 
 // find all insured Carrier
 exports.findAllCarriersLicensed = (req, res) => {
-  Carrier.findAll({ where: { Licensed: true } })
+  Carrier.findAll({ where: { Licensed: true },
+  
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
+  
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -168,13 +201,18 @@ exports.findAllCarriersByDate = (req, res) => {
   const startDate = req.params.StartDate;
   const endDate = req.params.EndDate;
 
-  Shipment.findAll({
+  Carrier.findAll({
     where: {
       createdAt: {
         [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
       },
     },
     order: [['createdAt', 'ASC']],
+
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+  }
   })
 
     .then((data) => {

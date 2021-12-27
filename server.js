@@ -25,12 +25,13 @@ const User = db.user;
 const UserRole = db.userrole;
 const Company = db.company;
 const Subscription = db.subscribe;
+const UserSubscription = db.usersubscription;
 //db.sequelize.sync();
 //force: true will drop the table if it already exists
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log('Drop and Resync Database with { force: true }');
-//   initial();
-// });
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('Drop and Resync Database with { force: true }');
+  initial();
+});
 
 // app.use(
 //   session({
@@ -82,6 +83,12 @@ function initial() {
   auditorRoleId = uuidv4();
   driverRoleId = uuidv4();
   brokerRoleId = uuidv4();
+  usersubscribeId= uuidv4();
+  let startDate = new Date();
+ 
+  let endDate = new Date();
+  endDate.setDate(endDate.getDate() + 90);
+
   User.create({
     UserId: initialUserId,
     FullName: 'Ebi Abaje',
@@ -116,6 +123,19 @@ function initial() {
     Active: true,
     Duration: 90,
   });
+  
+  UserSubscription.create({
+    UserSubscriptionId: 1,
+    SubscriptionId: 1,
+    SubscriptionName: 'Free 90 Day Trial',
+    UserId:initialUserId,
+    Active: true,
+    StartDate: startDate,
+    EndDate: endDate,
+  });
+
+  
+  
   Role.create({
     RoleId: shipperRoleId,
     Name: 'shipper',

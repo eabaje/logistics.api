@@ -47,7 +47,7 @@ module.exports = function (app) {
 
   app.get('/api/user/findUserSubscription/:userId', controller.findUserSubscription);
 
-  app.get('/api/user/findAllUserSubscriptions/', controller.findAllUserSubscriptions);
+  app.get('/api/user/findAllUserSubscriptions/:subscriptionId', controller.findAllUserSubscriptions);
 
   app.get('/api/user/findAllUserSubscriptionsByDate/:startDate/:toDate', controller.findAllUserSubscriptionsByDate);
 

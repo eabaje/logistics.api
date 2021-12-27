@@ -16,13 +16,13 @@ const Op = db.Sequelize.Op;
 
 // Create and Save a new User
 exports.create = (req, res) => {
-  // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: 'Content can not be empty!',
-    });
-    return;
-  }
+  // // Validate request
+  // if (!req.body.title) {
+  //   res.status(400).send({
+  //     message: 'Content can not be empty!',
+  //   });
+  //   return;
+  // }
 
   // Create a User
 
@@ -96,7 +96,15 @@ exports.findAll = (req, res) => {
   // const name = req.params.name;
   //var condition = name ? { FullName: { [Op.iLike]: `%${name}%` } } : null;{ where: condition }
 
-  User.findAll()
+  User.findAll({
+
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+    },
+
+    order: [['createdAt', 'DESC']],
+  })
     .then((data) => {
       res.status(200).send({
         message: 'Success',
@@ -114,7 +122,16 @@ exports.findAllBySearch = (req, res) => {
   const name = req.params.name;
   var condition = name ? { FullName: { [Op.iLike]: `%${name}%` } } : null;
 
-  User.findAll({ where: condition })
+  User.findAll({ where: condition 
+  ,
+  include: {
+    model: Company,
+    attributes:['CompanyName']
+  },
+
+  order: [['createdAt', 'DESC']],  
+  
+  })
     .then((data) => {
       res.status(200).send({
         message: 'Success',
@@ -132,7 +149,13 @@ exports.findAllBySearch = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.userId;
 
-  User.findByPk(id)
+  User.findByPk({id,
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+    }
+  
+  })
     .then((data) => {
       res.status(200).send({
         message: 'Success',
@@ -250,7 +273,12 @@ exports.findAllUsersByDate = (req, res) => {
         [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
       },
     },
-    order: [['createdAt', 'ASC']],
+    include: {
+      model: Company,
+      attributes:['CompanyName']
+    },
+
+    order: [['createdAt', 'DESC']],
   })
     .then((data) => {
       res.status(200).send({
@@ -622,10 +650,16 @@ exports.findUserSubscription = (req, res) => {
 };
 
 exports.findAllUserSubscriptions = (req, res) => {
-  const SubscriptionType = req.query.SubscriptionType;
-  var condition = SubscriptionType ? { SubscriptionType: { [Op.iLike]: `%${SubscriptionType}%` } } : null;
+  const subscriptionId = req.param.subscriptionId;
+  var condition = SubscriptionType ? { SubscriptionId:subscriptionId } : null;
 
-  UserSubscription.findAll({ where: condition })
+  UserSubscription.findAll({ where: condition 
+  
+  ,  order: [['createdAt', 'DESC']],
+  
+  
+  
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -650,7 +684,7 @@ exports.findAllUserSubscriptionsByDate = (req, res) => {
         [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
       },
     },
-    order: [['createdAt', 'ASC']],
+    order: [['createdAt', 'DESC']],
   })
 
     .then((data) => {

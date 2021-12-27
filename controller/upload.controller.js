@@ -4,6 +4,12 @@ const multerOpt = require('../middleware/multer');
 const sharp = require('sharp');
 const fs = require('fs');
 var Jimp = require('jimp');
+const db = require('../models/index.model');
+
+const Media = db.media;
+
+const Op = db.Sequelize.Op;
+
 exports.uploadImage = async function (req, res) {
   //, err
   // if (err instanceof multer.MulterError) {
@@ -50,6 +56,39 @@ exports.uploadImage = async function (req, res) {
     console.log(`An error occurred during processing: ${error}`);
   }
 };
+
+
+exports.uploadImageWithData = async function (req, res) {
+  
+  const { filename: image } = req.file;
+  
+  try {
+    const picpath = path.resolve(
+      `uploads/pics/${req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)}`,
+    );
+    console.log(`imagefile0`, picpath);
+
+    await sharp(req.file.buffer).resize(500, 500).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
+
+    console.log(`imagefile`, req.file);
+
+    const picurl= req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
+    Media.create({
+      RefId: req.body.RefId,
+      url: picurl,
+      UploadDate:  new Date(),
+     
+    })
+    
+    return res.status(200).send({
+      filename: picurl,
+    });
+  } catch (error) {
+    console.log(`An error occurred during processing: ${error}`);
+  }
+};
+
+
 
 exports.uploadDocument = function (req, res) {
   try {
