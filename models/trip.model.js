@@ -1,3 +1,4 @@
+
 module.exports = (sequelize, DataTypes) => {
   const Trip = sequelize.define('Trips', {
     TripId: {

@@ -13,6 +13,8 @@
 
 // module.exports = mongoose.model("carrier", userSchema);
 
+Company = require('./company.model.js')
+
 module.exports = (sequelize, DataTypes) => {
   const Carrier = sequelize.define('Carriers', {
     CarrierId: {
@@ -33,7 +35,9 @@ module.exports = (sequelize, DataTypes) => {
     //   type: DataTypes.INTEGER,
     //   references: {
     //     model: Company,
-    //     key: 'CompanyId'
+    //     key: 'CompanyId',
+    //     onUpdate: 'cascade',
+    //     onDelete: 'cascade'
     //   }
     // }
   });

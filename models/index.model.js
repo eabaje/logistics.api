@@ -92,36 +92,39 @@ db.vehicle.belongsToMany(db.driver, {
 // db.user.hasMany(db.userrole, { foreignKey: { name: 'UserId' } });
 // db.userrole.belongsTo(db.user);
 
-db.shipment.hasOne(db.trip, { foreignKey: { name: 'Id' } });
-db.trip.belongsTo(db.shipment);
 
-db.vehicle.hasOne(db.trip, { foreignKey: { name: 'Id' } });
-db.trip.belongsTo(db.vehicle);
 
-db.driver.hasOne(db.trip, { foreignKey: { name: 'Id' } });
-db.trip.belongsTo(db.driver);
+db.vehicle.hasOne(db.trip, { foreignKey: 'VehicleId' } );
+db.trip.belongsTo(db.vehicle, { foreignKey: 'VehicleId' } );
 
-db.company.hasMany(db.carrier, { foreignKey: { name: 'Id' } });
-db.carrier.belongsTo(db.company);
+db.driver.hasOne(db.trip, { foreignKey:'DriverId'  });
+db.trip.belongsTo(db.driver, { foreignKey:'DriverId'  });
 
-db.company.hasOne(db.user, { foreignKey: { name: 'Id' } });
-db.user.belongsTo(db.company);
+db.company.hasMany(db.carrier, { foreignKey: 'CompanyId' });
+db.carrier.belongsTo(db.company, { foreignKey: 'CompanyId' });
 
-//db.company.hasMany(db.driver, {foreignKey: 'CompanyId'});
-db.company.hasOne(db.driver, { foreignKey: { name: 'Id' } });
-db.driver.belongsTo(db.company);
+db.company.hasOne(db.user, { foreignKey: 'CompanyId' } );
+db.user.belongsTo(db.company, { foreignKey: 'CompanyId' });
 
-db.user.hasMany(db.usersubscription, { foreignKey: { name: 'Id' } });
-db.usersubscription.belongsTo(db.user);
+db.company.hasMany(db.driver, {foreignKey: 'CompanyId'});
+db.driver.belongsTo(db.company, {foreignKey: 'CompanyId'});
+// db.company.hasOne(db.driver, { foreignKey:'fk_CompanyId' });
 
-db.subscribe.hasMany(db.usersubscription, { foreignKey: { name: 'Id' } });
-db.usersubscription.belongsTo(db.subscribe);
+db.subscribe.hasMany(db.usersubscription, { foreignKey:'SubscribeId' });
+db.usersubscription.belongsTo(db.subscribe, { foreignKey:'SubscribeId' });
 
-db.shipment.hasMany(db.interested, { foreignKey: { name: 'Id' } });
-db.interested.belongsTo(db.shipment);
+db.user.hasMany(db.usersubscription, { foreignKey:'UserId' } );
+db.usersubscription.belongsTo(db.user, { foreignKey:'UserId' });
 
-db.driver.hasOne(db.interested, { foreignKey: { name: 'Id' } });
-db.interested.belongsTo(db.driver);
+db.shipment.hasMany(db.interested, { foreignKey:'ShipmentId' });
+db.interested.belongsTo(db.shipment , { foreignKey:'ShipmentId' });
+
+
+db.driver.hasOne(db.interested, { foreignKey:'DriverId' });
+db.interested.belongsTo(db.driver, { foreignKey:'DriverId' });
+
+db.shipment.hasOne(db.trip, { foreignKey:'ShipmentId' } );
+db.trip.belongsTo(db.shipment , { foreignKey:'ShipmentId' });
 
 //db.shipment.belongsTo(db.interested, {foreignKey: 'UserId'});
 
