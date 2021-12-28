@@ -11,25 +11,21 @@ module.exports = (sequelize, DataTypes) => {
 
     AssignedDate: { type: DataTypes.DATE },
 
-    VehicleId: {
-      type: DataTypes.STRING,
-      references: {
-        model: Vehicle,
-        key: 'VehicleId'
-      }
-    },
+    // VehicleId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: Vehicle,
+    //     key: 'VehicleId'
+    //   }
+    // },
 
-    DriverId: {
-      type: DataTypes.STRING,
-      references: {
-        model: Driver,
-        key: 'DriverId'
-      }
-    },
-
-
-
-
+    // DriverId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: Driver,
+    //     key: 'DriverId'
+    //   }
+    // },
   });
 
   return AssignDriver;

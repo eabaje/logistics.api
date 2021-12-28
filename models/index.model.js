@@ -62,39 +62,69 @@ db.role.belongsToMany(db.user, {
   foreignKey: 'RoleId',
   otherKey: 'UserId',
 });
+
 db.user.belongsToMany(db.role, {
   through: 'UserRoles',
   foreignKey: 'UserId',
   otherKey: 'RoleId',
 });
 
-db.trip.hasMany(db.shipment, { as: 'Shipments' });
-db.shipment.belongsTo(db.shipment, {
-  foreignKey: 'TripId',
-  as: 'Trips',
+db.driver.belongsToMany(db.vehicle, {
+  through: 'AssignDrivers',
+  foreignKey: 'DriverId',
+  otherKey: 'VehicleId',
 });
 
-db.company.hasMany(db.carrier, {foreignKey: 'fk_Carrier_CompanyId'});
-db.carrier.belongsTo(db.company, {foreignKey: 'fk_Carrier_CompanyId', targetKey: 'CompanyId'});
+db.vehicle.belongsToMany(db.driver, {
+  through: 'AssignDrivers',
+  foreignKey: 'VehicleId',
+  otherKey: 'DriverId',
+});
+// db.trip.hasMany(db.shipment, { as: 'Shipments' });
+// db.shipment.belongsTo(db.shipment, {
+//   foreignKey: 'TripId',
+//   as: 'Trips',
+// });
 
-db.user.belongsTo(db.company, {foreignKey: 'fk_User_CompanyId', targetKey: 'CompanyId'});
+// db.role.hasMany(db.userrole, { foreignKey: { name: 'RoleId' } });
+// db.userrole.belongsTo(db.role);
 
+// db.user.hasMany(db.userrole, { foreignKey: { name: 'UserId' } });
+// db.userrole.belongsTo(db.user);
 
-//db.company.belongsTo(db.user, {foreignKey: 'CompanyId'});
+db.shipment.hasOne(db.trip, { foreignKey: { name: 'Id' } });
+db.trip.belongsTo(db.shipment);
+
+db.vehicle.hasOne(db.trip, { foreignKey: { name: 'Id' } });
+db.trip.belongsTo(db.vehicle);
+
+db.driver.hasOne(db.trip, { foreignKey: { name: 'Id' } });
+db.trip.belongsTo(db.driver);
+
+db.company.hasMany(db.carrier, { foreignKey: { name: 'Id' } });
+db.carrier.belongsTo(db.company);
+
+db.company.hasOne(db.user, { foreignKey: { name: 'Id' } });
+db.user.belongsTo(db.company);
 
 //db.company.hasMany(db.driver, {foreignKey: 'CompanyId'});
-db.driver.belongsTo(db.company, {foreignKey: 'fk_Driver_CompanyId', targetKey: 'CompanyId'});
+db.company.hasOne(db.driver, { foreignKey: { name: 'Id' } });
+db.driver.belongsTo(db.company);
 
-db.user.hasMany(db.usersubscription, {foreignKey: 'fk_UserId'});
-db.usersubscription.belongsTo(db.user, {foreignKey: 'fk_UserId' , targetKey: 'UserId'});
+db.user.hasMany(db.usersubscription, { foreignKey: { name: 'Id' } });
+db.usersubscription.belongsTo(db.user);
 
+db.subscribe.hasMany(db.usersubscription, { foreignKey: { name: 'Id' } });
+db.usersubscription.belongsTo(db.subscribe);
 
-db.shipment.hasMany(db.interested, {foreignKey: 'fk_Interested_ShipmentId'});
-db.interested.belongsTo(db.shipment, {foreignKey: 'fk_Interested_ShipmentId', targetKey: 'ShipmentId'});
+db.shipment.hasMany(db.interested, { foreignKey: { name: 'Id' } });
+db.interested.belongsTo(db.shipment);
 
-db.interested.belongsTo(db.driver, {foreignKey: 'fk_Interested_DriverId', targetKey: 'DriverId'});
+db.driver.hasOne(db.interested, { foreignKey: { name: 'Id' } });
+db.interested.belongsTo(db.driver);
+
 //db.shipment.belongsTo(db.interested, {foreignKey: 'UserId'});
 
-db.ROLES = ['shipper', 'admin', 'auditor', 'driver', 'carrier', 'broker'];  
+db.ROLES = ['shipper', 'admin', 'auditor', 'driver', 'carrier', 'broker'];
 
 module.exports = db;

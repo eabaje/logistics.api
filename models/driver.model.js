@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1,
     },
-    CompanyId: { type: DataTypes.INTEGER },
+    //  CompanyId: { type: DataTypes.INTEGER },
     DriverName: { type: DataTypes.STRING },
     Email: { type: DataTypes.STRING },
     Phone: { type: DataTypes.STRING },
@@ -20,15 +20,18 @@ module.exports = (sequelize, DataTypes) => {
     Rating: { type: DataTypes.INTEGER },
     DriverDocs: { type: DataTypes.STRING },
 
-    CompanyId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Company,
-        key: 'CompanyId'
-      }
-    },
-    
+    // CompanyId: {
+    //   type: DataTypes.INTEGER,
+    //   references: {
+    //     model: Company,
+    //     key: 'CompanyId'
+    //   }
+    // },
   });
-
+  // Driver.associate = (models) => {
+  //   Driver.belongsTo(models.Company, {
+  //     foriegnKey: {},
+  //   });
+  // };
   return Driver;
 };

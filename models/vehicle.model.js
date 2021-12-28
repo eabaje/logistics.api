@@ -40,13 +40,13 @@ module.exports = (sequelize, DataTypes) => {
     PicUrl: { type: DataTypes.STRING },
     VehicleDocs: { type: DataTypes.STRING },
 
-    CarrierId: {
-      type: DataTypes.STRING,
-      references: {
-        model: Carrier,
-        key: 'CarrierId'
-      }
-    },
+    // CarrierId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: Carrier,
+    //     key: 'CarrierId'
+    //   }
+    // },
   });
 
   return Vehicle;

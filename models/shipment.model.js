@@ -49,20 +49,20 @@ module.exports = (sequelize, DataTypes) => {
     ShipmentDocs: { type: DataTypes.STRING },
     ShipmentStatus: { type: DataTypes.STRING },
 
-    CompanyId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Company,
-        key: 'CompanyId'
-      }
-    },
-    UserId: {
-      type: DataTypes.STRING,
-      references: {
-        model: User,
-        key: 'UserId'
-      }
-    },
+    // CompanyId: {
+    //   type: DataTypes.INTEGER,
+    //   references: {
+    //     model: Company,
+    //     key: 'CompanyId'
+    //   }
+    // },
+    // UserId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: User,
+    //     key: 'UserId'
+    //   }
+    // },
   });
 
   return Shipment;

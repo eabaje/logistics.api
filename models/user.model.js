@@ -24,13 +24,13 @@ module.exports = (sequelize, DataTypes) => {
     LoginCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     PaymentMethod: { type: DataTypes.STRING },
 
-    CompanyId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Company,
-        key: 'CompanyId'
-      }
-    },
+    // CompanyId: {
+    //   type: DataTypes.INTEGER,
+    //   references: {
+    //     model: Company,
+    //     key: 'CompanyId'
+    //   }
+    // },
   });
 
   return User;

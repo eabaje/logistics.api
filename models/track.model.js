@@ -9,15 +9,13 @@ module.exports = (sequelize, DataTypes) => {
     Status: { type: DataTypes.STRING },
     TrackNote: { type: DataTypes.STRING },
 
-    TripId: {
-      type: DataTypes.STRING,
-      references: {
-        model: Trip,
-        key: 'TripId'
-      }
-    },
-
-    
+    // TripId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: Trip,
+    //     key: 'TripId'
+    //   }
+    // },
   });
 
   return Track;

@@ -13,25 +13,22 @@ module.exports = (sequelize, DataTypes) => {
     StartDate: { type: DataTypes.DATEONLY },
     EndDate: { type: DataTypes.DATEONLY },
 
-    UserId: {
-      type: DataTypes.STRING,
-      references: {
-        model: User,
-        key: 'UserId'
-      }
-    },
+    // UserId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: User,
+    //     key: 'UserId'
+    //   }
+    // },
 
-    SubscriptionId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Subscription,
-        key: 'SubscriptionId'
-      }
-    },
-
+    // SubscriptionId: {
+    //   type: DataTypes.INTEGER,
+    //   references: {
+    //     model: Subscription,
+    //     key: 'SubscriptionId'
+    //   }
+    // },
   });
-
-
 
   return UserSubscription;
 };

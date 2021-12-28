@@ -83,25 +83,12 @@ function initial() {
   auditorRoleId = uuidv4();
   driverRoleId = uuidv4();
   brokerRoleId = uuidv4();
-  usersubscribeId= uuidv4();
+  usersubscribeId = uuidv4();
+
   let startDate = new Date();
- 
+
   let endDate = new Date();
   endDate.setDate(endDate.getDate() + 90);
-
-  User.create({
-    UserId: initialUserId,
-    FullName: 'Ebi Abaje',
-    Email: 'ebi.abaje@loaddispatch.com.ng',
-    Phone: '08057886381',
-    UserName: 'ebi.abje@loaddispatch.com.ng',
-    Password: encryptedPassword,
-    Address: 'Lagos',
-    City: 'LG',
-    Country: 'NG',
-    IsActivated: false,
-    CompanyId: 1,
-  });
 
   Company.create({
     CompanyId: 1,
@@ -123,19 +110,17 @@ function initial() {
     Active: true,
     Duration: 90,
   });
-  
+
   UserSubscription.create({
     UserSubscriptionId: 1,
     SubscriptionId: 1,
     SubscriptionName: 'Free 90 Day Trial',
-    UserId:initialUserId,
+    UserId: initialUserId,
     Active: true,
     StartDate: startDate,
     EndDate: endDate,
   });
 
-  
-  
   Role.create({
     RoleId: shipperRoleId,
     Name: 'shipper',
@@ -162,6 +147,20 @@ function initial() {
   Role.create({
     RoleId: auditorRoleId,
     Name: 'auditor',
+  });
+
+  User.create({
+    UserId: initialUserId,
+    FullName: 'Ebi Abaje',
+    Email: 'ebi.abaje@loaddispatch.com.ng',
+    Phone: '08057886381',
+    UserName: 'ebi.abje@loaddispatch.com.ng',
+    Password: encryptedPassword,
+    Address: 'Lagos',
+    City: 'LG',
+    Country: 'NG',
+    IsActivated: false,
+    CompanyId: 1,
   });
 
   UserRole.create({

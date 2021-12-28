@@ -20,23 +20,22 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1,
     },
-    CompanyId: { type: DataTypes.INTEGER },
+    // CompanyId: { type: DataTypes.INTEGER },
     CarrierType: { type: DataTypes.STRING },
     FleetType: { type: DataTypes.STRING },
     FleetNumber: { type: DataTypes.STRING },
     AboutUs: { type: DataTypes.STRING },
     ServiceDescription: { type: DataTypes.STRING },
-    Rating: { type: DataTypes.INTEGER , defaultValue: 0},
+    Rating: { type: DataTypes.INTEGER, defaultValue: 0 },
     Licensed: { type: DataTypes.BOOLEAN },
 
-    CompanyId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Company,
-        key: 'CompanyId'
-      }
-    }
-
+    // CompanyId: {
+    //   type: DataTypes.INTEGER,
+    //   references: {
+    //     model: Company,
+    //     key: 'CompanyId'
+    //   }
+    // }
   });
 
   return Carrier;

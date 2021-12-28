@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1,
     },
-   
+
     // ShipmentId: { type: DataTypes.STRING },
     // VehicleId: { type: DataTypes.STRING },
     // DriverId: { type: DataTypes.STRING },
@@ -17,29 +17,29 @@ module.exports = (sequelize, DataTypes) => {
     DriverNote: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
 
-    ShipmentId: {
-      type: DataTypes.STRING,
-      references: {
-        model: Shipment,
-        key: 'ShipmentId'
-      }
-    },
-    
-    VehicleId: {
-      type: DataTypes.STRING,
-      references: {
-        model: Vehicle,
-        key: 'VehicleId'
-      }
-    },
+    // ShipmentId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: Shipment,
+    //     key: 'ShipmentId'
+    //   }
+    // },
 
-    DriverId: {
-      type: DataTypes.STRING,
-      references: {
-        model: Driver,
-        key: 'DriverId'
-      }
-    },
+    // VehicleId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: Vehicle,
+    //     key: 'VehicleId'
+    //   }
+    // },
+
+    // DriverId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: Driver,
+    //     key: 'DriverId'
+    //   }
+    // },
   });
 
   return Trip;
