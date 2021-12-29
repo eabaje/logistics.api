@@ -97,10 +97,9 @@ exports.findAll = (req, res) => {
   //var condition = name ? { FullName: { [Op.iLike]: `%${name}%` } } : null;{ where: condition }
 
   User.findAll({
-
     include: {
       model: Company,
-      attributes:['CompanyName']
+      attributes: ['CompanyName'],
     },
 
     order: [['createdAt', 'DESC']],
@@ -122,15 +121,14 @@ exports.findAllBySearch = (req, res) => {
   const name = req.params.name;
   var condition = name ? { FullName: { [Op.iLike]: `%${name}%` } } : null;
 
-  User.findAll({ where: condition 
-  ,
-  include: {
-    model: Company,
-    attributes:['CompanyName']
-  },
+  User.findAll({
+    where: condition,
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
 
-  order: [['createdAt', 'DESC']],  
-  
+    order: [['createdAt', 'DESC']],
   })
     .then((data) => {
       res.status(200).send({
@@ -149,12 +147,12 @@ exports.findAllBySearch = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.userId;
 
-  User.findByPk({id,
+  User.findByPk({
+    id,
     include: {
       model: Company,
-      attributes:['CompanyName']
-    }
-  
+      attributes: ['CompanyName'],
+    },
   })
     .then((data) => {
       res.status(200).send({
@@ -275,7 +273,7 @@ exports.findAllUsersByDate = (req, res) => {
     },
     include: {
       model: Company,
-      attributes:['CompanyName']
+      attributes: ['CompanyName'],
     },
 
     order: [['createdAt', 'DESC']],
@@ -382,7 +380,7 @@ exports.deleteRole = (req, res) => {
 
 exports.createCompany = (req, res) => {
   // Validate request
- 
+
   // Create a Order
   const company = {
     CompanyName: req.body.CompanyName,
@@ -634,7 +632,14 @@ exports.updateUserSubscription = (req, res) => {
 exports.findUserSubscription = (req, res) => {
   const id = req.params.UserId;
 
-  UserSubscription.findOne({ where: { UserId: id } })
+  UserSubscription.findOne({
+    where: { UserId: id },
+
+    include: {
+      model: User,
+      attributes: ['FullName'],
+    },
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -651,17 +656,19 @@ exports.findUserSubscription = (req, res) => {
 
 exports.findAllUserSubscriptions = (req, res) => {
   const subscriptionId = req.param.subscriptionId;
-  var condition = SubscriptionType ? { SubscriptionId:subscriptionId } : null;
+  var condition = subscriptionId ? { SubscribeId: subscriptionId } : null;
 
-  UserSubscription.findAll({ where: condition 
-  
-  ,  order: [['createdAt', 'DESC']],
-  
-  
-  
+  UserSubscription.findAll({
+    where: condition,
+    include: {
+      model: User,
+      attributes: ['FullName'],
+    },
+    order: [['createdAt', 'DESC']],
   })
 
     .then((data) => {
+      console.log(`data`, data);
       res.status(200).send({
         message: 'Success',
         data: data,
@@ -684,6 +691,11 @@ exports.findAllUserSubscriptionsByDate = (req, res) => {
         [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
       },
     },
+    include: {
+      model: User,
+      attributes: ['FullName'],
+    },
+
     order: [['createdAt', 'DESC']],
   })
 
@@ -710,6 +722,10 @@ exports.findAllUserSubscriptionsByStartDate = (req, res) => {
       StartDate: {
         [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
       },
+    },
+    include: {
+      model: User,
+      attributes: ['FullName'],
     },
     order: [['createdAt', 'ASC']],
   })
@@ -738,7 +754,11 @@ exports.findAllUserSubscriptionsByEndDate = (req, res) => {
         [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
       },
     },
-    order: [['createdAt', 'ASC']],
+    include: {
+      model: User,
+      attributes: ['FullName'],
+    },
+    order: [['createdAt', 'DESC']],
   })
 
     .then((data) => {

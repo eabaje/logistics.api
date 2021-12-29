@@ -8,9 +8,7 @@
   "host": "localhost:8000",
   "basePath": "/",
   "tags": [],
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["http"],
   "consumes": [],
   "produces": [],
   "paths": {
@@ -603,13 +601,13 @@
         }
       }
     },
-    "/api/user/findAllUserSubscriptions/{subscriptionType}": {
+    "/api/user/findAllUserSubscriptions/{subscriptionId}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "subscriptionType",
+            "name": "subscriptionId",
             "in": "path",
             "required": true,
             "type": "string"

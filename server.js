@@ -28,10 +28,10 @@ const Subscription = db.subscribe;
 const UserSubscription = db.usersubscription;
 //db.sequelize.sync();
 //force: true will drop the table if it already exists
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and Resync Database with { force: true }');
-  initial();
-});
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log('Drop and Resync Database with { force: true }');
+//   initial();
+// });
 
 // app.use(
 //   session({
@@ -101,26 +101,6 @@ function initial() {
     Country: 'NG',
   });
 
-  Subscription.create({
-    SubscribeId: 1,
-    SubscriptionType: 'free Trial',
-    SubscriptionName: 'Free 90 Day Trial',
-    Amount: 0.0,
-    Description: 'Basic ',
-    Active: true,
-    Duration: 90,
-  });
-
-  UserSubscription.create({
-    UserSubscriptionId: 1,
-    SubscriptionId: 1,
-    SubscriptionName: 'Free 90 Day Trial',
-    UserId: initialUserId,
-    Active: true,
-    StartDate: startDate,
-    EndDate: endDate,
-  });
-
   Role.create({
     RoleId: shipperRoleId,
     Name: 'shipper',
@@ -166,5 +146,25 @@ function initial() {
   UserRole.create({
     UserId: initialUserId,
     RoleId: adminRoleId,
+  });
+
+  Subscription.create({
+    SubscribeId: 1,
+    SubscriptionType: 'free Trial',
+    SubscriptionName: 'Free 90 Day Trial',
+    Amount: 0.0,
+    Description: 'Basic ',
+    Active: true,
+    Duration: 90,
+  });
+
+  UserSubscription.create({
+    UserSubscriptionId: 1,
+    SubscribeId: 1,
+    SubscriptionName: 'Free 90 Day Trial',
+    UserId: initialUserId,
+    Active: true,
+    StartDate: startDate,
+    EndDate: endDate,
   });
 }
