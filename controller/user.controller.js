@@ -630,7 +630,7 @@ exports.updateUserSubscription = (req, res) => {
 };
 
 exports.findUserSubscription = (req, res) => {
-  const id = req.params.UserId;
+  const id = req.params.userId;
 
   UserSubscription.findOne({
     where: { UserId: id },
@@ -648,6 +648,7 @@ exports.findUserSubscription = (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(`error`, err)
       res.status(500).send({
         message: 'Error retrieving User with UserId=' + id,
       });

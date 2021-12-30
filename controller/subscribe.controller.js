@@ -42,10 +42,14 @@ exports.create = (req, res) => {
 
 // Retrieve all Subscriptions start the database.
 exports.findAll = (req, res) => {
-  const subscriptionName = req.params.SubscriptionName;
+  const subscriptionName = req.params.subscriptionName;
   var condition = subscriptionName ? { SubscriptionName: { [Op.iLike]: `%${subscriptionName}%` } } : null;
 
-  Subscription.findAll({ where: condition })
+  Subscription.findAll({ where: condition,
+    
+    order: [['createdAt', 'DESC']],
+  
+  })
 
     .then((data) => {
       res.status(200).send({
