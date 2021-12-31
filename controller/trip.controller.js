@@ -1,16 +1,17 @@
 const db = require('../models/index.model');
 const Trip = db.trip;
+const Track = db.track;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Trip
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: 'Content can not be empty!',
-    });
-    return;
-  }
+  // if (!req.body.title) {
+  //   res.status(400).send({
+  //     message: 'Content can not be empty!',
+  //   });
+  //   return;
+  // }
 
   // Create a Trip
   const trip = {
@@ -304,18 +305,19 @@ exports.findAllTripsByDate = (req, res) => {
 
 exports.addTrack = (req, res) => {
   // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: 'Content can not be empty!',
-    });
-    return;
-  }
+  // if (!req.body.title) {
+  //   res.status(400).send({
+  //     message: 'Content can not be empty!',
+  //   });
+  //   return;
+  // }
 
   // Create a Trip
   const track = {
     TrackId: req.body.TrackId,
     TripId: req.body.TripId,
     Status: req.body.Status,
+    TrackNote: req.body.TrackNote,
   };
 
   // Save Trip in the database
@@ -339,7 +341,14 @@ exports.findAllTrack = (req, res) => {
   const tripId = req.query.tripId;
   var condition = tripId ? { TripId: tripId } : null;
 
-  Track.findAll({ where: condition })
+  Track.findAll({
+    where: condition,
+
+    include: {
+      model: Trip,
+      attributes: ['DeliveryDate', 'PickUpDate', 'PickUpLocation', 'DeliveryLocation'],
+    },
+  })
 
     .then((data) => {
       res.status(200).send({

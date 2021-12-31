@@ -99,7 +99,7 @@ exports.findAll = (req, res) => {
   User.findAll({
     include: {
       model: Company,
-      attributes: ['CompanyName'],
+      attributes: ['CompanyName', 'CompanyType'],
     },
 
     order: [['createdAt', 'DESC']],
@@ -648,7 +648,7 @@ exports.findUserSubscription = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(`error`, err)
+      console.log(`error`, err);
       res.status(500).send({
         message: 'Error retrieving User with UserId=' + id,
       });

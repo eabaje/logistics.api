@@ -62,7 +62,20 @@ exports.findAll = (req, res) => {
   const loadCategory = req.params.loadCategory;
   var condition = loadCategory ? { LoadCategory: { [Op.iLike]: `%${loadCategory}%` } } : null;
 
-  Shipment.findAll({ where: condition })
+  Shipment.findAll({
+    where: condition,
+
+    include: {
+      model: User,
+      attributes: ['FullName'],
+    },
+
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
+    order: [['createdAt', 'DESC']],
+  })
     .then((data) => {
       res.status(200).send({
         message: 'Success',
@@ -80,7 +93,19 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.shipmentId;
 
-  Shipment.findByPk(id)
+  Shipment.findByPk({
+    id,
+
+    include: {
+      model: User,
+      attributes: ['FullName'],
+    },
+
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
+  })
     .then((data) => {
       res.status(200).send({
         message: 'Success',
