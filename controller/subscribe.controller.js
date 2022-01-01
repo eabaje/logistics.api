@@ -29,7 +29,7 @@ exports.create = (req, res) => {
 
     .then((data) => {
       res.status(200).send({
-        message: 'Success',
+        message: 'Subscription was added successfully',
         data: data,
       });
     })

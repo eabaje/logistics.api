@@ -31,7 +31,7 @@ exports.create = (req, res) => {
 
     .then((data) => {
       res.status(200).send({
-        message: 'Success',
+        message: 'Trip was added successfully',
         data: data,
       });
     })
@@ -325,7 +325,7 @@ exports.addTrack = (req, res) => {
 
     .then((data) => {
       res.status(200).send({
-        message: 'Success',
+        message: 'Track was added successfully',
         data: data,
       });
     })

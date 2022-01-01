@@ -45,7 +45,7 @@ exports.create = (req, res) => {
   Shipment.create(shipment)
     .then((data) => {
       res.status(200).send({
-        message: 'Success',
+        message: 'Shipment was added successfully',
         data: data,
       });
     })

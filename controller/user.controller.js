@@ -396,7 +396,7 @@ exports.createCompany = (req, res) => {
 
     .then((data) => {
       res.status(200).send({
-        message: 'Success',
+        message: 'Company was added successfully',
         data: data,
       });
     })

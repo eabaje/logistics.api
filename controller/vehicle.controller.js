@@ -4,13 +4,13 @@ const Op = db.Sequelize.Op;
 
 // Create and Save a new Vehicle
 exports.create = (req, res) => {
-  // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: 'Content can not be empty!',
-    });
-    return;
-  }
+  // // Validate request
+  // if (!req.body.title) {
+  //   res.status(400).send({
+  //     message: 'Content can not be empty!',
+  //   });
+  //   return;
+  // }
 
   // Create a Vehicle
   const vehicle = {
@@ -34,7 +34,7 @@ exports.create = (req, res) => {
 
     .then((data) => {
       res.status(200).send({
-        message: 'Success',
+        message: 'Vehicle was added successfully',
         data: data,
       });
     })
