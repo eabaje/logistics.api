@@ -24,6 +24,10 @@ module.exports = function (app) {
 
   app.get('/api/shipment/findAllShipmentsAssigned/:shipmentid/:assignedshipment', controller.findAllShipmentsAssigned);
 
+  app.get('/api/shipment/findAllShipmentsInterest', controller.findAllShipmentsInterest);
+
+  app.post('/api/shipment/showInterest', controller.showInterest);
+
   app.post('/api/shipment/create', controller.create);
 
   app.put('/api/shipment/update/:shipmentId', controller.update);

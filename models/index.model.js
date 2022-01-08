@@ -57,6 +57,8 @@ db.insurance = require('./insurance.model.js')(sequelize, Sequelize);
 db.interested = require('./shipment.interested.model.js')(sequelize, Sequelize);
 db.media = require('./media.model.js')(sequelize, Sequelize);
 
+db.assignshipment = require('./assign.shipment.model.js')(sequelize, Sequelize);
+
 db.role.belongsToMany(db.user, {
   through: 'UserRoles',
   foreignKey: 'RoleId',
@@ -101,6 +103,9 @@ db.trip.belongsTo(db.driver, { foreignKey: 'DriverId' });
 db.company.hasMany(db.carrier, { foreignKey: 'CompanyId' });
 db.carrier.belongsTo(db.company, { foreignKey: 'CompanyId' });
 
+db.carrier.hasMany(db.vehicle, { foreignKey: 'CarrierId' });
+db.vehicle.belongsTo(db.carrier, { foreignKey: 'CarrierId' });
+
 db.company.hasOne(db.user, { foreignKey: 'CompanyId' });
 db.user.belongsTo(db.company, { foreignKey: 'CompanyId' });
 
@@ -120,11 +125,23 @@ db.interested.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
 db.driver.hasOne(db.interested, { foreignKey: 'DriverId' });
 db.interested.belongsTo(db.driver, { foreignKey: 'DriverId' });
 
+// db.user.hasMany(db.interested, { foreignKey: 'UserId' });
+// db.interested.belongsTo(db.user, { foreignKey: 'UserId' });
+
 db.shipment.hasOne(db.trip, { foreignKey: 'ShipmentId' });
 db.trip.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
 
+db.user.hasOne(db.assignshipment, { foreignKey: 'UserId' });
+db.assignshipment.belongsTo(db.user, { foreignKey: 'UserId' });
+
+db.user.hasOne(db.interested, { foreignKey: 'UserId' });
+db.interested.belongsTo(db.user, { foreignKey: 'UserId' });
+
 db.trip.hasMany(db.track, { foreignKey: 'TripId' });
 db.track.belongsTo(db.trip, { foreignKey: 'TripId' });
+
+db.company.hasMany(db.shipment, { foreignKey: 'CompanyId' });
+db.shipment.belongsTo(db.company, { foreignKey: 'CompanyId' });
 
 //db.shipment.belongsTo(db.interested, {foreignKey: 'UserId'});
 

@@ -1,5 +1,7 @@
+const { carrier } = require('../models/index.model');
 const db = require('../models/index.model');
 const Vehicle = db.vehicle;
+const Carrier = db.carrier;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Vehicle
@@ -168,7 +170,19 @@ exports.findAllVehiclesInsured = (req, res) => {
 };
 
 exports.findAllVehiclesByCategory = (req, res) => {
-  Vehicle.findAll({ where: { Insured: true } })
+  const vehicleType = req.params.vehicleType;
+  const carrierId = req.params.carrierId;
+  // var condition = vehicleType ? { VehicleType: { [Op.iLike]: `%${vehicleType}%` } } : null;
+
+  Vehicle.findAll({
+    where: { VehicleType: { [Op.iLike]: `%${vehicleType}%` } },
+
+    include: {
+      model: Carrier,
+      attributes: ['CarrierType'],
+      where: { CarrierId: carrierId },
+    },
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -177,6 +191,7 @@ exports.findAllVehiclesByCategory = (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(`err.message`, err.message);
       res.status(500).send({
         message: err.message || 'Some error occurred while retrieving Vehicles.',
       });

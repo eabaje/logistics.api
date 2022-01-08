@@ -1,8 +1,20 @@
 const db = require('../models/index.model');
+var generator = require('generate-password');
+
+const nodemailer = require('nodemailer');
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const sgMail = require('@sendgrid/mail');
+const hbs = require('nodemailer-express-handlebars');
+const path = require('path');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 const Driver = db.driver;
 const AssignDriver = db.assigndriver;
 const Vehicle = db.vehicle;
-const Company=db.company;
+const User = db.user;
+const Company = db.company;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
@@ -34,10 +46,68 @@ exports.create = async (req, res) => {
     Rating: req.body.Rating,
     DriverDocs: req.body.DriverDocs,
   };
-
+  const generatedPassword = generator.generate({ length: 8, numbers: true });
+  const encryptedPassword = req.body.Password
+    ? bcrypt.hashSync(req.body.Password, 10)
+    : bcrypt.hashSync(generatedPassword, 10);
   // Save Driver in the database
   Driver.create(driver)
     .then((data) => {
+      User.create({
+        CompanyId: req.body.CompanyId,
+        FullName: req.body.DriverName,
+        Email: req.body.Email.toLowerCase(),
+        Phone: req.body.Phone,
+        Address: req.body.Address,
+        City: req.body.Region,
+        Country: req.body.Country,
+        UserName: req.body.Email.toLowerCase(),
+        Password: encryptedPassword,
+      });
+
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+      // //  mailgun
+      // // Step 2 - Generate a verification token with the user's ID
+      // const verificationToken = user.generateVerificationToken();
+      // // Step 3 - Email the user a unique verification link
+
+      // point to the template folder
+      const handlebarOptions = {
+        viewEngine: {
+          partialsDir: path.resolve('./views/'),
+          defaultLayout: false,
+        },
+        viewPath: path.resolve('./views/'),
+      };
+
+      // use a template file with nodemailer
+      transporter.use('compile', hbs(handlebarOptions));
+
+      //   const url = process.env.BASE_URL + `auth/verify/${token}`;
+      transporter.sendMail({
+        from: process.env.FROM_EMAIL,
+        to: email,
+        template: 'emailPassword', // the name of the template file i.e email.handlebars
+        context: {
+          name: req.body.DriverName,
+          password: generatedPassword,
+          url: url,
+        },
+        subject: 'Welcome to Global Load Dispatch',
+        //     html: `<h1>Email Confirmation</h1>
+        // <h2>Hello ${fullname}</h2>
+
+        // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+        // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+        // </div>`,
+      });
+
       res.send({
         message: 'Driver was added successfully.',
         data: data,
@@ -56,13 +126,13 @@ exports.findAll = (req, res) => {
   const CompanyId = req.params.CompanyId;
   var condition = CompanyId ? { CompanyId: { [Op.eq]: CompanyId } } : null;
 
-  Driver.findAll({ where: condition,
-  
+  Driver.findAll({
+    where: condition,
+
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
-  
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {
@@ -82,12 +152,13 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.driverId;
 
-  Driver.findByPk({id,
-  
+  Driver.findByPk({
+    id,
+
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {
@@ -232,13 +303,13 @@ exports.AssignDriverToVehicle = (req, res) => {
 exports.findAllDriversByDriverName = (req, res) => {
   const driverName = req.params.driverName;
 
-  Driver.findAll({ where: { DriverName: driverName },
-  
+  Driver.findAll({
+    where: { DriverName: driverName },
+
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
-  
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {
@@ -257,13 +328,13 @@ exports.findAllDriversByDriverName = (req, res) => {
 exports.findAllDriversByVehicle = (req, res) => {
   const vehicleId = req.params.vehicleId;
 
-  AssignDriver.findAll({ where: { VehicleId: vehicleId },
-  
+  AssignDriver.findAll({
+    where: { VehicleId: vehicleId },
+
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
-  
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {
@@ -282,13 +353,13 @@ exports.findAllDriversByVehicle = (req, res) => {
 exports.findAllAssignedDrivers = (req, res) => {
   //  const vehicleId = req.query.VehicleId;
 
-  AssignDriver.findAll({ where: { Assigned: true },
-  
+  AssignDriver.findAll({
+    where: { Assigned: true },
+
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
-  
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {
@@ -306,14 +377,13 @@ exports.findAllAssignedDrivers = (req, res) => {
 
 // find all Licensed Driver
 exports.findAllDriversLicensed = (req, res) => {
-  Driver.findAll({ where: { Licensed: true },
-  
+  Driver.findAll({
+    where: { Licensed: true },
+
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
-  
-  
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {
@@ -342,12 +412,10 @@ exports.findAllDriversByDate = (req, res) => {
     },
     order: [['createdAt', 'ASC']],
 
-
-
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {

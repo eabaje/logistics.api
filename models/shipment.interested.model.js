@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     // ShipmentId: { type: DataTypes.STRING },
     CarrierId: { type: DataTypes.STRING, default: null },
-
+    IsInterested: { type: DataTypes.BOOLEAN },
     InterestDate: { type: DataTypes.DATEONLY },
 
     // DriverId: {

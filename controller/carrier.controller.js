@@ -42,7 +42,7 @@ exports.findAll = (req, res) => {
   const carrierType = req.params.carrierType;
   var condition = carrierType ? { CarrierType: { [Op.iLike]: `%${carrierType}%` } } : null;
 
- // Carrier.findAll({ where: condition })
+  // Carrier.findAll({ where: condition })
 
   Carrier.findAll({
     // where: {
@@ -52,10 +52,10 @@ exports.findAll = (req, res) => {
     //     exclude: ['createdAt', 'updatedAt']   DairyId: req.query.dairyid
     // },
     include: {
-        model: Company,
-        attributes:['CompanyName']
-    }
-})
+      model: Company,
+      attributes: ['CompanyName'],
+    },
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -79,19 +79,16 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.carrierId;
 
-  Carrier.findByPk({id,
-  
+  Carrier.findOne({
+    where: {
+      CarrierId: id,
+    },
+
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
-  
-  
-  
+      attributes: ['CompanyName'],
+    },
   })
-
- 
-
 
     .then((data) => {
       res.status(200).send({
@@ -100,6 +97,7 @@ exports.findOne = (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(`err`, err);
       res.status(500).send({
         message: 'Error retrieving Carrier with CarrierId=' + id,
       });
@@ -174,13 +172,13 @@ exports.deleteAll = (req, res) => {
 
 // find all insured Carrier
 exports.findAllCarriersLicensed = (req, res) => {
-  Carrier.findAll({ where: { Licensed: true },
-  
+  Carrier.findAll({
+    where: { Licensed: true },
+
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
-  
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {
@@ -211,8 +209,8 @@ exports.findAllCarriersByDate = (req, res) => {
 
     include: {
       model: Company,
-      attributes:['CompanyName']
-  }
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {

@@ -520,14 +520,6 @@ exports.deleteCompany = (req, res) => {
 };
 
 exports.subscribe = (req, res) => {
-  // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: 'Content can not be empty!',
-    });
-    return;
-  }
-
   // Add user to Subscription
 
   const subscribe = {
@@ -541,7 +533,7 @@ exports.subscribe = (req, res) => {
 
   const UserId = req.body.UserId;
 
-  const IsSubscribed = UserSubscription.findAll({ where: { UserId: UserId } && { Active: true } });
+  const IsSubscribed = UserSubscription.findAll({ where: { UserId: UserId, Active: true } });
 
   if (IsSubscribed) {
     return res.status(409).send('User Already Subscribed. Do you want to upgrade your subscription?');
@@ -585,7 +577,7 @@ exports.upgradeUserSubscription = (req, res) => {
 
   const UserId = req.body.UserId;
 
-  const IsSubscribed = UserSubscription.findAll({ where: { UserId: UserId } && { Active: true } });
+  const IsSubscribed = UserSubscription.findAll({ where: { UserId: UserId, Active: true } });
 
   if (IsSubscribed) {
     UserSubscription.update(

@@ -15,11 +15,13 @@ module.exports = function (app) {
 
   app.get('/api/vehicle/findAllVehiclesInsured', controller.findAllVehiclesInsured);
 
+  app.get('/api/vehicle/findAllVehiclesByCategory/:carrierId/:vehicleType', controller.findAllVehiclesByCategory);
+
   app.get('/api/vehicle/findAllVehiclesByDate/:startDate/:toDate', controller.findAllVehiclesByDate);
 
-  app.put('/api/vehicle/update/:vehicleId',  controller.update);
+  app.put('/api/vehicle/update/:vehicleId', controller.update);
 
-  app.delete('/api/vehicle/delete/:vehicleId',  controller.delete);
+  app.delete('/api/vehicle/delete/:vehicleId', controller.delete);
 
   app.delete('/api/vehicle/deleteAll', controller.deleteAll);
 };
