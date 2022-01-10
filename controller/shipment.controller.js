@@ -378,45 +378,179 @@ exports.showInterest = (req, res) => {
   const UserId = req.body.UserId;
   // const InterestDate = req.body.InterestDate;
 
-  //check if vehicle exists in the record
+  //check if interest exists in the record
+  Interested.findOne({ where: { ShipmentId: ShipmentId, UserId: UserId} })
+  .then((InterestedResult)=>{
 
-  Interested.findOne({ where: { ShipmentId: ShipmentId, UserId: UserId } })
-    .then((IsInterestedResult) => {
-      if (IsInterestedResult) {
-        Interested.update({ IsInterested: false }, { where: { ShipmentId: ShipmentId, UserId: UserId } })
+    if (InterestedResult===null) {
 
-          .then((data) => {
-            res.status(200).send({
-              message: 'Withdrawn Interest',
-              data: data,
-            });
-          })
-          .catch((err) => {
-            res.status(500).send({
-              message: `${err.message} -Bad Operation` || 'Some error occurred while retrieving records.',
-            });
-          });
-      } else {
-        Interested.create({ ShipmentId: ShipmentId, UserId: UserId, IsInterested: true, InterestDate: new Date() })
-          .then((data) => {
-            res.status(200).send({
-              message: 'Shown Interest',
-              data: data,
-            });
-          })
-          .catch((err) => {
-            res.status(500).send({
-              message: `${err.message} -Bad Operation` || 'Some error occurred while retrieving records.',
-            });
-          });
-      }
-    })
-    .catch((err) => {
-      console.log(`error`, err.message);
-      res.status(500).send({
-        message: `${err.message} -Bad Operation` || 'Some error occurred while retrieving records.',
-      });
+        // create new interest
+      Interested.create({ ShipmentId: ShipmentId, UserId: UserId, IsInterested: true, InterestDate: new Date() })
+      .then((data) => {
+           
+     const interestedUser=User.findOne({where:{UserId:req.body.UserId}});
+
+
+     const shipmentUser=   Shipment.findOne(
+       {where:{ ShipmentId:req.body.ShipmentId },
+      include:[ {
+        model: User,
+        attributes: ['FullName','Email'],
+      },
+    
+      ]
     });
+
+    const url = process.env.ADMIN_URL + `user-profile-info/${req.body.UserId}`;
+    console.log(`interestedUser`, interestedUser);
+    console.log(`shipmentUser`, shipmentUser)
+          
+          const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: process.env.EMAIL_USERNAME,
+              pass: process.env.EMAIL_PASSWORD,
+            },
+          });
+         
+          // point to the template folder
+          const handlebarOptions = {
+            viewEngine: {
+              partialsDir: path.resolve('./views/'),
+              defaultLayout: false,
+            },
+            viewPath: path.resolve('./views/'),
+          };
+
+          // use a template file with nodemailer
+          transporter.use('compile', hbs(handlebarOptions));
+
+        
+          //Send mail to Shipment Owner
+          const msgShipment=`You have an interest from  ${interestedUser.User.FullName} for Load Boarding Services.Kindly check the profile  <a href='${url}'>here</a>  `;
+
+          transporter
+            .sendMail({
+              from: process.env.FROM_EMAIL,
+              to: shipmentUser.User.Email,
+              template: 'generic', // the name of the template file i.e email.handlebars
+              context: {
+                name: shipmentUser.User.FullName,
+                msg: msgShipment,
+              },
+              subject: 'Request for LoadBoarding Services',
+              //     html: `<h1>Email Confirmation</h1>
+              // <h2>Hello ${fullname}</h2>
+
+              // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+              // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+              // </div>`,
+            })
+            .then((info) => {
+              console.log({ info });
+            })
+            .catch(console.error);
+
+
+
+
+          //Send Mail to interested carrier
+          const msgCarrier=`Your interest in shipment with ref:${req.body.ShipmentId} for LoadBoraing Services has been sent.We wish you best luck going further in the process.`;
+          transporter
+          .sendMail({
+            from: process.env.FROM_EMAIL,
+            to: interestedUser.Email,
+            template: 'generic', // the name of the template file i.e email.handlebars
+            context: {
+              name: interestedUser.FullName,
+              msg: msgCarrier,
+            },
+            subject: 'Request for LoadBoarding Services ',
+            //     html: `<h1>Email Confirmation</h1>
+            // <h2>Hello ${fullname}</h2>
+
+            // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+            // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+            // </div>`,
+          })
+
+        res.status(200).send({
+          message: 'Shown Interest',
+          data: data,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: `${err.message} -Bad Operation` || 'Some error occurred while retrieving records.',
+        });
+      });
+
+
+
+
+
+    } 
+    else {
+
+
+
+      Interested.findOne({ where: { ShipmentId: ShipmentId, UserId: UserId,IsInterested: false } })
+      .then((IsInterestedResult) => {
+        if (IsInterestedResult) {
+          Interested.update({ IsInterested: true }, { where: { ShipmentId: ShipmentId, UserId: UserId } })
+  
+            .then((data) => {
+              res.status(200).send({
+                message: 'Restored Interest',
+                data: data,
+              });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: `${err.message} -Bad Operation` || 'Some error occurred while retrieving records.',
+              });
+            });
+          
+          }
+          else {
+
+            Interested.update({ IsInterested: false }, { where: { ShipmentId: ShipmentId, UserId: UserId } })
+  
+            .then((data) => {
+              res.status(200).send({
+                message: 'Withdrawn Interest',
+                data: data,
+              });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: `${err.message} -Bad Operation` || 'Some error occurred while retrieving records.',
+              });
+            });
+
+
+
+
+
+          }
+
+
+    })
+  }
+
+
+  })
+  .catch((err)=>{
+  console.log(`err.message`, err.message)
+    res.status(500).send({
+      message: `${err.message} -Bad Operation` || 'Some error occurred while retrieving records.',
+    });
+
+
+  })
+
+ 
+     
 };
 
 exports.findAllShipmentsInterest = (req, res) => {
@@ -429,15 +563,18 @@ exports.findAllShipmentsInterest = (req, res) => {
   Interested.findAll({
     where: { IsInterested: true },
 
-    include: {
+   
+
+
+    include:[ {
       model: User,
       attributes: ['FullName'],
     },
-
-    include: {
+    {
       model: Shipment,
-      attributes: ['LoadCategory', 'LoadType', 'LoadWeight', 'LoadUnit', 'Qty', 'Description'],
-    },
+      attributes: ['LoadCategory', 'LoadType', 'LoadWeight', 'LoadUnit', 'Qty', 'Description','ShipmentId'],
+    }],
+   
   })
 
     .then((data) => {

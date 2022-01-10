@@ -71,7 +71,7 @@ exports.signup = (req, res) => {
     Address: req.body.CompanyAddress,
     Region: req.body.Region,
     Country: req.body.Country,
-    CompanyType: req.body.CompanyType,
+    CompanyType: req.body.RoleType,
   })
     .then((company) => {
       //const company = Company.save();
@@ -97,10 +97,10 @@ exports.signup = (req, res) => {
         Password: encryptedPassword,
       })
         .then((user) => {
-          if (req.body.CompanyType) {
+          if (req.body.RoleType) {
             Role.findOne({
               where: {
-                Name: req.body.CompanyType,
+                Name: req.body.RoleType,
               },
             }).then((role) => {
               UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });

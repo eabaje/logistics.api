@@ -8,7 +8,9 @@
   "host": "localhost:8000",
   "basePath": "/",
   "tags": [],
-  "schemes": ["http"],
+  "schemes": [
+    "http"
+  ],
   "consumes": [],
   "produces": [],
   "paths": {
@@ -467,9 +469,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "title": {
-                  "example": "any"
-                },
                 "SubscriptionId": {
                   "example": "any"
                 },
@@ -495,9 +494,6 @@
         "responses": {
           "201": {
             "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
           },
           "409": {
             "description": "Conflict"
@@ -1244,6 +1240,15 @@
                 },
                 "DriverDocs": {
                   "example": "any"
+                },
+                "Password\r": {
+                  "example": "any"
+                },
+                "Password": {
+                  "example": "any"
+                },
+                "Region": {
+                  "example": "any"
                 }
               }
             }
@@ -1745,6 +1750,52 @@
         }
       }
     },
+    "/api/shipment/findAllShipmentsInterest": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/shipment/showInterest": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ShipmentId": {
+                  "example": "any"
+                },
+                "UserId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/shipment/create": {
       "post": {
         "tags": [],
@@ -1811,6 +1862,9 @@
                   "example": "any"
                 },
                 "DeliveryContactPhone": {
+                  "example": "any"
+                },
+                "DeliveryEmail": {
                   "example": "any"
                 },
                 "AssignedShipment": {
