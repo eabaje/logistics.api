@@ -137,6 +137,9 @@ db.assignshipment.belongsTo(db.user, { foreignKey: 'UserId' });
 db.user.hasOne(db.interested, { foreignKey: 'UserId' });
 db.interested.belongsTo(db.user, { foreignKey: 'UserId' });
 
+db.user.hasOne(db.payment, { foreignKey: 'UserId' });
+db.payment.belongsTo(db.user, { foreignKey: 'UserId' });
+
 db.trip.hasMany(db.track, { foreignKey: 'TripId' });
 db.track.belongsTo(db.trip, { foreignKey: 'TripId' });
 
