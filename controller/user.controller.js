@@ -147,8 +147,8 @@ exports.findAllBySearch = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.userId;
 
-  User.findByPk({
-    id,
+  User.findOne({
+    where: { UserId: id },
     include: {
       model: Company,
       attributes: ['CompanyName'],

@@ -19,6 +19,7 @@ exports.create = (req, res) => {
   // Create a Shipment
   const shipment = {
     CompanyId: req.body.CompanyId,
+    UserId: req.body.UserId,
     LoadCategory: req.body.LoadCategory,
     LoadType: req.body.LoadType,
     LoadWeight: req.body.LoadWeight,
@@ -75,10 +76,16 @@ exports.findAll = (req, res) => {
       attributes: ['FullName'],
     },
 
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: User,
+        attributes: ['FullName', 'Email', 'Phone'],
+      },
+    ],
     order: [['createdAt', 'DESC']],
   })
     .then((data) => {

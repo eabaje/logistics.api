@@ -63,54 +63,62 @@ exports.create = async (req, res) => {
         Country: req.body.Country,
         UserName: req.body.Email.toLowerCase(),
         Password: encryptedPassword,
-      });
+      }).then((user) => {
+        Role.findOne({
+          where: {
+            Name: 'driver',
+          },
+        }).then((role) => {
+          UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });
+        });
 
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD,
-        },
-      });
-      // //  mailgun
-      // // Step 2 - Generate a verification token with the user's ID
-      // const verificationToken = user.generateVerificationToken();
-      // // Step 3 - Email the user a unique verification link
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD,
+          },
+        });
+        // //  mailgun
+        // // Step 2 - Generate a verification token with the user's ID
+        // const verificationToken = user.generateVerificationToken();
+        // // Step 3 - Email the user a unique verification link
 
-      // point to the template folder
-      const handlebarOptions = {
-        viewEngine: {
-          partialsDir: path.resolve('./views/'),
-          defaultLayout: false,
-        },
-        viewPath: path.resolve('./views/'),
-      };
+        // point to the template folder
+        const handlebarOptions = {
+          viewEngine: {
+            partialsDir: path.resolve('./views/'),
+            defaultLayout: false,
+          },
+          viewPath: path.resolve('./views/'),
+        };
 
-      // use a template file with nodemailer
-      transporter.use('compile', hbs(handlebarOptions));
+        // use a template file with nodemailer
+        transporter.use('compile', hbs(handlebarOptions));
 
-      //   const url = process.env.BASE_URL + `auth/verify/${token}`;
-      transporter.sendMail({
-        from: process.env.FROM_EMAIL,
-        to: email,
-        template: 'emailPassword', // the name of the template file i.e email.handlebars
-        context: {
-          name: req.body.DriverName,
-          password: generatedPassword,
-          url: url,
-        },
-        subject: 'Welcome to Global Load Dispatch',
-        //     html: `<h1>Email Confirmation</h1>
-        // <h2>Hello ${fullname}</h2>
+        //   const url = process.env.BASE_URL + `auth/verify/${token}`;
+        transporter.sendMail({
+          from: process.env.FROM_EMAIL,
+          to: email,
+          template: 'emailPassword', // the name of the template file i.e email.handlebars
+          context: {
+            name: req.body.DriverName,
+            password: generatedPassword,
+            url: url,
+          },
+          subject: 'Welcome to Global Load Dispatch',
+          //     html: `<h1>Email Confirmation</h1>
+          // <h2>Hello ${fullname}</h2>
 
-        // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
-        // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-        // </div>`,
-      });
+          // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+          // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+          // </div>`,
+        });
 
-      res.send({
-        message: 'Driver was added successfully.',
-        data: data,
+        res.send({
+          message: 'Driver was added successfully.',
+          data: data,
+        });
       });
     })
     .catch((err) => {

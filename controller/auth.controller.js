@@ -52,18 +52,6 @@ exports.signup = (req, res) => {
     }
   });
 
-  //  var password = generator.generate({length: 8,numbers: true,})
-
-  // const company = Company.create({
-  //   CompanyName: req.body.CompanyName,
-  //   ContactEmail: req.body.ContactEmail,
-  //   ContactPhone: req.body.ContactPhone,
-  //   Address: req.body.CompanyAddress,
-  //   Region: req.body.Region,
-  //   Country: req.body.Country,
-  //   CompanyType: req.body.CompanyType,
-  // });
-
   Company.create({
     CompanyName: req.body.CompanyName,
     ContactEmail: req.body.ContactEmail,
@@ -75,7 +63,7 @@ exports.signup = (req, res) => {
   })
     .then((company) => {
       //const company = Company.save();
-      encryptedPassword = req.body.Password
+      const encryptedPassword = req.body.Password
         ? bcrypt.hashSync(req.body.Password, 10)
         : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);
 
@@ -97,6 +85,7 @@ exports.signup = (req, res) => {
         Password: encryptedPassword,
       })
         .then((user) => {
+          console.log(`RoleType`, req.body.RoleType);
           if (req.body.RoleType) {
             Role.findOne({
               where: {
@@ -256,6 +245,7 @@ exports.signin = (req, res) => {
                 CompanyId: user.CompanyId,
                 CompanyName: company.CompanyName,
                 roles: role.Name,
+                PicUrl: user.PicUrl,
               },
             });
           });
