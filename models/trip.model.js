@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, DataTypes) => {
   const Trip = sequelize.define('Trips', {
     TripId: {
@@ -17,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     DeliveryDate: { type: DataTypes.DATEONLY },
     DriverNote: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
+    Review: { type: DataTypes.STRING },
 
     // ShipmentId: {
     //   type: DataTypes.STRING,
