@@ -91,7 +91,7 @@ function initial() {
   endDate.setDate(endDate.getDate() + 90);
 
   Company.create({
-    CompanyId: 1,
+    //  CompanyId: 1,
     CompanyName: 'Global Load dispatch',
     ContactEmail: 'ebi.abaje@loaddispatch.com.ng',
     ContactPhone: '08057886381',

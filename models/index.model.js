@@ -131,6 +131,9 @@ db.shipment.belongsTo(db.user, { foreignKey: 'UserId' });
 db.shipment.hasOne(db.trip, { foreignKey: 'ShipmentId' });
 db.trip.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
 
+db.shipment.hasMany(db.track, { foreignKey: 'ShipmentId' });
+db.track.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
+
 db.user.hasMany(db.payment, { foreignKey: 'UserId' });
 db.payment.belongsTo(db.user, { foreignKey: 'UserId' });
 
@@ -145,6 +148,9 @@ db.track.belongsTo(db.trip, { foreignKey: 'TripId' });
 
 db.user.hasMany(db.trip, { foreignKey: 'UserId' });
 db.trip.belongsTo(db.user, { foreignKey: 'UserId' });
+
+db.user.hasMany(db.track, { foreignKey: 'UserId' });
+db.track.belongsTo(db.user, { foreignKey: 'UserId' });
 
 db.company.hasMany(db.shipment, { foreignKey: 'CompanyId' });
 db.shipment.belongsTo(db.company, { foreignKey: 'CompanyId' });

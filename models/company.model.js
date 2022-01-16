@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     Country: { type: DataTypes.STRING },
     Region: { type: DataTypes.STRING },
     CompanyType: { type: DataTypes.STRING },
+    Specilaization: { type: DataTypes.STRING },
   });
 
   return Company;

@@ -60,6 +60,7 @@ exports.signup = (req, res) => {
     Region: req.body.Region,
     Country: req.body.Country,
     CompanyType: req.body.RoleType,
+    Specilaization: req.body.Specilaization,
   })
     .then((company) => {
       //const company = Company.save();
@@ -189,6 +190,7 @@ exports.signup = (req, res) => {
     })
 
     .catch((err) => {
+      console.log(`err`, err);
       res.status(500).send({ message: 'Company Error:' + err.message });
     });
 };
