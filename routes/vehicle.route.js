@@ -17,6 +17,8 @@ module.exports = function (app) {
 
   app.get('/api/vehicle/findAllVehiclesByCategory/:carrierId/:vehicleType', controller.findAllVehiclesByCategory);
 
+  app.get('/api/vehicle/findAllVehiclesByCompany/:companyId', controller.findAllVehiclesByCompany);
+
   app.get('/api/vehicle/findAllVehiclesByDate/:startDate/:toDate', controller.findAllVehiclesByDate);
 
   app.put('/api/vehicle/update/:vehicleId', controller.update);

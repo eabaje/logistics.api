@@ -358,6 +358,30 @@ exports.findAllDriversByVehicle = (req, res) => {
     });
 };
 
+exports.findAllDriversByCompany = (req, res) => {
+  const companyId = req.params.companyId;
+
+  Driver.findAll({
+    where: { CompanyId: companyId },
+
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
+    });
+};
 exports.findAllAssignedDrivers = (req, res) => {
   //  const vehicleId = req.query.VehicleId;
 

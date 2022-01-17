@@ -106,6 +106,9 @@ db.carrier.belongsTo(db.company, { foreignKey: 'CompanyId' });
 db.carrier.hasMany(db.vehicle, { foreignKey: 'CarrierId' });
 db.vehicle.belongsTo(db.carrier, { foreignKey: 'CarrierId' });
 
+db.company.hasMany(db.vehicle, { foreignKey: 'CompanyId' });
+db.vehicle.belongsTo(db.company, { foreignKey: 'CompanyId' });
+
 db.company.hasOne(db.user, { foreignKey: 'CompanyId' });
 db.user.belongsTo(db.company, { foreignKey: 'CompanyId' });
 

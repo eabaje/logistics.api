@@ -44,6 +44,8 @@ module.exports = function (app) {
 
   app.get('/api/driver/findAll', controller.findAll);
 
+  app.get('/api/driver/findAllDriversByCompany/:companyId', controller.findAllDriversByCompany);
+
   app.get('/api/driver/findAllDriversByDriverName/:driverName', controller.findAllDriversByDriverName);
 
   app.get('/api/driver/findAllDriversByVehicle/:vehicleId', controller.findAllDriversByVehicle);
