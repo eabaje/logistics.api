@@ -46,6 +46,7 @@ exports.create = async (req, res) => {
     Rating: req.body.Rating,
     DriverDocs: req.body.DriverDocs,
   };
+  console.log(`driver`, driver)
   const generatedPassword = generator.generate({ length: 8, numbers: true });
   const encryptedPassword = req.body.Password
     ? bcrypt.hashSync(req.body.Password, 10)

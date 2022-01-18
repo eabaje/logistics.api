@@ -62,9 +62,9 @@ module.exports = function (app) {
     next();
   });
   //[verifySignUp.checkDuplicateUsernameOrEmail,verifySignUp.checkRolesExisted],upLoadPics,
-  app.post('/api/upload/uploadImage', imageUploader.single('PicUrl'), controller.uploadImage);
+  app.post('/api/upload/uploadImage', imageUploader.single('filePicUrl'), controller.uploadImage);
 
-  app.post('/api/upload/uploadDocument', upLoadDocuments.single('LicenseUrl'), controller.uploadDocument);
+  app.post('/api/upload/uploadDocument', upLoadDocuments.single('fileLicenseUrl'), controller.uploadDocument);
 
   app.post('/api/upload/uploadImageWithData', imageUploader.single('PicUrl'), controller.uploadImageWithData);
 };
