@@ -1,6 +1,5 @@
 const { authJwt } = require('../middleware');
 const controller = require('../controller/driver.controller');
-
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -56,8 +55,8 @@ module.exports = function (app) {
 
   app.get('/api/driver/findAllAssignedDrivers', controller.findAllAssignedDrivers);
   //upLoadDocuments.single('LicenseUrl'), imageUploader.single('PicUrl'),
-  app.post('/api/driver/create', controller.create);
-
+  app.post('/api/driver/create', imageUploader.single('filePicUrl'), controller.create);
+  //[, upLoadDocuments.single('fileLicenseUrl')]
   app.post('/api/driver/AssignDriverToVehicle', controller.AssignDriverToVehicle);
 
   app.put('/api/driver/update/:driverId', controller.update);

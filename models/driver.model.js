@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     Email: { type: DataTypes.STRING },
     Phone: { type: DataTypes.STRING },
     SecondaryPhone: { type: DataTypes.STRING },
+    // DOB: { type: DataTypes.DATEONLY },
     Address: { type: DataTypes.STRING },
     City: { type: DataTypes.STRING },
     // Region: { type: DataTypes.STRING },

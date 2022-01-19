@@ -8,6 +8,10 @@ const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
 const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
+const multer = require('multer');
+const multerOpt = require('../middleware/multer');
+const sharp = require('sharp');
+const fs = require('fs');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const Driver = db.driver;
@@ -15,20 +19,18 @@ const AssignDriver = db.assigndriver;
 const Vehicle = db.vehicle;
 const User = db.user;
 const Company = db.company;
+const Role = db.role;
+const UserRole = db.userrole;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
 exports.create = async (req, res) => {
-  // const picpath = path.resolve(`uploads/pics/${req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)}`);
-  // console.log(`imagefile0`, picpath);
+  const { filename: image } = req.file;
+  const newFileName = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
+  const picpath = path.resolve(`uploads/pics/${newFileName}`);
 
-  // await sharp(req.file.buffer)
-  // .resize(200, 200)
-  // .toFormat("jpeg")
-  // .jpeg({ quality: 90 })
-  // .toFile(picpath);
-
-  // console.log(`imagefile`, req.file);
+  await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
+  // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
 
   // Create a Driver
   const driver = {
@@ -40,13 +42,13 @@ exports.create = async (req, res) => {
     City: req.body.City,
     // Region: req.body.Region,
     Country: req.body.Country,
-    PicUrl: req.body.PicUrl, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
+    PicUrl: newFileName, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
     Licensed: req.body.Licensed,
-    LicenseUrl: req.body.LicenseUrl, // req.LicenseUrl.path,
+    //  LicenseUrl: req.files.fileLicenseUrl[0].filename, // req.LicenseUrl.path,
     Rating: req.body.Rating,
     DriverDocs: req.body.DriverDocs,
   };
-  console.log(`driver`, driver)
+  console.log(`driver`, driver);
   const generatedPassword = generator.generate({ length: 8, numbers: true });
   const encryptedPassword = req.body.Password
     ? bcrypt.hashSync(req.body.Password, 10)
@@ -100,7 +102,7 @@ exports.create = async (req, res) => {
         //   const url = process.env.BASE_URL + `auth/verify/${token}`;
         transporter.sendMail({
           from: process.env.FROM_EMAIL,
-          to: email,
+          to: req.body.Email,
           template: 'emailPassword', // the name of the template file i.e email.handlebars
           context: {
             name: req.body.DriverName,
