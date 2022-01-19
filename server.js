@@ -1,6 +1,8 @@
 require('dotenv').config();
 const multer = require('multer');
-const app = require('express')();
+const express = require('express');
+const app = express();
+//const app = require('express')();
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger_output.json');
 var uuid = require('uuid');
@@ -49,7 +51,9 @@ app.get('/', (req, res) => {
 app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to Loadboard Logistics api.' });
 });
-
+app.use(express.static('uploads')); 
+app.use('/pics', express.static('pics'));
+app.use('/docs', express.static('docs'));
 // set port, listen for requests
 //const PORT = process.env.PORT || 8080;
 const PORT = process.env.PORT || 9000;

@@ -40,7 +40,7 @@ exports.create = async (req, res) => {
     Phone: req.body.Phone,
     Address: req.body.Address,
     City: req.body.City,
-    // Region: req.body.Region,
+     Region: req.body.Region,
     Country: req.body.Country,
     PicUrl: newFileName, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
     Licensed: req.body.Licensed,
@@ -63,6 +63,7 @@ exports.create = async (req, res) => {
         Phone: req.body.Phone,
         Address: req.body.Address,
         City: req.body.Region,
+        Region: req.body.Region,
         Country: req.body.Country,
         UserName: req.body.Email.toLowerCase(),
         Password: encryptedPassword,
@@ -107,7 +108,7 @@ exports.create = async (req, res) => {
           context: {
             name: req.body.DriverName,
             password: generatedPassword,
-            url: url,
+           // url: url,
           },
           subject: 'Welcome to Global Load Dispatch',
           //     html: `<h1>Email Confirmation</h1>
@@ -140,10 +141,16 @@ exports.findAll = (req, res) => {
   Driver.findAll({
     where: condition,
 
-    include: {
+    include:[ {
       model: Company,
       attributes: ['CompanyName'],
     },
+    {
+      model: User,
+      attributes: ['FullName'],
+    },
+  
+  ]
   })
 
     .then((data) => {
@@ -163,13 +170,17 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.driverId;
 
-  Driver.findByPk({
-    id,
-
-    include: {
+  Driver.findOne({ where:{DriverId:id },
+    include:[ {
       model: Company,
       attributes: ['CompanyName'],
     },
+    {
+      model: User,
+      attributes: ['FullName'],
+    },
+  
+  ]
   })
 
     .then((data) => {
@@ -179,6 +190,7 @@ exports.findOne = (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(`err`, err)
       res.status(500).send({
         message: 'Error retrieving Driver with DriverId=' + id,
       });

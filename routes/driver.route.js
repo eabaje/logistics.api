@@ -39,7 +39,7 @@ module.exports = function (app) {
 
   //, [authJwt.verifyToken]
 
-  app.get('/api/driver/findOne/:id', controller.findOne);
+  app.get('/api/driver/findOne/:driverId', controller.findOne);
 
   app.get('/api/driver/findAll', controller.findAll);
 

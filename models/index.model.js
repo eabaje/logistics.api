@@ -143,6 +143,9 @@ db.payment.belongsTo(db.user, { foreignKey: 'UserId' });
 db.user.hasOne(db.assignshipment, { foreignKey: 'UserId' });
 db.assignshipment.belongsTo(db.user, { foreignKey: 'UserId' });
 
+db.user.hasOne(db.driver, { foreignKey: 'UserId' });
+db.driver.belongsTo(db.user, { foreignKey: 'UserId' });
+
 db.user.hasOne(db.interested, { foreignKey: 'UserId' });
 db.interested.belongsTo(db.user, { foreignKey: 'UserId' });
 
