@@ -51,7 +51,7 @@ app.get('/', (req, res) => {
 app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to Loadboard Logistics api.' });
 });
-app.use(express.static('uploads')); 
+app.use(express.static('uploads'));
 app.use('/pics', express.static('pics'));
 app.use('/docs', express.static('docs'));
 // set port, listen for requests
