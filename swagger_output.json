@@ -2,15 +2,14 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "REST API",
-    "description": ""
+    "title": "LOAD DISPACH REST API",
+    "description": "This is the REST API for the Global Load Dispatch System"
   },
-  "host": "localhost:8000",
+  "host": "loadboard-api.herokuapp.com",
   "basePath": "/",
   "tags": [],
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["https"],
+
   "consumes": [],
   "produces": [],
   "paths": {
@@ -46,7 +45,10 @@
                 "Country": {
                   "example": "any"
                 },
-                "CompanyType": {
+                "RoleType": {
+                  "example": "any"
+                },
+                "Specilaization": {
                   "example": "any"
                 },
                 "Password\r": {
@@ -1055,13 +1057,13 @@
         }
       }
     },
-    "/api/driver/findOne/{id}": {
+    "/api/driver/findOne/{driverId}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "driverId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1082,6 +1084,28 @@
         "tags": [],
         "description": "",
         "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/driver/findAllDriversByCompany/{companyId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1220,19 +1244,19 @@
                 "Address": {
                   "example": "any"
                 },
+                "DOB": {
+                  "example": "any"
+                },
                 "City": {
+                  "example": "any"
+                },
+                "Region": {
                   "example": "any"
                 },
                 "Country": {
                   "example": "any"
                 },
-                "PicUrl": {
-                  "example": "any"
-                },
                 "Licensed": {
-                  "example": "any"
-                },
-                "LicenseUrl": {
                   "example": "any"
                 },
                 "Rating": {
@@ -1245,9 +1269,6 @@
                   "example": "any"
                 },
                 "Password": {
-                  "example": "any"
-                },
-                "Region": {
                   "example": "any"
                 }
               }
@@ -1480,6 +1501,28 @@
           },
           {
             "name": "vehicleType",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/findAllVehiclesByCompany/{companyId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1808,6 +1851,9 @@
               "type": "object",
               "properties": {
                 "CompanyId": {
+                  "example": "any"
+                },
+                "UserId": {
                   "example": "any"
                 },
                 "LoadCategory": {
