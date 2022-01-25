@@ -1,6 +1,6 @@
-require('dotenv').config();
 require('../config/db.postgres.config');
 var generator = require('generate-password');
+require('dotenv').config();
 
 const nodemailer = require('nodemailer');
 const express = require('express');
