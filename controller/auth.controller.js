@@ -217,7 +217,7 @@ exports.signin = (req, res) => {
       // var token = jwt.sign({ id: user.UserId }, process.env, {
       //   expiresIn: 86400, // 24 hours
       // }); .toUpperCase()
-      const token = jwt.sign({ UserId: user.UserId }, process.env.TOKEN_KEY, {
+      const token = jwt.sign({ UserId: user.UserId }, `${process.env.TOKEN_KEY}`, {
         expiresIn: '86400',
       });
       var authorities = [];
