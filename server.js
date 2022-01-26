@@ -30,10 +30,10 @@ const Subscription = db.subscribe;
 const UserSubscription = db.usersubscription;
 //db.sequelize.sync();
 //force: true will drop the table if it already exists
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log('Drop and Resync Database with { force: true }');
-//   initial();
-// });
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('Drop and Resync Database with { force: true }');
+  initial();
+});
 
 // app.use(
 //   session({
@@ -92,16 +92,16 @@ function initial() {
   let startDate = new Date();
 
   let endDate = new Date();
-  endDate.setDate(endDate.getDate() + 90);
+  endDate.setDate(endDate.getDate() + 30);
 
   Company.create({
     //  CompanyId: 1,
-    CompanyName: 'Global Load dispatch',
+    CompanyName: 'Global Load Dispatch',
     ContactEmail: 'ebi.abaje@loaddispatch.com.ng',
     ContactPhone: '08057886381',
     CompanyType: 'admin',
     Address: 'Lagos',
-    City: 'Lagos',
+    City: 'LG',
     Country: 'NG',
   });
 
@@ -155,17 +155,17 @@ function initial() {
   Subscription.create({
     SubscribeId: 1,
     SubscriptionType: 'free Trial',
-    SubscriptionName: 'Free 90 Day Trial',
+    SubscriptionName: 'Free 30 Day Trial',
     Amount: 0.0,
     Description: 'Basic ',
     Active: true,
-    Duration: 90,
+    Duration: 30,
   });
 
   UserSubscription.create({
     UserSubscriptionId: 1,
     SubscribeId: 1,
-    SubscriptionName: 'Free 90 Day Trial',
+    SubscriptionName: 'Free 30 Day Trial',
     UserId: initialUserId,
     Active: true,
     StartDate: startDate,
