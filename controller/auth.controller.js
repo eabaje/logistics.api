@@ -97,7 +97,7 @@ exports.signup = (req, res) => {
 
               // Add User Subscription
               // user.setRoles(roles).then(() => {
-              const token = jwt.sign({ UserId: user.UserId }, process.env.TOKEN_KEY, {
+              const token = jwt.sign({ UserId: user.UserId }, `${process.env.TOKEN_KEY}`, {
                 expiresIn: '2h',
               });
               // save user token
@@ -107,8 +107,8 @@ exports.signup = (req, res) => {
               const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                  user: process.env.EMAIL_USERNAME,
-                  pass: process.env.EMAIL_PASSWORD,
+                  user: `${process.env.EMAIL_USERNAME}`,
+                  pass: `${process.env.EMAIL_PASSWORD}`,
                 },
               });
               // //  mailgun
@@ -128,10 +128,10 @@ exports.signup = (req, res) => {
               // use a template file with nodemailer
               transporter.use('compile', hbs(handlebarOptions));
 
-              const url = process.env.BASE_URL + `auth/verify/${token}`;
+              const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
               transporter
                 .sendMail({
-                  from: process.env.FROM_EMAIL,
+                  from: `${process.env.FROM_EMAIL}`,
                   to: email,
                   template: 'email2', // the name of the template file i.e email.handlebars
                   context: {
