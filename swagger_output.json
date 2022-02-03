@@ -9,7 +9,6 @@
   "basePath": "/",
   "tags": [],
   "schemes": ["https"],
-
   "consumes": [],
   "produces": [],
   "paths": {
@@ -176,10 +175,46 @@
             "schema": {
               "type": "object",
               "properties": {
+                "Email": {
+                  "example": "any"
+                },
+                "CompanyName": {
+                  "example": "any"
+                },
+                "ContactEmail": {
+                  "example": "any"
+                },
+                "ContactPhone": {
+                  "example": "any"
+                },
+                "CompanyAddress": {
+                  "example": "any"
+                },
+                "Region": {
+                  "example": "any"
+                },
+                "Country": {
+                  "example": "any"
+                },
+                "RoleType": {
+                  "example": "any"
+                },
+                "Specilaization": {
+                  "example": "any"
+                },
+                "Password\r": {
+                  "example": "any"
+                },
+                "Password": {
+                  "example": "any"
+                },
                 "FullName": {
                   "example": "any"
                 },
-                "Email": {
+                "FirstName": {
+                  "example": "any"
+                },
+                "LastName": {
                   "example": "any"
                 },
                 "Phone": {
@@ -188,13 +223,10 @@
                 "Address": {
                   "example": "any"
                 },
-                "City": {
+                "AcceptTerms": {
                   "example": "any"
                 },
-                "Country": {
-                  "example": "any"
-                },
-                "UserPicUrl": {
+                "PaymentMethod": {
                   "example": "any"
                 }
               }
@@ -202,11 +234,14 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK"
           },
-          "409": {
-            "description": "Conflict"
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -317,27 +352,6 @@
               "properties": {
                 "UserId": {
                   "example": "any"
-                },
-                "FullName": {
-                  "example": "any"
-                },
-                "Email": {
-                  "example": "any"
-                },
-                "Phone": {
-                  "example": "any"
-                },
-                "Address": {
-                  "example": "any"
-                },
-                "City": {
-                  "example": "any"
-                },
-                "Country": {
-                  "example": "any"
-                },
-                "UserPicUrl": {
-                  "example": "any"
                 }
               }
             }
@@ -414,6 +428,25 @@
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/updateUserRole/{userId}": {
+      "put": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
           },
           {
             "name": "obj",
@@ -421,7 +454,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "userRoleId": {
+                "UserId": {
                   "example": "any"
                 }
               }
