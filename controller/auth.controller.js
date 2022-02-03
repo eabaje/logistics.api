@@ -105,7 +105,7 @@ exports.signup = (req, res) => {
               user.save();
 
               const transporter = nodemailer.createTransport({
-                service: 'gmail',
+                service: `${process.env.MAIL_SERVICE}`,
                 auth: {
                   user: `${process.env.EMAIL_USERNAME}`,
                   pass: `${process.env.EMAIL_PASSWORD}`,
@@ -151,28 +151,6 @@ exports.signup = (req, res) => {
                 })
                 .catch(console.error);
 
-              // const msg = {
-              //   from: process.env.FROM_EMAIL,
-              //   to: email,
-              //   subject: 'Welcome to Global Load Dispatch',
-              //   html: `<h1>Email Confirmation</h1>
-              // <h2>Hello ${fullname}</h2>
-
-              // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
-              // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-              // </div>`,
-              // };
-
-              // sgMail.send(msg).then(
-              //   () => {},
-              //   (error) => {
-              //     console.error(error);
-
-              //     if (error.response) {
-              //       console.error(error.response.body);
-              //     }
-              //   },
-              // );
               res.status(200).send({ message: 'User registered successfully!' });
               // });
             });
@@ -253,6 +231,91 @@ exports.signin = (req, res) => {
           });
         });
       });
+    })
+    .catch((err) => {
+      console.log('state:', err.message);
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.reset = (req, res) => {
+  // where: { [Op.and]: [{ Email: req.body.Email }, { IsActivated: true }] },
+  User.findOne({
+    where: { Email: req.body.Email },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'User Not found.' });
+      }
+
+      const encryptedPassword = req.body.Password
+        ? bcrypt.hashSync(req.body.Password, 10)
+        : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);
+
+      User.update(
+        { Password: encryptedPassword },
+        {
+          where: { UserId: user.UserId },
+        },
+      )
+        .then((num) => {
+          if (num == 1) {
+            const transporter = nodemailer.createTransport({
+              service: `${process.env.MAIL_SERVICE}`,
+              auth: {
+                user: `${process.env.EMAIL_USERNAME}`,
+                pass: `${process.env.EMAIL_PASSWORD}`,
+              },
+            });
+            // //  mailgun
+            // // Step 2 - Generate a verification token with the user's ID
+            // const verificationToken = user.generateVerificationToken();
+            // // Step 3 - Email the user a unique verification link
+
+            // point to the template folder
+            const handlebarOptions = {
+              viewEngine: {
+                partialsDir: path.resolve('./views/'),
+                defaultLayout: false,
+              },
+              viewPath: path.resolve('./views/'),
+            };
+
+            // use a template file with nodemailer
+            transporter.use('compile', hbs(handlebarOptions));
+
+            const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
+            transporter.sendMail({
+              from: `${process.env.FROM_EMAIL}`,
+              to: req.body.Email,
+              template: 'emailPassword', // the name of the template file i.e email.handlebars
+              context: {
+                name: user.FullName,
+                password: encryptedPassword,
+              },
+              subject: 'Password Reset',
+              //     html: `<h1>Email Confirmation</h1>
+              // <h2>Hello ${fullname}</h2>
+
+              // <p>Password: `${encryptedPassword}`By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+              // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+              // </div>`,
+            });
+
+            res.send({
+              message: 'User was updated successfully.',
+            });
+          } else {
+            res.send({
+              message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`,
+            });
+          }
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: 'Error updating User with id=' + id,
+          });
+        });
     })
     .catch((err) => {
       console.log('state:', err.message);

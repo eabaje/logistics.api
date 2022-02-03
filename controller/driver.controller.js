@@ -78,10 +78,10 @@ exports.create = async (req, res) => {
         });
 
         const transporter = nodemailer.createTransport({
-          service: 'gmail',
+          service: `${process.env.MAIL_SERVICE}`,
           auth: {
-            user: process.env.EMAIL_USERNAME,
-            pass: process.env.EMAIL_PASSWORD,
+            user: `${process.env.EMAIL_USERNAME}`,
+            pass: `${process.env.EMAIL_PASSWORD}`,
           },
         });
         // //  mailgun

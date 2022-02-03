@@ -16,79 +16,135 @@ const Op = db.Sequelize.Op;
 
 // Create and Save a new User
 exports.create = (req, res) => {
-  // // Validate request
-  // if (!req.body.title) {
-  //   res.status(400).send({
-  //     message: 'Content can not be empty!',
-  //   });
-  //   return;
-  // }
-
-  // Create a User
-
-  const user = {
-    FullName: req.body.FullName,
-    Email: req.body.Email,
-    Phone: req.body.Phone,
-    Address: req.body.Address,
-    City: req.body.City,
-    Country: req.body.Country,
-    UserPicUrl: req.body.UserPicUrl,
-    Password: '',
-    // UserDocs: req.body.UserDocs
-  };
-  // Save User in the database
-
-  //exports.createUser = (req, res) => {
-  const email = req.body.Email;
-
-  const oldUser = User.findAll({ where: { Email: email } });
-
-  if (oldUser) {
-    return res.status(409).send('User Already Exist. Please Login');
-  }
-  //Encrypt user password
-  user.Password = bcrypt.hash(password, 10);
-  const newUser = User.create(user);
-
-  // .then(data => {
-  //   res.send(data);
-  // })
-  // .catch(err => {
-  //         res.status(500).send({
-  //             message:
-  //             err.message || "Some error occurred while creating the User."
-  //         });
-  //    });
-
-  const token = jwt.sign({ userid: User.UserId, email }, process.env.TOKEN_KEY, {
-    expiresIn: '2h',
-  });
-  // save user token
-  user.token = token;
-
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
+  User.findOne({
+    where: {
+      Email: req.body.Email,
     },
+  }).then((user) => {
+    if (user) {
+      return res.status(404).send({ message: 'Email already exists' });
+    }
   });
 
-  // Step 2 - Generate a verification token with the user's ID
-  const verificationToken = user.generateVerificationToken();
-  // Step 3 - Email the user a unique verification link
-  const url = process.env.BASE_URL + '/verify/${token}';
-  transporter.sendMail({
-    to: email,
-    subject: 'Verify Account',
-    html: `Click <a href = '${url}'>here</a> to confirm your email.`,
-  });
-  return res.status(201).send({
-    message: `Sent a verification email to ${email}`,
-  });
+  Company.create({
+    CompanyName: req.body.CompanyName,
+    ContactEmail: req.body.ContactEmail,
+    ContactPhone: req.body.ContactPhone,
+    Address: req.body.CompanyAddress,
+    Region: req.body.Region,
+    Country: req.body.Country,
+    CompanyType: req.body.RoleType,
+    Specilaization: req.body.Specilaization,
+  })
+    .then((company) => {
+      //const company = Company.save();
+      const encryptedPassword = req.body.Password
+        ? bcrypt.hashSync(req.body.Password, 10)
+        : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);
 
-  // };
+      //console.log('Password:', encryptedPassword);
+      const email = req.body.ContactEmail ? req.body.ContactEmail : req.body.Email;
+      const fullname = req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName;
+
+      User.create({
+        CompanyId: company.CompanyId,
+        FullName: req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName,
+        Email: req.body.Email.toLowerCase(),
+        Phone: req.body.Phone,
+        Address: req.body.Address,
+        City: req.body.Region,
+        Country: req.body.Country,
+        UserName: req.body.Email.toLowerCase(),
+        AcceptTerms: req.body.AcceptTerms,
+        PaymentMethod: req.body.PaymentMethod,
+        Password: encryptedPassword,
+      })
+        .then((user) => {
+          console.log(`RoleType`, req.body.RoleType);
+          if (req.body.RoleType) {
+            Role.findOne({
+              where: {
+                Name: req.body.RoleType,
+              },
+            }).then((role) => {
+              UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });
+
+              // Add User Subscription
+              // user.setRoles(roles).then(() => {
+              const token = jwt.sign({ UserId: user.UserId }, `${process.env.TOKEN_KEY}`, {
+                expiresIn: '2h',
+              });
+              // save user token
+              user.Token = token;
+              user.save();
+
+              const transporter = nodemailer.createTransport({
+                service: `${process.env.MAIL_SERVICE}`,
+                auth: {
+                  user: `${process.env.EMAIL_USERNAME}`,
+                  pass: `${process.env.EMAIL_PASSWORD}`,
+                },
+              });
+              // //  mailgun
+              // // Step 2 - Generate a verification token with the user's ID
+              // const verificationToken = user.generateVerificationToken();
+              // // Step 3 - Email the user a unique verification link
+
+              // point to the template folder
+              const handlebarOptions = {
+                viewEngine: {
+                  partialsDir: path.resolve('./views/'),
+                  defaultLayout: false,
+                },
+                viewPath: path.resolve('./views/'),
+              };
+
+              // use a template file with nodemailer
+              transporter.use('compile', hbs(handlebarOptions));
+
+              const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
+              transporter
+                .sendMail({
+                  from: `${process.env.FROM_EMAIL}`,
+                  to: email,
+                  template: 'email2', // the name of the template file i.e email.handlebars
+                  context: {
+                    name: fullname,
+                    url: url,
+                  },
+                  subject: 'Welcome to Global Load Dispatch',
+                  //     html: `<h1>Email Confirmation</h1>
+                  // <h2>Hello ${fullname}</h2>
+
+                  // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+                  // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+                  // </div>`,
+                })
+                .then((info) => {
+                  console.log({ info });
+                })
+                .catch(console.error);
+
+              res.status(200).send({ message: 'User registered successfully!' });
+              // });
+            });
+            // } else {
+            //   // user role = 1
+            //   user.setRoles([1]).then(() => {
+            //     res.send({ message: 'User registered successfully!' });
+            //   });
+          }
+        })
+
+        .catch((err) => {
+          res.status(500).send({ message: err.message });
+        });
+    })
+
+    .catch((err) => {
+      console.log(`err`, err);
+      res.status(500).send({ message: 'Company Error:' + err.message });
+    });
 };
 
 // Retrieve all Users from the database.
@@ -149,10 +205,16 @@ exports.findOne = (req, res) => {
 
   User.findOne({
     where: { UserId: id },
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: UserRole,
+        attributes: ['RoleId'],
+      },
+    ],
   })
     .then((data) => {
       res.status(200).send({
@@ -169,15 +231,12 @@ exports.findOne = (req, res) => {
 
 // Update a User by the id in the request
 exports.update = (req, res) => {
-  const user = ({ UserId, FullName, Email, Phone, Address, City, Country, UserPicUrl } = req.body);
   const id = req.body.UserId;
 
   const imagePath = req.file.filename;
 
-  // await fs.unlink(path.resolve('src/uploads/Profile/' + imagedb[0].image));
-
-  User.update(user, {
-    where: { id: id },
+  User.update(req.body, {
+    where: { UserId: id },
   })
     .then((num) => {
       if (num == 1) {
@@ -187,6 +246,30 @@ exports.update = (req, res) => {
       } else {
         res.send({
           message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: 'Error updating User with id=' + id,
+      });
+    });
+};
+
+exports.updateUserRole = (req, res) => {
+  const id = req.body.UserId;
+
+  UserRole.update(req.body, {
+    where: { UserId: id },
+  })
+    .then((num) => {
+      if (num == 1) {
+        res.send({
+          message: 'User Role was updated successfully.',
+        });
+      } else {
+        res.send({
+          message: `Cannot update User Role with id=${id}. Maybe User was not found or req.body is empty!`,
         });
       }
     })
@@ -331,9 +414,9 @@ exports.findUserRoles = (req, res) => {
 };
 
 exports.updateRole = (req, res) => {
-  const id = req.body.userRoleId;
+  const id = req.params.roleId;
 
-  Company.update(req.body, {
+  Role.update(req.body, {
     where: { RoleId: id },
   })
     .then((num) => {
