@@ -153,7 +153,7 @@ function initial() {
   });
 
   Subscription.create({
-    SubscribeId: 1,
+    // SubscribeId: 1,
     SubscriptionType: 'free Trial',
     SubscriptionName: 'Free 30 Day Trial',
     Amount: 0.0,
@@ -163,7 +163,7 @@ function initial() {
   });
 
   UserSubscription.create({
-    UserSubscriptionId: 1,
+    // UserSubscriptionId: 1,
     SubscribeId: 1,
     SubscriptionName: 'Free 30 Day Trial',
     UserId: initialUserId,

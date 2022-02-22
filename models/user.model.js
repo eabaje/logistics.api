@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     AcceptTerms: { type: DataTypes.BOOLEAN },
     LoginCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     PaymentMethod: { type: DataTypes.STRING },
+    Currency: { type: DataTypes.STRING },
 
     // CompanyId: {
     //   type: DataTypes.INTEGER,

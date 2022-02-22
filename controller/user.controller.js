@@ -153,10 +153,16 @@ exports.findAll = (req, res) => {
   //var condition = name ? { FullName: { [Op.iLike]: `%${name}%` } } : null;{ where: condition }
 
   User.findAll({
-    include: {
-      model: Company,
-      attributes: ['CompanyName', 'CompanyType'],
-    },
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName', 'CompanyType', 'CompanyId'],
+      },
+      {
+        model: Role,
+        attributes: ['Name'],
+      },
+    ],
 
     order: [['createdAt', 'DESC']],
   })
@@ -179,10 +185,16 @@ exports.findAllBySearch = (req, res) => {
 
   User.findAll({
     where: condition,
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: Role,
+        attributes: ['Name'],
+      },
+    ],
 
     order: [['createdAt', 'DESC']],
   })
@@ -211,8 +223,8 @@ exports.findOne = (req, res) => {
         attributes: ['CompanyName'],
       },
       {
-        model: UserRole,
-        attributes: ['RoleId'],
+        model: Role,
+        attributes: ['Name'],
       },
     ],
   })
@@ -223,6 +235,7 @@ exports.findOne = (req, res) => {
       });
     })
     .catch((err) => {
+      console.log('err', err);
       res.status(500).send({
         message: 'Error retrieving User with UserId=' + id,
       });
@@ -517,7 +530,7 @@ exports.updateCompany = (req, res) => {
 exports.findCompany = (req, res) => {
   const id = req.params.companyId;
 
-  Company.findByPk(id)
+  Company.findOne({ where: { CompanyId: id } })
 
     .then((data) => {
       res.status(200).send({
@@ -660,24 +673,29 @@ exports.upgradeUserSubscription = (req, res) => {
 
   const UserId = req.body.UserId;
 
-  const IsSubscribed = UserSubscription.findAll({ where: { UserId: UserId, Active: true } });
+  UserSubscription.findAll({ where: { UserId: UserId, Active: true } })
 
-  if (IsSubscribed) {
-    UserSubscription.update(
-      { Active: false },
-      {
-        where: {
-          UserId: UserId,
-        },
-      },
-    );
+    .then((IsSubscribed) => {
+      if (IsSubscribed) {
+        UserSubscription.update(
+          { Active: false },
+          {
+            where: {
+              UserId: UserId,
+            },
+          },
+        );
+      }
 
-    const UserSubscribed = UserSubscription.create(subscribe);
-
-    if (UserSubscribed) {
-      return res.status(201).send({ message: `User Subscribed to  ${UserSubscribed.SubscriptionName} package.` });
-    }
-  }
+      UserSubscription.create(subscribe).then((UserSubscribed) => {
+        if (UserSubscribed) {
+          return res.status(201).send({ message: `User Subscribed to  ${UserSubscribed.SubscriptionName} package.` });
+        }
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
 };
 
 exports.updateUserSubscription = (req, res) => {
@@ -712,7 +730,7 @@ exports.findUserSubscription = (req, res) => {
 
     include: {
       model: User,
-      attributes: ['FullName'],
+      attributes: ['FullName','Email', 'PaymentMethod','Currency'],
     },
   })
 

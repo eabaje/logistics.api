@@ -12,10 +12,13 @@ const path = require('path');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const db = require('../models/index.model');
+const { exit } = require('process');
 const User = db.user;
 const Role = db.role;
 const UserRole = db.userrole;
 const Company = db.company;
+const Subscribe = db.subscribe;
+const UserSubscription = db.usersubscription;
 
 //const authware = require('../middleware/auth');
 
@@ -49,128 +52,166 @@ exports.signup = (req, res) => {
   }).then((user) => {
     if (user) {
       return res.status(404).send({ message: 'Email already exists' });
-    }
-  });
-
-  Company.create({
-    CompanyName: req.body.CompanyName,
-    ContactEmail: req.body.ContactEmail,
-    ContactPhone: req.body.ContactPhone,
-    Address: req.body.CompanyAddress,
-    Region: req.body.Region,
-    Country: req.body.Country,
-    CompanyType: req.body.RoleType,
-    Specilaization: req.body.Specilaization,
-  })
-    .then((company) => {
-      //const company = Company.save();
-      const encryptedPassword = req.body.Password
-        ? bcrypt.hashSync(req.body.Password, 10)
-        : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);
-
-      //console.log('Password:', encryptedPassword);
-      const email = req.body.ContactEmail ? req.body.ContactEmail : req.body.Email;
-      const fullname = req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName;
-
-      User.create({
-        CompanyId: company.CompanyId,
-        FullName: req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName,
-        Email: req.body.Email.toLowerCase(),
-        Phone: req.body.Phone,
-        Address: req.body.Address,
-        City: req.body.Region,
+    } else {
+      Company.create({
+        CompanyName: req.body.CompanyName,
+        ContactEmail: req.body.ContactEmail,
+        ContactPhone: req.body.ContactPhone,
+        Address: req.body.CompanyAddress,
+        Region: req.body.Region,
         Country: req.body.Country,
-        UserName: req.body.Email.toLowerCase(),
-        AcceptTerms: req.body.AcceptTerms,
-        PaymentMethod: req.body.PaymentMethod,
-        Password: encryptedPassword,
+        CompanyType: req.body.RoleType,
+        Specilaization: req.body.Specilaization,
       })
-        .then((user) => {
-          console.log(`RoleType`, req.body.RoleType);
-          if (req.body.RoleType) {
-            Role.findOne({
-              where: {
-                Name: req.body.RoleType,
-              },
-            }).then((role) => {
-              UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });
+        .then((company) => {
+          //const company = Company.save();
+          const encryptedPassword = req.body.Password
+            ? bcrypt.hashSync(req.body.Password, 10)
+            : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);
 
-              // Add User Subscription
-              // user.setRoles(roles).then(() => {
-              const token = jwt.sign({ UserId: user.UserId }, `${process.env.TOKEN_KEY}`, {
-                expiresIn: '2h',
-              });
-              // save user token
-              user.Token = token;
-              user.save();
+          //console.log('Password:', encryptedPassword);
+          const email = req.body.ContactEmail ? req.body.ContactEmail : req.body.Email;
+          const fullname = req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName;
 
-              const transporter = nodemailer.createTransport({
-                service: `${process.env.MAIL_SERVICE}`,
-                auth: {
-                  user: `${process.env.EMAIL_USERNAME}`,
-                  pass: `${process.env.EMAIL_PASSWORD}`,
-                },
-              });
-              // //  mailgun
-              // // Step 2 - Generate a verification token with the user's ID
-              // const verificationToken = user.generateVerificationToken();
-              // // Step 3 - Email the user a unique verification link
-
-              // point to the template folder
-              const handlebarOptions = {
-                viewEngine: {
-                  partialsDir: path.resolve('./views/'),
-                  defaultLayout: false,
-                },
-                viewPath: path.resolve('./views/'),
-              };
-
-              // use a template file with nodemailer
-              transporter.use('compile', hbs(handlebarOptions));
-
-              const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
-              transporter
-                .sendMail({
-                  from: `${process.env.FROM_EMAIL}`,
-                  to: email,
-                  template: 'email2', // the name of the template file i.e email.handlebars
-                  context: {
-                    name: fullname,
-                    url: url,
+          User.create({
+            CompanyId: company.CompanyId,
+            FullName: req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName,
+            Email: req.body.Email.toLowerCase(),
+            Phone: req.body.Phone,
+            Address: req.body.Address,
+            City: req.body.Region,
+            Country: req.body.Country,
+            UserName: req.body.Email.toLowerCase(),
+            AcceptTerms: req.body.AcceptTerms,
+            PaymentMethod: req.body.PaymentMethod,
+            Password: encryptedPassword,
+          })
+            .then((user) => {
+              console.log(`RoleType`, req.body.RoleType);
+              if (req.body.RoleType) {
+                Role.findOne({
+                  where: {
+                    Name: req.body.RoleType,
                   },
-                  subject: 'Welcome to Global Load Dispatch',
-                  //     html: `<h1>Email Confirmation</h1>
-                  // <h2>Hello ${fullname}</h2>
+                }).then((role) => {
+                  UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });
 
-                  // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
-                  // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-                  // </div>`,
-                })
-                .then((info) => {
-                  console.log({ info });
-                })
-                .catch(console.error);
+                  // Add User Subscription
+                  // user.setRoles(roles).then(() => {
+                  const token = jwt.sign({ UserId: user.UserId }, `${process.env.TOKEN_KEY}`, {
+                    expiresIn: '2h',
+                  });
+                  // save user token
+                  user.Token = token;
+                  user.save();
+                  // Get free subscription
+                  // const free = 'Free';
+                  //  var condition = free ? { SubscriptionType: { [Op.iLike]: `%${free}%` } } : null;
+                  const subscribePrk = 1;
+                  Subscribe.findOne({
+                    where: {
+                      SubscribeId: subscribePrk,
+                    },
+                  }).then((subscribeRes) => {
+                    if (subscribeRes) {
+                      // Add user free subscription
+                      const startDate = new Date();
 
-              res.status(200).send({ message: 'User registered successfully!' });
-              // });
+                      const endDate = new Date();
+                      endDate.setDate(endDate.getDate() + subscribeRes.Duration);
+
+                      UserSubscription.create({
+                        // UserSubscriptionId: 2,
+                        SubscribeId: subscribeRes.SubscribeId,
+                        SubscriptionName: subscribeRes.SubscriptionName,
+                        UserId: user.UserId,
+                        Active: subscribeRes.Active,
+                        StartDate: startDate,
+                        EndDate: endDate,
+                      }).then((userSubscription) => {});
+                      const subscribeObj = {
+                        SubscribeId: subscribeRes.SubscribeId,
+                        SubscriptionName: subscribeRes.SubscriptionName,
+                        UserId: user.UserId,
+                        Active: subscribeRes.Active,
+                        StartDate: startDate,
+                        EndDate: endDate,
+                      };
+                      console.log('subscribeObj', subscribeObj);
+                      //  UserSubscription.create(subscribeObj);
+                    }
+                  });
+
+                  const transporter = nodemailer.createTransport({
+                    service: `${process.env.MAIL_SERVICE}`,
+                    auth: {
+                      user: `${process.env.EMAIL_USERNAME}`,
+                      pass: `${process.env.EMAIL_PASSWORD}`,
+                    },
+                  });
+                  // //  mailgun
+                  // // Step 2 - Generate a verification token with the user's ID
+                  // const verificationToken = user.generateVerificationToken();
+                  // // Step 3 - Email the user a unique verification link
+
+                  // point to the template folder
+                  const handlebarOptions = {
+                    viewEngine: {
+                      partialsDir: path.resolve('./views/'),
+                      defaultLayout: false,
+                    },
+                    viewPath: path.resolve('./views/'),
+                  };
+
+                  // use a template file with nodemailer
+                  transporter.use('compile', hbs(handlebarOptions));
+
+                  const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
+                  transporter
+                    .sendMail({
+                      from: `${process.env.FROM_EMAIL}`,
+                      to: email,
+                      template: 'email2', // the name of the template file i.e email.handlebars
+                      context: {
+                        name: fullname,
+                        url: url,
+                      },
+                      subject: 'Welcome to Global Load Dispatch',
+                      //     html: `<h1>Email Confirmation</h1>
+                      // <h2>Hello ${fullname}</h2>
+
+                      // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+                      // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+                      // </div>`,
+                    })
+                    .then((info) => {
+                      console.log({ info });
+                    })
+                    .catch(console.error);
+
+                  res.status(200).send({ message: 'User registered successfully!' });
+                  // });
+                });
+                // } else {
+                //   // user role = 1
+                //   user.setRoles([1]).then(() => {
+                //     res.send({ message: 'User registered successfully!' });
+                //   });
+              }
+            })
+
+            .catch((err) => {
+              console.log(`err`, err);
+              res.status(500).send({ message: err.message });
             });
-            // } else {
-            //   // user role = 1
-            //   user.setRoles([1]).then(() => {
-            //     res.send({ message: 'User registered successfully!' });
-            //   });
-          }
         })
 
         .catch((err) => {
-          res.status(500).send({ message: err.message });
+          console.log(`err`, err);
+          res.status(500).send({ message: 'Company Error:' + err.message });
         });
-    })
-
-    .catch((err) => {
-      console.log(`err`, err);
-      res.status(500).send({ message: 'Company Error:' + err.message });
-    });
+    }
+  });
 };
 
 exports.signin = (req, res) => {
