@@ -16,7 +16,7 @@ exports.create = (req, res) => {
     OrderStatus: req.body.OrderStatus,
     // Licensed: req.body.Licensed ? req.body.Licensed : false,
     PaymentMethod: req.body.PaymentMethod,
-    // PaymentDocs: req.body.PaymentDocs
+    PaymentDate: req.body.PaymentDate,
   };
 
   // Save Payment in the database
@@ -29,6 +29,7 @@ exports.create = (req, res) => {
       });
     })
     .catch((err) => {
+      console.log('err', err);
       res.status(500).send({
         message: err.message || 'Some error occurred while creating the Payment.',
       });
