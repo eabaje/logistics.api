@@ -730,7 +730,7 @@ exports.findUserSubscription = (req, res) => {
 
     include: {
       model: User,
-      attributes: ['FullName','Email', 'PaymentMethod','Currency'],
+      attributes: ['FullName', 'Email', 'PaymentMethod', 'Currency'],
     },
   })
 
@@ -756,7 +756,7 @@ exports.findAllUserSubscriptions = (req, res) => {
     where: condition,
     include: {
       model: User,
-      attributes: ['FullName'],
+      attributes: ['FullName', 'Email', 'PaymentMethod', 'Currency'],
     },
     order: [['createdAt', 'DESC']],
   })
@@ -787,7 +787,7 @@ exports.findAllUserSubscriptionsByDate = (req, res) => {
     },
     include: {
       model: User,
-      attributes: ['FullName'],
+      attributes: ['FullName', 'Email', 'PaymentMethod', 'Currency'],
     },
 
     order: [['createdAt', 'DESC']],
@@ -819,7 +819,7 @@ exports.findAllUserSubscriptionsByStartDate = (req, res) => {
     },
     include: {
       model: User,
-      attributes: ['FullName'],
+      attributes: ['FullName', 'Email', 'PaymentMethod', 'Currency'],
     },
     order: [['createdAt', 'ASC']],
   })
@@ -850,7 +850,7 @@ exports.findAllUserSubscriptionsByEndDate = (req, res) => {
     },
     include: {
       model: User,
-      attributes: ['FullName'],
+      attributes: ['FullName', 'Email', 'PaymentMethod', 'Currency'],
     },
     order: [['createdAt', 'DESC']],
   })
