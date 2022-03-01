@@ -17,6 +17,7 @@ exports.create = (req, res) => {
 
   // Create a Vehicle
   const vehicle = {
+    CompanyId: req.body.CompanyId,
     CarrierId: req.body.CarrierId,
     VehicleType: req.body.VehicleType,
     VehicleNumber: req.body.VehicleNumber,

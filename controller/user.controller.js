@@ -9,6 +9,7 @@ const db = require('../models/index.model');
 
 const User = db.user;
 const UserSubscription = db.usersubscription;
+const Subscription = db.subscribe;
 const Company = db.company;
 const Role = db.role;
 const UserRole = db.userrole;
@@ -618,15 +619,6 @@ exports.deleteCompany = (req, res) => {
 exports.subscribe = (req, res) => {
   // Add user to Subscription
 
-  const subscribe = {
-    SubscriptionId: req.body.SubscriptionId,
-    SubscriptionName: req.body.SubscriptionName,
-    UserId: req.body.UserId,
-    Active: req.body.Active,
-    StartDate: req.body.StartDate,
-    EndDate: req.body.EndDate,
-  };
-
   const UserId = req.body.UserId;
 
   const IsSubscribed = UserSubscription.findAll({ where: { UserId: UserId, Active: true } });
@@ -635,12 +627,34 @@ exports.subscribe = (req, res) => {
     return res.status(409).send('User Already Subscribed. Do you want to upgrade your subscription?');
   }
 
-  const UserSubscribed = UserSubscription.create(subscribe);
+  // Get the subscription package
+
+  Subscription.findOne({ where: { SubscribeId: req.body.SubscriptionId } }).then((subscribeRes) => {
+    let startDate = new Date();
+
+    let endDate = new Date();
+    endDate.setDate(endDate.getDate() + parsInt(subscribeRes.Duration));
+
+    const subscribe = {
+      SubscriptionId: req.body.SubscriptionId,
+      SubscriptionName: req.body.SubscriptionName,
+      UserId: req.body.UserId,
+      Active: true,
+      StartDate: startDate,
+      EndDate: endDate,
+    };
+
+    UserSubscription.create(subscribe).then((UserSubscribed) => {
+      if (UserSubscribed) {
+        return res.status(201).send({ message: `User Subscribed to  ${subscribeRes.SubscriptionName} package.` });
+      }
+    });
+  });
 
   const User = User.findOne({ where: { UserId: UserId } });
 
   const transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    service: process.env.MAIL_SERVICE,
     auth: {
       user: process.env.EMAIL_USERNAME,
       pass: process.env.EMAIL_PASSWORD,
@@ -660,15 +674,6 @@ exports.subscribe = (req, res) => {
 };
 
 exports.upgradeUserSubscription = (req, res) => {
-  const subscribe = {
-    SubscriptionId: req.body.SubscriptionId,
-    SubscriptionName: req.body.SubscriptionName,
-    UserId: req.body.UserId,
-    Active: req.body.Active,
-    StartDate: req.body.StartDate,
-    EndDate: req.body.EndDate,
-  };
-
   const id = req.body.UserSubscriptionId;
 
   const UserId = req.body.UserId;
@@ -687,10 +692,29 @@ exports.upgradeUserSubscription = (req, res) => {
         );
       }
 
-      UserSubscription.create(subscribe).then((UserSubscribed) => {
-        if (UserSubscribed) {
-          return res.status(201).send({ message: `User Subscribed to  ${UserSubscribed.SubscriptionName} package.` });
-        }
+      // Get the subscription package
+      console.log('req.body.SubscriptionId', req.body.SubscriptionId);
+      Subscription.findOne({ where: { SubscribeId: req.body.SubscriptionId } }).then((subscribeRes) => {
+        console.log('subscribeRes', subscribeRes);
+        let startDate = new Date();
+
+        let endDate = new Date();
+        endDate.setDate(endDate.getDate() + parseInt(subscribeRes.Duration));
+
+        const subscribe = {
+          SubscribeId: req.body.SubscriptionId,
+          SubscriptionName: subscribeRes.SubscriptionName,
+          UserId: req.body.UserId,
+          Active: true,
+          StartDate: startDate,
+          EndDate: endDate,
+        };
+
+        UserSubscription.create(subscribe).then((UserSubscribed) => {
+          if (UserSubscribed) {
+            return res.status(201).send({ message: `User Subscribed to  ${subscribeRes.SubscriptionName} package.` });
+          }
+        });
       });
     })
     .catch((err) => {
@@ -726,7 +750,7 @@ exports.findUserSubscription = (req, res) => {
   const id = req.params.userId;
 
   UserSubscription.findOne({
-    where: { UserId: id },
+    where: { UserId: id, Active: true },
 
     include: {
       model: User,
