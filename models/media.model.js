@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     RefId: { type: DataTypes.STRING },
     FileType: { type: DataTypes.STRING },
+    FileName: { type: DataTypes.STRING },
     url: { type: DataTypes.STRING },
     UploadDate: { type: DataTypes.DATEONLY },
   });

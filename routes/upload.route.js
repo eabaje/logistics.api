@@ -62,6 +62,8 @@ module.exports = function (app) {
     next();
   });
   //[verifySignUp.checkDuplicateUsernameOrEmail,verifySignUp.checkRolesExisted],upLoadPics,
+
+  app.get('/api/upload/getFiles/:refId', controller.getFiles);
   app.post('/api/upload/uploadImage', imageUploader.single('filePicUrl'), controller.uploadImage);
 
   app.post('/api/upload/uploadDocument', upLoadDocuments.single('fileLicenseUrl'), controller.uploadDocument);

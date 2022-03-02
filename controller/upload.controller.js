@@ -57,11 +57,9 @@ exports.uploadImage = async function (req, res) {
   }
 };
 
-
 exports.uploadImageWithData = async function (req, res) {
-  
   const { filename: image } = req.file;
-  
+
   try {
     const picpath = path.resolve(
       `uploads/pics/${req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)}`,
@@ -72,14 +70,14 @@ exports.uploadImageWithData = async function (req, res) {
 
     console.log(`imagefile`, req.file);
 
-    const picurl= req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
+    const picurl = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
     Media.create({
       RefId: req.body.RefId,
+      FileName: req.file.fieldname,
       url: picurl,
-      UploadDate:  new Date(),
-     
-    })
-    
+      UploadDate: new Date(),
+    });
+
     return res.status(200).send({
       filename: picurl,
     });
@@ -87,8 +85,30 @@ exports.uploadImageWithData = async function (req, res) {
     console.log(`An error occurred during processing: ${error}`);
   }
 };
+exports.getFiles = (req, res) => {
+  const refId = req.params.refId;
 
+  Media.findAll({
+    where: { RefId: refId },
 
+    // include: {
+    //   model: Trip,
+    //   attributes: ['DeliveryDate', 'PickUpDate', 'PickUpLocation', 'DeliveryLocation'],
+    // },
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Trips.',
+      });
+    });
+};
 
 exports.uploadDocument = function (req, res) {
   try {
