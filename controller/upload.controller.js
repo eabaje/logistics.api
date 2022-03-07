@@ -61,19 +61,21 @@ exports.uploadImageWithData = async function (req, res) {
   const { filename: image } = req.file;
 
   try {
-    const picpath = path.resolve(
-      `uploads/pics/${req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)}`,
-    );
+    const picurl = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
+    const picpath = path.resolve(`uploads/pics/${picurl}`);
     console.log(`imagefile0`, picpath);
 
-    await sharp(req.file.buffer).resize(500, 500).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
+    await sharp(req.file.buffer)
+      .resize({ fit: sharp.fit.contain, width: 500 })
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(picpath);
 
     console.log(`imagefile`, req.file);
 
-    const picurl = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
     Media.create({
       RefId: req.body.RefId,
-      FileName: req.file.fieldname,
+      FileName: req.file.originalname,
       url: picurl,
       UploadDate: new Date(),
     });
@@ -105,7 +107,7 @@ exports.getFiles = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving Trips.',
+        message: err.message || 'Some error occurred while retrieving files.',
       });
     });
 };
