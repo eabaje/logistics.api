@@ -61,11 +61,20 @@ exports.uploadImageWithData = async function (req, res) {
   const { filename: image } = req.file;
 
   try {
-    const picurl = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
+    const picName = req.file.fieldname + '-' + Date.now() ;
+    const picurl = picName + path.extname(req.file.originalname);
+    const thumbnailurl = picName +'_thumb'+ path.extname(req.file.originalname);
+    const thumbpath = path.resolve(`uploads/pics/${thumbnailurl}`);
     const picpath = path.resolve(`uploads/pics/${picurl}`);
     console.log(`imagefile0`, picpath);
 
     await sharp(req.file.buffer)
+      .resize({ fit: sharp.fit.contain, width: 200 })
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(thumbpath);
+
+      await sharp(req.file.buffer)
       .resize({ fit: sharp.fit.contain, width: 500 })
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
@@ -77,6 +86,7 @@ exports.uploadImageWithData = async function (req, res) {
       RefId: req.body.RefId,
       FileName: req.file.originalname,
       url: picurl,
+      ThumbUrl: thumbnailurl,
       UploadDate: new Date(),
     });
 

@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     FileType: { type: DataTypes.STRING },
     FileName: { type: DataTypes.STRING },
     url: { type: DataTypes.STRING },
+    ThumbUrl: { type: DataTypes.STRING },
     UploadDate: { type: DataTypes.DATEONLY },
   });
 
