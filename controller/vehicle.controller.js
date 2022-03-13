@@ -26,6 +26,7 @@ exports.create = (req, res) => {
     VehicleColor: req.body.VehicleColor,
     VehicleModel: req.body.VehicleModel,
     LicensePlate: req.body.LicensePlate,
+    Description: req.body.Description,
     VehicleModelYear: req.body.VehicleModelYear,
     PurchaseYear: req.body.PurchaseYear,
     Insured: req.body.Insured ? req.body.Insured : false,
@@ -43,6 +44,7 @@ exports.create = (req, res) => {
       });
     })
     .catch((err) => {
+      console.log('err', err)
       res.status(500).send({
         message: err.message || 'Some error occurred while creating the Vehicle.',
       });
@@ -54,7 +56,22 @@ exports.findAll = (req, res) => {
   const vehicleType = req.params.vehicleType;
   var condition = vehicleType ? { VehicleType: { [Op.iLike]: `%${vehicleType}%` } } : null;
 
-  Vehicle.findAll({ where: condition })
+  Vehicle.findAll({ where: condition ,
+
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: Carrier,
+        attributes: ['FleetType','ServiceDescription'],
+      },
+    ],
+    
+    }
+    
+    )
 
     .then((data) => {
       res.status(200).send({
@@ -73,7 +90,22 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.vehicleId;
 
-  Vehicle.findByPk(id)
+  Vehicle.findOne({ where: {VehicleId:id},
+  
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: Carrier,
+        attributes: ['FleetType','ServiceDescription'],
+      },
+    ],
+  
+  
+  
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -244,6 +276,17 @@ exports.findAllVehiclesByDate = (req, res) => {
         [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
       },
     },
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+        where: { CompanyId: companyId },
+      },
+      {
+        model: Carrier,
+        attributes: ['CarrierType'],
+      },
+    ],
     order: [['createdAt', 'ASC']],
   })
 
