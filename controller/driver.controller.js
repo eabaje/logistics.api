@@ -273,18 +273,12 @@ exports.deleteAll = (req, res) => {
 
 // Assign driver to vehicle
 exports.AssignDriverToVehicle = (req, res) => {
-  // const assigndriver = {
-  //   DriverId: req.body.DriverId,
-  //   VehicleId: req.body.Vehicle,
-  //   AssignedDate: req.body.AssignedDate,
-  // };
+ 
   const driverId = req.body.DriverId;
   const vehicleId = req.body.VehicleId;
   const assignedDate = new Date();
 
-//   let startDate = new Date();
-// let endDate = new Date();
-// endDate.setDate(endDate.getDate() + parseInt(subscribeRes.Duration));
+
 
   //check if vehicle exists in the record
 
@@ -299,18 +293,38 @@ exports.AssignDriverToVehicle = (req, res) => {
           //
           AssignDriver.findOne({
             where: { VehicleId: vehicleId, Assigned: true },
+            // include: [
+            //   Driver
+            //   // {
+            //   //   model: Driver,
+            //   //   attributes: ['DriverName'],
+            //   // },
+            // ],
           })
           .then((IsAssigned)=>{
+
+            Driver.findOne({where:{DriverId:driverId}}).then(driverObj=>{
+
+
+
+
+
+           
+            console.log('driverObj', driverObj)
           //check if vehicle has been assigned and unassign it
           if (IsAssigned === null) {
            
              //Assign New Driver To Vehicle
-      
+              
+             //Get driver name
+
+            
+
              AssignDriver.create({ VehicleId: vehicleId, DriverId: driverId, Assigned: true , AssignedDate: assignedDate })
       
              .then((data) => {
                res.status(200).send({
-                 message: 'Success',
+                 message: `Vehicle Successfully assigned to Driver ${driverObj.DriverName}`,
                  data: data,
                });
              })
@@ -323,21 +337,38 @@ exports.AssignDriverToVehicle = (req, res) => {
           } else {
 
             // Unassign it
-            AssignDriver.update({ Assigned: false }, { where: { AssignId: IsAssigned.AssignedId } });
+            AssignDriver.update({ Assigned: false,updatedAt:assignedDate }, { where: { VehicleId: vehicleId } });
       
             //Assign New Driver To Vehicle
       
             AssignDriver.create({ VehicleId: vehicleId, DriverId: driverId, Assigned: true, AssignedDate: assignedDate })
-              .then((data) => {
-                res.send(data);
-              })
-              .catch((err) => {
-                res.status(500).send({
-                  message: `${err.message} -Bad Operation` || 'Some error occurred while retrieving Drivers.',
-                });
+            .then((data) => {
+              res.status(200).send({
+                message: `Vehicle Successfully assigned to Driver ${driverObj.DriverName}`,
+                data: data,
               });
+            })
+            .catch((err) => {
+              console.log('err', err)
+              res.status(500).send({
+                message: err.message || 'Some error occurred while retrieving results.',
+              });
+            });
            
+         
+
+
+
+
+          
           }
+
+        })
+
+
+
+
+        
         
         })
     }

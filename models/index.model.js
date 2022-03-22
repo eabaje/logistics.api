@@ -94,11 +94,18 @@ db.vehicle.belongsToMany(db.driver, {
 // db.user.hasMany(db.userrole, { foreignKey: { name: 'UserId' } });
 // db.userrole.belongsTo(db.user);
 
+
 db.vehicle.hasOne(db.trip, { foreignKey: 'VehicleId' });
 db.trip.belongsTo(db.vehicle, { foreignKey: 'VehicleId' });
 
 db.driver.hasOne(db.trip, { foreignKey: 'DriverId' });
 db.trip.belongsTo(db.driver, { foreignKey: 'DriverId' });
+
+// db.AssignDriver.hasMany(db.driver, { foreignKey: { name: 'DriverId' } });
+// db.driver.belongsTo(db.AssignDriver , { foreignKey: { name: 'AssignId' } });
+
+// db.driver.hasMany(db.vehicle, { foreignKey: { name: 'VehicleId' } });
+// db.vehicle.belongsTo(db.driver , { foreignKey: { name: 'DriverId' } });
 
 db.company.hasMany(db.carrier, { foreignKey: 'CompanyId' });
 db.carrier.belongsTo(db.company, { foreignKey: 'CompanyId' });
