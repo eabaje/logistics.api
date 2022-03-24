@@ -44,7 +44,7 @@ exports.create = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log('err', err)
+      console.log('err', err);
       res.status(500).send({
         message: err.message || 'Some error occurred while creating the Vehicle.',
       });
@@ -56,7 +56,8 @@ exports.findAll = (req, res) => {
   const vehicleType = req.params.vehicleType;
   var condition = vehicleType ? { VehicleType: { [Op.iLike]: `%${vehicleType}%` } } : null;
 
-  Vehicle.findAll({ where: condition ,
+  Vehicle.findAll({
+    where: condition,
 
     include: [
       {
@@ -65,13 +66,10 @@ exports.findAll = (req, res) => {
       },
       {
         model: Carrier,
-        attributes: ['FleetType','ServiceDescription'],
+        attributes: ['FleetType', 'ServiceDescription'],
       },
     ],
-    
-    }
-    
-    )
+  })
 
     .then((data) => {
       res.status(200).send({
@@ -90,8 +88,9 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.vehicleId;
 
-  Vehicle.findOne({ where: {VehicleId:id},
-  
+  Vehicle.findOne({
+    where: { VehicleId: id },
+
     include: [
       {
         model: Company,
@@ -99,12 +98,9 @@ exports.findOne = (req, res) => {
       },
       {
         model: Carrier,
-        attributes: ['FleetType','ServiceDescription'],
+        attributes: ['FleetType', 'ServiceDescription'],
       },
     ],
-  
-  
-  
   })
 
     .then((data) => {
