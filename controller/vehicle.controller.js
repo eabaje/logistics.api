@@ -125,7 +125,7 @@ exports.update = (req, res) => {
   const id = req.params.vehicleId;
 
   Vehicle.update(req.body, {
-    where: { id: id },
+    where: { VehicleId: id },
   })
     .then((num) => {
       if (num == 1) {
@@ -150,7 +150,7 @@ exports.delete = (req, res) => {
   const id = req.params.vehicleId;
 
   Vehicle.destroy({
-    where: { id: id },
+    where: { VehicleId: id },
   })
     .then((num) => {
       if (num == 1) {

@@ -38,6 +38,8 @@ module.exports = (sequelize, DataTypes) => {
     PurchaseYear: { type: DataTypes.DATEONLY },
     Insured: { type: DataTypes.BOOLEAN },
     PicUrl: { type: DataTypes.STRING },
+    Description: { type: DataTypes.STRING },
+
     VehicleDocs: { type: DataTypes.STRING },
 
     // CarrierId: {
