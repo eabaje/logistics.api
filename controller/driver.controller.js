@@ -57,7 +57,7 @@ exports.create = async (req, res) => {
   // Save Driver in the database
   Driver.create(driver)
     .then((data) => {
-      console.log('data', data)
+      console.log('data', data);
       User.create({
         CompanyId: req.body.CompanyId,
         FullName: req.body.DriverName,
@@ -70,11 +70,11 @@ exports.create = async (req, res) => {
         UserName: req.body.Email.toLowerCase(),
         Password: encryptedPassword,
       }).then((user) => {
-        console.log('user', user)
+        console.log('user', user);
         Driver.update({
-          UserId:user.UserId, 
-            where: { DriverId: data.DriverId },
-        })
+          UserId: user.UserId,
+          where: { DriverId: data.DriverId },
+        });
         Role.findOne({
           where: {
             Name: 'driver',
@@ -273,113 +273,91 @@ exports.deleteAll = (req, res) => {
 
 // Assign driver to vehicle
 exports.AssignDriverToVehicle = (req, res) => {
- 
   const driverId = req.body.DriverId;
   const vehicleId = req.body.VehicleId;
   const assignedDate = new Date();
 
-
-
   //check if vehicle exists in the record
 
   Vehicle.findOne({ where: { VehicleId: vehicleId } })
-  .then((IsVehicle)=>{
+    .then((IsVehicle) => {
+      if (IsVehicle === null) {
+        res.status(500).send({
+          message: 'No record of Vehice Id found .',
+        });
+      } else {
+        //
+        AssignDriver.findOne({
+          where: { VehicleId: vehicleId, Assigned: true },
+          // include: [
+          //   Driver
+          //   // {
+          //   //   model: Driver,
+          //   //   attributes: ['DriverName'],
+          //   // },
+          // ],
+        }).then((IsAssigned) => {
+          Driver.findOne({ where: { DriverId: driverId } }).then((driverObj) => {
+            console.log('driverObj', driverObj);
+            //check if vehicle has been assigned and unassign it
+            if (IsAssigned === null) {
+              //Assign New Driver To Vehicle
 
-        if (IsVehicle === null) {
-          res.status(500).send({
-            message: 'No record of Vehice Id found .',
+              //Get driver name
+
+              AssignDriver.create({
+                VehicleId: vehicleId,
+                DriverId: driverId,
+                Assigned: true,
+                AssignedDate: assignedDate,
+              })
+
+                .then((data) => {
+                  res.status(200).send({
+                    message: `Vehicle Successfully assigned to Driver ${driverObj.DriverName}`,
+                    data: data,
+                  });
+                })
+                .catch((err) => {
+                  res.status(500).send({
+                    message: err.message || 'Some error occurred while retrieving Drivers.',
+                  });
+                });
+            } else {
+              // Unassign it
+              AssignDriver.update({ Assigned: false, updatedAt: assignedDate }, { where: { VehicleId: vehicleId } });
+
+              //Assign New Driver To Vehicle
+
+              AssignDriver.create({
+                VehicleId: vehicleId,
+                DriverId: driverId,
+                Assigned: true,
+                AssignedDate: assignedDate,
+              })
+                .then((data) => {
+                  res.status(200).send({
+                    message: `Vehicle Successfully assigned to Driver ${driverObj.DriverName}`,
+                    data: data,
+                  });
+                })
+                .catch((err) => {
+                  console.log('err', err);
+                  res.status(500).send({
+                    message: err.message || 'Some error occurred while retrieving results.',
+                  });
+                });
+            }
           });
-        } else {
-          //
-          AssignDriver.findOne({
-            where: { VehicleId: vehicleId, Assigned: true },
-            // include: [
-            //   Driver
-            //   // {
-            //   //   model: Driver,
-            //   //   attributes: ['DriverName'],
-            //   // },
-            // ],
-          })
-          .then((IsAssigned)=>{
+        });
+      }
+    })
 
-            Driver.findOne({where:{DriverId:driverId}}).then(driverObj=>{
-
-
-
-
-
-           
-            console.log('driverObj', driverObj)
-          //check if vehicle has been assigned and unassign it
-          if (IsAssigned === null) {
-           
-             //Assign New Driver To Vehicle
-              
-             //Get driver name
-
-            
-
-             AssignDriver.create({ VehicleId: vehicleId, DriverId: driverId, Assigned: true , AssignedDate: assignedDate })
-      
-             .then((data) => {
-               res.status(200).send({
-                 message: `Vehicle Successfully assigned to Driver ${driverObj.DriverName}`,
-                 data: data,
-               });
-             })
-             .catch((err) => {
-               res.status(500).send({
-                 message: err.message || 'Some error occurred while retrieving Drivers.',
-               });
-             });
-           
-          } else {
-
-            // Unassign it
-            AssignDriver.update({ Assigned: false,updatedAt:assignedDate }, { where: { VehicleId: vehicleId } });
-      
-            //Assign New Driver To Vehicle
-      
-            AssignDriver.create({ VehicleId: vehicleId, DriverId: driverId, Assigned: true, AssignedDate: assignedDate })
-            .then((data) => {
-              res.status(200).send({
-                message: `Vehicle Successfully assigned to Driver ${driverObj.DriverName}`,
-                data: data,
-              });
-            })
-            .catch((err) => {
-              console.log('err', err)
-              res.status(500).send({
-                message: err.message || 'Some error occurred while retrieving results.',
-              });
-            });
-           
-         
-
-
-
-
-          
-          }
-
-        })
-
-
-
-
-        
-        
-        })
-    }
-  }) 
-
-  .catch((err) => {
-    res.status(500).send({
-      message: err.message || 'Some error occurred while retrieving Drivers.',
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
     });
-  });
-
 };
 
 // find all Licensed Driver
@@ -461,23 +439,21 @@ exports.findAllAssignedDrivers = (req, res) => {
   //  const vehicleId = req.query.VehicleId;
 
   Driver.findAll({
-   // where: { Assigned: true },
-
-    include: [
-      {
-        model: Company,
-        attributes: ['CompanyName'],
-      },
-      {
-        model: Vehicle,
-        attributes: ['FullName'],
-
-        through: {
-          where: { Assigned: true },
-          attributes: ['VehicleId','DriverId'],
-        },
-      },
-    ],
+    // where: { Assigned: true },
+    // include: [
+    //   {
+    //     model: Company,
+    //     attributes: ['CompanyName'],
+    //   },
+    //   {
+    //     model: Vehicle,
+    //     attributes: ['FullName'],
+    //     through: {
+    //       where: { Assigned: true },
+    //       attributes: ['VehicleId','DriverId'],
+    //     },
+    //   },
+    // ],
   })
 
     .then((data) => {
