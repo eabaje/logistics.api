@@ -460,13 +460,24 @@ exports.findAllDriversByCompany = (req, res) => {
 exports.findAllAssignedDrivers = (req, res) => {
   //  const vehicleId = req.query.VehicleId;
 
-  AssignDriver.findAll({
-    where: { Assigned: true },
+  Driver.findAll({
+   // where: { Assigned: true },
 
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: Vehicle,
+        attributes: ['FullName'],
+
+        through: {
+          where: { Assigned: true },
+          attributes: ['VehicleId','DriverId'],
+        },
+      },
+    ],
   })
 
     .then((data) => {
