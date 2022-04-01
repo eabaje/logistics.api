@@ -440,11 +440,11 @@ exports.findAllAssignedDrivers = (req, res) => {
 
   Driver.findAll({
     // where: { Assigned: true },
-    // include: [
-    //   {
-    //     model: Company,
-    //     attributes: ['CompanyName'],
-    //   },
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
     //   {
     //     model: Vehicle,
     //     attributes: ['FullName'],
@@ -453,7 +453,7 @@ exports.findAllAssignedDrivers = (req, res) => {
     //       attributes: ['VehicleId','DriverId'],
     //     },
     //   },
-    // ],
+     ],
   })
 
     .then((data) => {
