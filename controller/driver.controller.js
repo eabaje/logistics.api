@@ -25,11 +25,15 @@ const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
 exports.create = async (req, res) => {
-  const { filename: image } = req.file;
-  const newFileName = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
+  const picFile = req.files.filePicUrl[0];
+
+  const licenseFile = req.files.fileLicenseUrl[0];
+
+  const newFileName = picFile.fieldname + '-' + Date.now() + path.extname(picFile.originalname);
   const picpath = path.resolve(`uploads/pics/${newFileName}`);
 
   await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
+
   // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
 
   // Create a Driver
@@ -445,15 +449,15 @@ exports.findAllAssignedDrivers = (req, res) => {
         model: Company,
         attributes: ['CompanyName'],
       },
-    //   {
-    //     model: Vehicle,
-    //     attributes: ['FullName'],
-    //     through: {
-    //       where: { Assigned: true },
-    //       attributes: ['VehicleId','DriverId'],
-    //     },
-    //   },
-     ],
+      //   {
+      //     model: Vehicle,
+      //     attributes: ['FullName'],
+      //     through: {
+      //       where: { Assigned: true },
+      //       attributes: ['VehicleId','DriverId'],
+      //     },
+      //   },
+    ],
   })
 
     .then((data) => {

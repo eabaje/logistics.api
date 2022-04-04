@@ -4,7 +4,16 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const storage = multer.memoryStorage();
+// const storage = multer.memoryStorage();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
 
 const filter = (req, file, cb) => {
   if (file.mimetype.split('/')[0] === 'image') {
@@ -13,6 +22,7 @@ const filter = (req, file, cb) => {
     cb(new Error('Only images are allowed!'));
   }
 };
+
 const imageUploader = multer({
   storage,
   fileFilter: filter,
@@ -54,8 +64,21 @@ module.exports = function (app) {
   app.get('/api/driver/findAllDriversByDate/:startDate/:endDate', controller.findAllDriversByDate);
 
   app.get('/api/driver/findAllAssignedDrivers', controller.findAllAssignedDrivers);
-  //upLoadDocuments.single('LicenseUrl'), imageUploader.single('PicUrl'),
-  app.post('/api/driver/create', imageUploader.single('filePicUrl'), controller.create);
+  //upLoadDocuments.single('LicenseUrl'), imageUploader.single('PicUrl''filePicUrl'),
+  app.post(
+    '/api/driver/create',
+    imageUploader.fields([
+      {
+        name: 'filePicUrl',
+        maxCount: 1,
+      },
+      {
+        name: 'fileLicenseUrl',
+        maxCount: 1,
+      },
+    ]),
+    controller.create,
+  );
   //[, upLoadDocuments.single('fileLicenseUrl')]
   app.post('/api/driver/AssignDriverToVehicle', controller.AssignDriverToVehicle);
 
