@@ -34,6 +34,16 @@ exports.create = async (req, res) => {
 
   await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
 
+  const { filename: image } = req.file;
+
+  await sharp(req.file.path)
+    .resize(200, 200)
+    .jpeg({ quality: 90 })
+    .toFile(path.resolve(req.file.destination, 'resized', image));
+  fs.unlinkSync(req.file.path);
+
+  res.redirect('/');
+
   // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
 
   // Create a Driver

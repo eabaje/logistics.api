@@ -8,7 +8,15 @@ const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads');
+    const { Email } = req.body;
+    const { CompanyId } = req.body;
+    const dir = `./uploads/${CompanyId}/${Email}`;
+    fs.exists(dir, (exist) => {
+      if (!exist) {
+        return fs.mkdir(dir, (error) => cb(error, dir));
+      }
+      cb(null, dir);
+    });
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
