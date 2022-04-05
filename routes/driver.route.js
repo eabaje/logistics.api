@@ -5,19 +5,33 @@ const path = require('path');
 const fs = require('fs');
 
 // const storage = multer.memoryStorage();
+async function exists (path) {  
+  try {
+    await fs.access(path)
+    return true
+  } catch {
+    return false
+  }
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     console.log('req.body', req.body);
     const { Email, CompanyId } = req.body;
-
+   
     const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
-    fs.exists(dir, (exist) => {
-      if (!exist) {
-        return fs.mkdir(dir, (error) => cb(error, dir));
+
+    fs.access(dir, fs.F_OK, (err) => {
+      if (err) {
+      //  console.error(err)
+     // return fs.mkdirSync(dir, (error) => cb(error, dir));
+      return fs.mkdirSync(dir,{recursive:true});
       }
       cb(null, dir);
+      //file exists
     });
+  
+   
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
