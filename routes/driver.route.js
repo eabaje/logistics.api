@@ -8,9 +8,10 @@ const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    console.log('req.body', req.body);
     const { Email, CompanyId } = req.body;
 
-    const dir = `./uploads/${CompanyId}/${Email}`;
+    const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
     fs.exists(dir, (exist) => {
       if (!exist) {
         return fs.mkdir(dir, (error) => cb(error, dir));
