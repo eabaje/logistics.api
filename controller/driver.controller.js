@@ -30,19 +30,21 @@ exports.create = async (req, res) => {
   const licenseFile = req.files.fileLicenseUrl[0];
 
   const newFileName = picFile.fieldname + '-' + Date.now() + path.extname(picFile.originalname);
-  const picpath = path.resolve(`uploads/pics/${newFileName}`);
+  // const picpath = path.resolve(`uploads/pics/${newFileName}`);
 
-  await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
+  const picpath = path.resolve(req.files.filePicUrl[0].destination + `/${picFile.originalname}`);
 
-  const { filename: image } = req.file;
+  const licensepath = path.resolve(req.files.fileLicenseUrl[0].destination + `/${licenseFile.originalname}`);
 
-  await sharp(req.file.path)
+  // await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
+
+  const { filename: image } = req.files.filePicUrl[0];
+
+  await sharp(req.files.filePicUrl[0].path)
     .resize(200, 200)
     .jpeg({ quality: 90 })
-    .toFile(path.resolve(req.file.destination, 'resized', image));
-  fs.unlinkSync(req.file.path);
-
-  res.redirect('/');
+    .toFile(path.resolve(req.files.filePicUrl[0].destination, 'resized', image));
+  fs.unlinkSync(req.files.filePicUrl[0].path);
 
   // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
 
@@ -57,11 +59,11 @@ exports.create = async (req, res) => {
     City: req.body.City,
     Region: req.body.Region,
     Country: req.body.Country,
-    PicUrl: newFileName, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
+    PicUrl: picpath, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
     Licensed: req.body.Licensed,
     //  LicenseUrl: req.files.fileLicenseUrl[0].filename, // req.LicenseUrl.path,
     Rating: req.body.Rating,
-    DriverDocs: req.body.DriverDocs,
+    DriverDocs: licensepath,
   };
   console.log(`driver`, driver);
   const generatedPassword = generator.generate({ length: 8, numbers: true });

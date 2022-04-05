@@ -8,8 +8,8 @@ const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const { Email } = req.body;
-    const { CompanyId } = req.body;
+    const { Email, CompanyId } = req.body;
+
     const dir = `./uploads/${CompanyId}/${Email}`;
     fs.exists(dir, (exist) => {
       if (!exist) {
@@ -33,7 +33,7 @@ const filter = (req, file, cb) => {
 
 const imageUploader = multer({
   storage,
-  fileFilter: filter,
+  // fileFilter: filter,
 });
 
 //const upLoadPics = multer({ storage: storageProfile }).single('file');
