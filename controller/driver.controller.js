@@ -192,7 +192,7 @@ exports.findAll = (req, res) => {
 // Find a single Driver with an id
 exports.findOne = (req, res) => {
   const id = req.params.driverId;
-  if(id===undefined) return
+ 
   Driver.findOne({
     where: { DriverId: id },
     include: [
