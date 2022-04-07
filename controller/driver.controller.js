@@ -216,7 +216,7 @@ exports.findOne = (req, res) => {
   const id = req.params.driverId;
 
   Driver.findOne({
-    where: [{ DriverId: id }, { UserId: id }],
+    where: { $or: [{ DriverId: id }, { UserId: id }] },
     include: [
       {
         model: Company,
