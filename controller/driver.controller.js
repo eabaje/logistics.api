@@ -29,6 +29,15 @@ exports.create = async (req, res) => {
   // sharp options
 
   //
+  Driver.findOne({
+    where: {
+      Email: req.body.Email,
+    },
+  }).then((user) => {
+    if (user) {
+      return res.status(404).send({ message: 'Email already exists for Driver' });
+    } 
+  });
 
   // const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
   // fs.exists(dir, (exist) => {
@@ -216,7 +225,7 @@ exports.findOne = (req, res) => {
   const id = req.params.driverId;
 
   Driver.findOne({
-    where: { $or: [{ DriverId: id }, { UserId: id }] },
+    where: { [Op.or]: [{ DriverId: id }, { UserId: id }] },
     include: [
       {
         model: Company,
