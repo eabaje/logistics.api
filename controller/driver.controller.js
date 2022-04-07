@@ -54,18 +54,18 @@ exports.create = async (req, res) => {
   const { filename: image } = req.files.filePicUrl[0];
   console.log('picFile', picFile);
 
-  // sharp(picFile.path)
-  //   .resize(200, 200)
-  //   .jpeg({ quality: 90 })
-  //   .toFile(
-  //     path.resolve(picFile.destination , 'resized', image), //, (err, info) => {
-  //     //   console.log(err);}+ `/${newFileName}`
-  //   );
-  await sharp(picFile.path)
-    .resize(500)
-    .jpeg({ quality: 50 })
-    .toFile(path.resolve(picFile.destination, 'resized', image));
-  fs.unlinkSync(picFile.path);
+  //  await sharp(picFile.path)
+  //     .resize(200, 200)
+  //     .jpeg({ quality: 90 })
+  //     .toFile(
+  //       path.resolve(picFile.destination , 'resized', image), //, (err, info) => {
+  //       //   console.log(err);}+ `/${newFileName}`
+  //     );
+  // await sharp(picFile.path)
+  //   .resize(500)
+  //   .jpeg({ quality: 50 })
+  //   .toFile(path.resolve(picFile.destination, 'resized', image));
+  //fs.unlinkSync(picFile.path);
   //fs.unlinkSync(req.files.filePicUrl[0].path);
 
   // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
@@ -216,7 +216,7 @@ exports.findOne = (req, res) => {
   const id = req.params.driverId;
 
   Driver.findOne({
-    where: { DriverId: id },
+    where: [{ DriverId: id }, { UserId: id }],
     include: [
       {
         model: Company,
