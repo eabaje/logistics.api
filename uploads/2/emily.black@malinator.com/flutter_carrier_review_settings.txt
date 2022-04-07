@@ -1,0 +1,10 @@
+'com.google.gms:google-services:4.2.0'
+com.google.gms:google-services:4.3.2
+
+apply plugin: 'com.google.gms.google-services'
+
+
+
+maven {
+            url "https://maven.google.com"
+        }

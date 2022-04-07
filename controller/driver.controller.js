@@ -9,6 +9,7 @@ const sgMail = require('@sendgrid/mail');
 const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
 const multer = require('multer');
+//const MulterSharpResizer = require('multer-sharp-resizer');
 const multerOpt = require('../middleware/multer');
 const sharp = require('sharp');
 const fs = require('fs');
@@ -25,6 +26,18 @@ const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
 exports.create = async (req, res) => {
+  // sharp options
+
+  //
+
+  // const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
+  // fs.exists(dir, (exist) => {
+  //   if (!exist) {
+  //     return fs.mkdir(dir, { recursive: true }, (err, info) => {
+  //          console.log(err);
+  //         });
+  //   }
+  // });
   const picFile = req.files.filePicUrl[0];
 
   const licenseFile = req.files.fileLicenseUrl[0];
@@ -32,19 +45,28 @@ exports.create = async (req, res) => {
   const newFileName = picFile.fieldname + '-' + Date.now() + path.extname(picFile.originalname);
   // const picpath = path.resolve(`uploads/pics/${newFileName}`);
 
-  const picpath = path.resolve(req.files.filePicUrl[0].destination + `/${picFile.originalname}`);
+  const picpath = `${req.body.CompanyId}/${req.body.Email}/${picFile.originalname}`;
 
-  const licensepath = path.resolve(req.files.fileLicenseUrl[0].destination + `/${licenseFile.originalname}`);
+  const licensepath = `${req.body.CompanyId}/${req.body.Email}/${licenseFile.originalname}`;
 
   // await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
 
   const { filename: image } = req.files.filePicUrl[0];
+  console.log('picFile', picFile);
 
-  await sharp(req.files.filePicUrl[0].path)
-    .resize(200, 200)
-    .jpeg({ quality: 90 })
-    .toFile(path.resolve(req.files.filePicUrl[0].destination, 'resized', image));
-  fs.unlinkSync(req.files.filePicUrl[0].path);
+  // sharp(picFile.path)
+  //   .resize(200, 200)
+  //   .jpeg({ quality: 90 })
+  //   .toFile(
+  //     path.resolve(picFile.destination , 'resized', image), //, (err, info) => {
+  //     //   console.log(err);}+ `/${newFileName}`
+  //   );
+  await sharp(picFile.path)
+    .resize(500)
+    .jpeg({ quality: 50 })
+    .toFile(path.resolve(picFile.destination, 'resized', image));
+  fs.unlinkSync(picFile.path);
+  //fs.unlinkSync(req.files.filePicUrl[0].path);
 
   // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
 
@@ -192,7 +214,7 @@ exports.findAll = (req, res) => {
 // Find a single Driver with an id
 exports.findOne = (req, res) => {
   const id = req.params.driverId;
- 
+
   Driver.findOne({
     where: { DriverId: id },
     include: [
