@@ -36,7 +36,7 @@ exports.create = async (req, res) => {
   }).then((user) => {
     if (user) {
       return res.status(404).send({ message: 'Email already exists for Driver' });
-    } 
+    }
   });
 
   // const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
@@ -79,6 +79,10 @@ exports.create = async (req, res) => {
 
   // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
 
+  const generatedPassword = generator.generate({ length: 8, numbers: true });
+  const encryptedPassword = req.body.Password
+    ? bcrypt.hashSync(req.body.Password, 10)
+    : bcrypt.hashSync(generatedPassword, 10);
   // Create a Driver
   const driver = {
     CompanyId: req.body.CompanyId,
@@ -92,42 +96,51 @@ exports.create = async (req, res) => {
     Country: req.body.Country,
     PicUrl: picpath, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
     Licensed: req.body.Licensed,
-    //  LicenseUrl: req.files.fileLicenseUrl[0].filename, // req.LicenseUrl.path,
     Rating: req.body.Rating,
     DriverDocs: licensepath,
   };
+
+  const user = {
+    CompanyId: req.body.CompanyId,
+    FullName: req.body.DriverName,
+    Email: req.body.Email.toLowerCase(),
+    Phone: req.body.Phone,
+    Address: req.body.Address,
+    City: req.body.Region,
+    Region: req.body.Region,
+    Country: req.body.Country,
+    UserName: req.body.Email.toLowerCase(),
+    Password: encryptedPassword,
+  };
   console.log(`driver`, driver);
-  const generatedPassword = generator.generate({ length: 8, numbers: true });
-  const encryptedPassword = req.body.Password
-    ? bcrypt.hashSync(req.body.Password, 10)
-    : bcrypt.hashSync(generatedPassword, 10);
+
   // Save Driver in the database
-  Driver.create(driver)
-    .then((data) => {
-      console.log('data', data);
-      User.create({
+  User.create(user)
+    .then((userdata) => {
+      console.log('data', userdata);
+      Driver.create({
         CompanyId: req.body.CompanyId,
-        FullName: req.body.DriverName,
-        Email: req.body.Email.toLowerCase(),
+        DriverName: req.body.DriverName,
+        Email: req.body.Email,
         Phone: req.body.Phone,
         Address: req.body.Address,
-        City: req.body.Region,
+        DOB: req.body.DOB,
+        City: req.body.City,
         Region: req.body.Region,
         Country: req.body.Country,
-        UserName: req.body.Email.toLowerCase(),
-        Password: encryptedPassword,
-      }).then((user) => {
-        console.log('user', user);
-        Driver.update({
-          UserId: user.UserId,
-          where: { DriverId: data.DriverId },
-        });
+        PicUrl: picpath,
+        Licensed: req.body.Licensed,
+        DriverDocs: licensepath,
+        UserId: userdata.UserId,
+      }).then((driverdata) => {
+        console.log('driver', driverdata);
+
         Role.findOne({
           where: {
             Name: 'driver',
           },
         }).then((role) => {
-          UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });
+          UserRole.create({ UserId: userdata.UserId, RoleId: role.RoleId });
         });
 
         const transporter = nodemailer.createTransport({
@@ -175,7 +188,7 @@ exports.create = async (req, res) => {
 
         res.send({
           message: 'Driver was added successfully.',
-          data: data,
+          data: driverdata,
         });
       });
     })
