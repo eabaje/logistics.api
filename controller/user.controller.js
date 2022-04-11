@@ -294,6 +294,57 @@ exports.updateUserRole = (req, res) => {
     });
 };
 
+exports.updateFile = (req, res) => {
+ // console.log('req.body.UserId', req.body.UserId);
+  User.findOne({
+    where: {
+      UserId: req.body.UserId,
+    },
+  }).then((user) => {
+    if (user) {
+      const uploadFile = req.file ? req.file : null;
+
+      const picpath = uploadFile ? `${driver.CompanyId}/${driver.Email}/${uploadFile.originalname}` : '';
+
+      var condition = req.body.FileType === 'image' ? { UserPicUrl: picpath } : { UserPicUrl: picpath };
+      console.log('condition', condition);
+      User.update(condition, {
+        where: { UserId: req.body.UserId },
+      })
+        .then((num) => {
+          if (num == 1) {
+            res.send({
+              message: 'File uploaded successfully.',
+            });
+          } else {
+            res.send({
+              message: `Cannot update Driver with id=${id}. Maybe Driver was not found or req.body is empty!`,
+            });
+          }
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: 'Error updating Driver with id=' + id,
+          });
+        });
+    } else {
+      res.status(500).send({
+        message: 'Error updating the record',
+      });
+    }
+  });
+
+  // const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
+  // fs.exists(dir, (exist) => {
+  //   if (!exist) {
+  //     return fs.mkdir(dir, { recursive: true }, (err, info) => {
+  //          console.log(err);
+  //         });
+  //   }
+  // });
+};
+
+
 exports.changeImageProfile = async (req, res = response) => {
   try {
     const imagePath = req.file.filename;
