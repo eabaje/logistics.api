@@ -292,6 +292,7 @@ exports.update = (req, res) => {
 
 // Update a Driver by the id in the request
 exports.updateFile = (req, res) => {
+  console.log('req.body.DriverId', req.body.DriverId);
   Driver.findOne({
     where: {
       DriverId: req.body.DriverId,
@@ -303,7 +304,7 @@ exports.updateFile = (req, res) => {
       const picpath = uploadFile ? `${driver.CompanyId}/${driver.Email}/${uploadFile.originalname}` : '';
 
       var condition = req.body.FileType === 'image' ? { PicUrl: picpath } : { DriverDocs: picpath };
-
+      console.log('condition', condition);
       Driver.update(condition, {
         where: { DriverId: req.body.DriverId },
       })
