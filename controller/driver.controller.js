@@ -47,16 +47,16 @@ exports.create = async (req, res) => {
   //         });
   //   }
   // });
-  const picFile = req.files.filePicUrl[0];
+  const picFile = req.files.filePicUrl[0] ? req.files.filePicUrl[0] : null;
 
-  const licenseFile = req.files.fileLicenseUrl[0];
+  const licenseFile = req.files.fileLicenseUrl[0] ? req.files.fileLicenseUrl[0] : null;
 
   const newFileName = picFile.fieldname + '-' + Date.now() + path.extname(picFile.originalname);
   // const picpath = path.resolve(`uploads/pics/${newFileName}`);
 
-  const picpath = `${req.body.CompanyId}/${req.body.Email}/${picFile.originalname}`;
+  const picpath = picFile ? `${req.body.CompanyId}/${req.body.Email}/${picFile.originalname}` : '';
 
-  const licensepath = `${req.body.CompanyId}/${req.body.Email}/${licenseFile.originalname}`;
+  const licensepath = licenseFile ? `${req.body.CompanyId}/${req.body.Email}/${licenseFile.originalname}` : '';
 
   // await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
 
@@ -290,12 +290,62 @@ exports.update = (req, res) => {
     });
 };
 
+// Update a Driver by the id in the request
+exports.updateFile = (req, res) => {
+  Driver.findOne({
+    where: {
+      DriverId: req.body.DriverId,
+    },
+  }).then((driver) => {
+    if (driver) {
+      const uploadFile = req.file ? req.file : null;
+
+      const picpath = uploadFile ? `${driver.CompanyId}/${driver.Email}/${uploadFile.originalname}` : '';
+
+      var condition = req.body.FileType === 'image' ? { PicUrl: picpath } : { DriverDocs: picpath };
+
+      Driver.update(condition, {
+        where: { DriverId: req.body.DriverId },
+      })
+        .then((num) => {
+          if (num == 1) {
+            res.send({
+              message: 'File uploaded successfully.',
+            });
+          } else {
+            res.send({
+              message: `Cannot update Driver with id=${id}. Maybe Driver was not found or req.body is empty!`,
+            });
+          }
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: 'Error updating Driver with id=' + id,
+          });
+        });
+    } else {
+      res.status(500).send({
+        message: 'Error updating the record',
+      });
+    }
+  });
+
+  // const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
+  // fs.exists(dir, (exist) => {
+  //   if (!exist) {
+  //     return fs.mkdir(dir, { recursive: true }, (err, info) => {
+  //          console.log(err);
+  //         });
+  //   }
+  // });
+};
+
 // Delete a Driver with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.driverId;
 
   Driver.destroy({
-    where: { id: id },
+    where: { DriverId: id },
   })
     .then((num) => {
       if (num == 1) {

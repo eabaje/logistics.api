@@ -95,6 +95,13 @@ module.exports = function (app) {
     ]),
     controller.create,
   );
+  app.post(
+    '/api/driver/updateFile',
+
+    imageUploader.single('file'),
+    controller.updateFile,
+  );
+
   //[, upLoadDocuments.single('fileLicenseUrl')]
   app.post('/api/driver/AssignDriverToVehicle', controller.AssignDriverToVehicle);
 
