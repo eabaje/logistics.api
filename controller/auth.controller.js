@@ -281,6 +281,7 @@ exports.signin = (req, res) => {
 
 exports.reset = (req, res) => {
   // where: { [Op.and]: [{ Email: req.body.Email }, { IsActivated: true }] },
+  console.log('req.body.Email', req.body.Email);
   User.findOne({
     where: { Email: req.body.Email },
   })
@@ -288,7 +289,7 @@ exports.reset = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: 'User Not found.' });
       }
-
+      const id = user.UserId;
       const encryptedPassword = req.body.Password
         ? bcrypt.hashSync(req.body.Password, 10)
         : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);

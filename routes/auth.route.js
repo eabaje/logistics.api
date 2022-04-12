@@ -13,6 +13,8 @@ module.exports = function (app) {
 
   app.post('/api/auth/signin', controller.signin);
 
+  app.put('/api/auth/reset', controller.reset);
+
   app.get('/api/auth/verify/:token', controller.verify);
 
   app.get('/api/auth/logout', controller.logout);

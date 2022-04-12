@@ -295,16 +295,17 @@ exports.updateUserRole = (req, res) => {
 };
 
 exports.updateFile = (req, res) => {
- // console.log('req.body.UserId', req.body.UserId);
+  // console.log('req.body.UserId', req.body.UserId);
   User.findOne({
     where: {
       UserId: req.body.UserId,
     },
   }).then((user) => {
     if (user) {
+      console.log('user', user);
       const uploadFile = req.file ? req.file : null;
 
-      const picpath = uploadFile ? `${driver.CompanyId}/${driver.Email}/${uploadFile.originalname}` : '';
+      const picpath = uploadFile ? `${user.CompanyId}/${user.Email}/${uploadFile.originalname}` : '';
 
       var condition = req.body.FileType === 'image' ? { UserPicUrl: picpath } : { UserPicUrl: picpath };
       console.log('condition', condition);
@@ -343,7 +344,6 @@ exports.updateFile = (req, res) => {
   //   }
   // });
 };
-
 
 exports.changeImageProfile = async (req, res = response) => {
   try {
