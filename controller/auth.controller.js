@@ -266,7 +266,7 @@ exports.signin = (req, res) => {
                 CompanyId: user.CompanyId,
                 CompanyName: company.CompanyName,
                 roles: role.Name,
-                PicUrl: user.PicUrl,
+                UserPicUrl: user.UserPicUrl,
               },
             });
           });

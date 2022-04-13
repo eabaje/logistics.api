@@ -269,8 +269,24 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.driverId;
 
+  const driver = {
+    DriverName: req.body.DriverName,
+    Email: req.body.Email,
+    Phone: req.body.Phone,
+    Address: req.body.Address,
+    DOB: req.body.DOB,
+    City: req.body.City,
+    Region: req.body.Region,
+    Country: req.body.Country,
+
+    Licensed: req.body.Licensed,
+  };
+
+  console.log('req.params.driverId', req.params.driverId);
+  console.log('req.body', req.body);
+
   Driver.update(req.body, {
-    where: { id: id },
+    where: { DriverId: id },
   })
     .then((num) => {
       if (num == 1) {
