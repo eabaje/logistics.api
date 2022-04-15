@@ -217,6 +217,14 @@ exports.findAll = (req, res) => {
         model: User,
         attributes: ['FullName'],
       },
+      {
+        model: Vehicle,
+         
+        attributes: ["VehicleNumber"],
+        through: {
+          attributes: ["VehicleId", "DriverId"],
+        }
+      }
     ],
   })
 
@@ -544,10 +552,25 @@ exports.findAllDriversByCompany = (req, res) => {
   Driver.findAll({
     where: { CompanyId: companyId },
 
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: User,
+        attributes: ['FullName'],
+      },
+      {
+        model: Vehicle,
+         
+        attributes: ["VehicleNumber"],
+        required: true,
+        // through: {
+        //   attributes: ["VehicleId", "DriverId"],
+        // }
+      }
+    ],
   })
 
     .then((data) => {
