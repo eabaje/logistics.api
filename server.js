@@ -98,7 +98,7 @@ function initial() {
   Company.create({
     //  CompanyId: 1,
     CompanyName: 'Global Load Dispatch',
-    ContactEmail: 'ebi.abaje@loaddispatch.com.ng',
+    ContactEmail: 'admin@loaddispatch.com.ng',
     ContactPhone: '08057886381',
     CompanyType: 'admin',
     Address: 'Lagos',
@@ -136,10 +136,10 @@ function initial() {
 
   User.create({
     UserId: initialUserId,
-    FullName: 'Ebi Abaje',
-    Email: 'ebi.abaje@loaddispatch.com.ng',
+    FullName: 'Gabriel Ehima',
+    Email: 'admin@loaddispatch.com.ng',
     Phone: '08057886381',
-    UserName: 'ebi.abje@loaddispatch.com.ng',
+    UserName: 'admin@loaddispatch.com.ng',
     Password: encryptedPassword,
     Address: 'Lagos',
     City: 'LG',

@@ -1,9 +1,26 @@
 const jwt = require('jsonwebtoken');
-const config = require('../config/auth.config.js');
+//const config = require('../config/auth.config.js');
 const db = require('../models/index.model.js');
 const User = db.user;
 
-verifyToken = (req, res, next) => {
+const config = process.env;
+
+ verifyToken = (req, res, next) => {
+  const token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+  if (!token) {
+    return res.status(403).send('A token is required for authentication');
+  }
+  try {
+    const decoded = jwt.verify(token, config.TOKEN_KEY);
+    req.user = decoded;
+  } catch (err) {
+    return res.status(401).send('Invalid Token');
+  }
+  return next();
+};
+
+verifyTokenv1 = (req, res, next) => {
   let token = req.headers['x-access-token'];
 
   if (!token) {

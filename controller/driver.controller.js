@@ -220,12 +220,208 @@ exports.findAll = (req, res) => {
       {
         model: Vehicle,
          
-        attributes: ["VehicleNumber"],
+        attributes: ["VehicleNumber","VehicleId"],
         through: {
           attributes: ["VehicleId", "DriverId"],
         }
       }
     ],
+    order: [['createdAt', 'DESC']],
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
+    });
+};
+
+
+// find all Licensed Driver
+exports.findAllDriversByDriverName = (req, res) => {
+  const driverName = req.params.driverName;
+
+  Driver.findAll({
+    where: { DriverName: driverName },
+
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
+
+    order: [['createdAt', 'DESC']],
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
+    });
+};
+
+exports.findAllDriversByVehicle = (req, res) => {
+  const vehicleId = req.params.vehicleId;
+
+  AssignDriver.findAll({
+    where: { VehicleId: vehicleId },
+
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
+    order: [['createdAt', 'DESC']],
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
+    });
+};
+
+exports.findAllDriversByCompany = (req, res) => {
+  const companyId = req.params.companyId;
+
+  Driver.findAll({
+    where: { CompanyId: companyId },
+
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: User,
+        attributes: ['FullName'],
+      },
+      {
+        model: Vehicle,
+         
+        attributes: ["VehicleNumber"],
+        required: true,
+        // through: {
+        //   attributes: ["VehicleId", "DriverId"],
+        // }
+      }
+    ],
+    order: [['createdAt', 'DESC']],
+  })
+
+    .then((data) => {
+    
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
+    });
+};
+exports.findAllAssignedDrivers = (req, res) => {
+  //  const vehicleId = req.query.VehicleId;
+
+  Driver.findAll({
+    // where: { Assigned: true },
+    
+    include: [
+      {
+        model: Company,
+        attributes: ['CompanyName'],
+      },
+      {
+        model: User,
+        attributes: ['FullName'],
+      },
+      {
+        model: Vehicle,
+        required: true,
+         attributes: ["VehicleId","VehicleNumber","VehicleMake"],
+        // through: {
+        //   attributes: ["VehicleId","DriverId"],
+          
+        //   where:{Assigned:true}
+        // }
+       
+      }
+    ],
+    order: [['createdAt', 'DESC']],
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
+    });
+};
+
+// find all Licensed Driver
+exports.findAllDriversLicensed = (req, res) => {
+  Driver.findAll({
+    where: { Licensed: true },
+    order: [['createdAt', 'DESC']],
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Drivers.',
+      });
+    });
+};
+
+// find all  Driver by date
+exports.findAllDriversByDate = (req, res) => {
+  const startDate = req.params.startDate;
+  const endDate = req.params.endDate;
+
+  Driver.findAll({
+    where: {
+      createdAt: {
+        [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
+      },
+    },
+    order: [['createdAt', 'DESC']],
+
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
   })
 
     .then((data) => {
@@ -256,6 +452,16 @@ exports.findOne = (req, res) => {
         model: User,
         attributes: ['FullName'],
       },
+      {
+        model: Vehicle,
+         
+        attributes: ["VehicleId","VehicleNumber","VehicleMake"],
+        through: {
+          attributes: ["VehicleId"],
+           where:{Assigned:true}
+        }
+       
+      }
     ],
   })
 
@@ -495,182 +701,4 @@ exports.AssignDriverToVehicle = (req, res) => {
     });
 };
 
-// find all Licensed Driver
-exports.findAllDriversByDriverName = (req, res) => {
-  const driverName = req.params.driverName;
 
-  Driver.findAll({
-    where: { DriverName: driverName },
-
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
-  })
-
-    .then((data) => {
-      res.status(200).send({
-        message: 'Success',
-        data: data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving Drivers.',
-      });
-    });
-};
-
-exports.findAllDriversByVehicle = (req, res) => {
-  const vehicleId = req.params.vehicleId;
-
-  AssignDriver.findAll({
-    where: { VehicleId: vehicleId },
-
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
-  })
-
-    .then((data) => {
-      res.status(200).send({
-        message: 'Success',
-        data: data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving Drivers.',
-      });
-    });
-};
-
-exports.findAllDriversByCompany = (req, res) => {
-  const companyId = req.params.companyId;
-
-  Driver.findAll({
-    where: { CompanyId: companyId },
-
-    include: [
-      {
-        model: Company,
-        attributes: ['CompanyName'],
-      },
-      {
-        model: User,
-        attributes: ['FullName'],
-      },
-      {
-        model: Vehicle,
-         
-        attributes: ["VehicleNumber"],
-        required: true,
-        // through: {
-        //   attributes: ["VehicleId", "DriverId"],
-        // }
-      }
-    ],
-  })
-
-    .then((data) => {
-      res.status(200).send({
-        message: 'Success',
-        data: data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving Drivers.',
-      });
-    });
-};
-exports.findAllAssignedDrivers = (req, res) => {
-  //  const vehicleId = req.query.VehicleId;
-
-  Driver.findAll({
-    // where: { Assigned: true },
-    include: [
-      {
-        model: Company,
-        attributes: ['CompanyName'],
-      },
-      //   {
-      //     model: Vehicle,
-      //     attributes: ['FullName'],
-      //     through: {
-      //       where: { Assigned: true },
-      //       attributes: ['VehicleId','DriverId'],
-      //     },
-      //   },
-    ],
-  })
-
-    .then((data) => {
-      res.status(200).send({
-        message: 'Success',
-        data: data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving Drivers.',
-      });
-    });
-};
-
-// find all Licensed Driver
-exports.findAllDriversLicensed = (req, res) => {
-  Driver.findAll({
-    where: { Licensed: true },
-
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
-  })
-
-    .then((data) => {
-      res.status(200).send({
-        message: 'Success',
-        data: data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving Drivers.',
-      });
-    });
-};
-
-// find all  Driver by date
-exports.findAllDriversByDate = (req, res) => {
-  const startDate = req.params.startDate;
-  const endDate = req.params.endDate;
-
-  Driver.findAll({
-    where: {
-      createdAt: {
-        [Op.between]: [new Date(Date(startDate)), new Date(Date(endDate))],
-      },
-    },
-    order: [['createdAt', 'ASC']],
-
-    include: {
-      model: Company,
-      attributes: ['CompanyName'],
-    },
-  })
-
-    .then((data) => {
-      res.status(200).send({
-        message: 'Success',
-        data: data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving Drivers.',
-      });
-    });
-};

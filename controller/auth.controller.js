@@ -232,13 +232,18 @@ exports.signin = (req, res) => {
           message: 'Invalid Password!',
         });
       }
-
+    
       // var token = jwt.sign({ id: user.UserId }, process.env, {
       //   expiresIn: 86400, // 24 hours
       // }); .toUpperCase()
-      const token = jwt.sign({ UserId: user.UserId }, `${process.env.TOKEN_KEY}`, {
-        expiresIn: '86400',
+      const token = jwt.sign({ UserId: user.UserId }, `${process.env.ACCESS_TOKEN_SECRET}`, {
+        expiresIn: '86400s',
       });
+      const refreshToken = jwt.sign({ UserId: user.UserId }, `${process.env.REFRESH_TOKEN_SECRET}`, {
+        expiresIn: '2d',
+      });
+      user.Token=refreshToken;
+      user.save();
       var authorities = [];
       UserRole.findOne({
         where: { UserId: user.UserId },
@@ -269,6 +274,7 @@ exports.signin = (req, res) => {
                 UserPicUrl: user.UserPicUrl,
               },
             });
+         //   res.cookie('jwt',refreshToken,{httpOnly:true,MaxAge:24*60*60*1000});
           });
         });
       });

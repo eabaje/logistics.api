@@ -228,6 +228,7 @@ exports.findOne = (req, res) => {
         attributes: ['Name'],
       },
     ],
+    order: [['createdAt', 'DESC']],
   })
     .then((data) => {
       res.status(200).send({
