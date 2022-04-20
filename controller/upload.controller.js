@@ -3,6 +3,7 @@ const path = require('path');
 const multerOpt = require('../middleware/multer');
 const sharp = require('sharp');
 const fs = require('fs');
+const fsPromises = require('fs').promises;
 var Jimp = require('jimp');
 const db = require('../models/index.model');
 
@@ -122,6 +123,7 @@ exports.getFiles = (req, res) => {
     });
 };
 
+
 exports.uploadDocument = function (req, res) {
   try {
     console.log(`docfile`, req.file);
@@ -131,4 +133,77 @@ exports.uploadDocument = function (req, res) {
   } catch (error) {
     console.log(`An error occurred during processing: ${error}`);
   }
+};
+
+exports.deleteFile = (req, res) => {
+  const mediaId = req.params.mediaId;
+
+  Media.findAll({
+    where: { MediaId: mediaId } })
+
+    .then((files) => {
+      if (fs.existsSync(path.join(__dirname, files.url))) {
+         fsPromises.unlink(path.join(__dirname, files.url));
+         fsPromises.unlink(path.join(__dirname, files.ThumbUrl));
+
+        const del=  Media.destroy({where: { MediaId: files.MediaId }});
+      }
+    })
+    .then((num) => {
+      if (num == 1) {
+        
+        res.send({
+          message: 'Picture deleted successfully!',
+        })
+      }
+
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving files.',
+      });
+    });
+};
+
+exports.deleteFiles = (req, res) => {
+  const id = req.params.refId;
+
+
+  //Delete all files
+  Media.findAll({
+    where: { RefId: refId },
+
+   
+  })
+
+    .then((files) => {
+     
+      if (fs.existsSync(path.join(__dirname, files.url))) {
+         fsPromises.unlink(path.join(__dirname, files.url));
+         fsPromises.unlink(path.join(__dirname, files.ThumbUrl));
+
+      const del=  Media.destroy({where: { MediaId: files.MediaId }});
+
+    }
+
+
+    })
+    .then((num) => {
+      if (num == 1) {
+        
+        res.send({
+          message: 'Pictures deleted successfully!',
+        })
+      }
+
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving files.',
+      });
+    });
+
+
+
+  
 };

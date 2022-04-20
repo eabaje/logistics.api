@@ -69,4 +69,7 @@ module.exports = function (app) {
   app.post('/api/upload/uploadDocument', upLoadDocuments.single('fileLicenseUrl'), controller.uploadDocument);
 
   app.post('/api/upload/uploadImageWithData', imageUploader.single('file'), controller.uploadImageWithData);
+  app.delete('/api/upload/deleteFile/:mediaId', controller.deleteFile);
+
+  app.delete('/api/upload/deleteFiles/:refId', controller.deleteFiles);
 };

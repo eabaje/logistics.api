@@ -1,8 +1,7 @@
 require('dotenv').config();
-const multer = require('multer');
 const express = require('express');
 const app = express();
-//const app = require('express')();
+
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger_output.json');
 var uuid = require('uuid');
@@ -61,17 +60,17 @@ const PORT = process.env.PORT || 9000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // routes
-require('./routes/auth.route')(app);
-require('./routes/user.route')(app);
-require('./routes/carrier.route')(app);
-require('./routes/driver.route')(app);
-require('./routes/vehicle.route')(app);
-require('./routes/shipment.route')(app);
-require('./routes/trip.route')(app);
-require('./routes/order.route')(app);
-require('./routes/payment.route')(app);
-require('./routes/subscription.route')(app);
-require('./routes/upload.route')(app);
+require('./routes/auth.routes')(app);
+require('./routes/user.routes')(app);
+require('./routes/carrier.routes')(app);
+require('./routes/driver.routes')(app);
+require('./routes/vehicle.routes')(app);
+require('./routes/shipment.routes')(app);
+require('./routes/trip.routes')(app);
+require('./routes/order.routes')(app);
+require('./routes/payment.routes')(app);
+require('./routes/subscription.routes')(app);
+require('./routes/upload.routes')(app);
 
 app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
