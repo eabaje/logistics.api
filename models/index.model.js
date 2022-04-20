@@ -5,7 +5,7 @@ const env = process.env.NODE_ENV.trim() || 'development';
 
 const config = require(__dirname + '/../config/config.json')[env];
 
-console.log('config', config)
+
 
 //console.log(process.env[config.use_env_variable]);
 
