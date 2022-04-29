@@ -98,6 +98,106 @@ exports.uploadImageWithData = async function (req, res) {
     console.log(`An error occurred during processing: ${error}`);
   }
 };
+
+exports.uploadImageWithData = async function (req, res) {
+  const { filename: image } = req.file;
+
+  const dir =req.body.UploadType==='vehicle'? `${process.env.VEHICLE_IMG_URL}${RefId}`:`${process.env.VEHICLE_IMG_URL}${RefId}`;
+  try {
+    const picName = req.file.fieldname + '-' + Date.now() ;
+    const picurl = picName + path.extname(req.file.originalname);
+    const thumbnailurl = picName +'_thumb'+ path.extname(req.file.originalname);
+    const thumbpath = path.resolve(`${dir}/${thumbnailurl}`);
+    const picpath = path.resolve(`${dir}/${picurl}`);
+    console.log(`imagefile0`, picpath);
+
+    await sharp(req.file.buffer)
+      .resize({ fit: sharp.fit.contain, width: 200 })
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(thumbpath);
+
+      await sharp(req.file.buffer)
+      .resize({ fit: sharp.fit.contain, width: 500 })
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(picpath);
+
+    console.log(`imagefile`, req.file);
+    // ImgPath=
+    // ThumbPath
+    Media.create({
+      RefId: req.body.RefId,
+      FileName: req.file.originalname,
+      ImgPath: picurl,
+      ThumbPath: thumbnailurl,
+      UploadDate: new Date(),
+    });
+
+    return res.status(200).send({
+      filename: picurl,
+    });
+  } catch (error) {
+    console.log(`An error occurred during processing: ${error}`);
+  }
+};
+
+exports.updateImageWithData = async function (req, res) {
+  const { filename: image } = req.file;
+
+ 
+
+  try {
+
+  const foundMedia=  Media.findOne({
+      where: { MediaId: req.body.MediaId } })
+
+      if(foundMedia){
+
+        await fs.unlink(path.resolve(`${foundMedia.ImgPath}`))
+        await fs.unlink(path.resolve(`${foundMedia.ThumbPath}`))
+
+      
+    const dir =req.body.UploadType==='vehicle'? `${process.env.VEHICLE_IMG_URL}${RefId}`:`${process.env.VEHICLE_IMG_URL}${RefId}`;
+    const picName = req.file.fieldname + '-' + Date.now() ;
+    const picurl = picName + path.extname(req.file.originalname);
+    const thumbnailurl = picName +'_thumb'+ path.extname(req.file.originalname);
+    const thumbpath = path.resolve(`${dir}${thumbnailurl}`);
+    const picpath = path.resolve(`u${dir}${picurl}`);
+    console.log(`imagefile0`, picpath);
+
+    await sharp(req.file.buffer)
+      .resize({ fit: sharp.fit.contain, width: 200 })
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(thumbpath);
+
+      await sharp(req.file.buffer)
+      .resize({ fit: sharp.fit.contain, width: 500 })
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(picpath);
+
+    console.log(`imagefile`, req.file);
+
+    Media.create({
+      RefId: req.body.RefId,
+      FileName: req.file.originalname,
+      ImgPath: picurl,
+      ThumbPath: thumbnailurl,
+      UploadDate: new Date(),
+    });
+
+    return res.status(200).send({
+      filename: picurl,
+    });
+  }
+  } catch (error) {
+    console.log(`An error occurred during processing: ${error}`);
+  }
+};
+
+
 exports.getFiles = (req, res) => {
   const refId = req.params.refId;
 
@@ -142,9 +242,9 @@ exports.deleteFile = (req, res) => {
     where: { MediaId: mediaId } })
 
     .then((files) => {
-      if (fs.existsSync(path.join(__dirname, files.url))) {
-         fsPromises.unlink(path.join(__dirname, files.url));
-         fsPromises.unlink(path.join(__dirname, files.ThumbUrl));
+      if (fs.existsSync(path.join(__dirname, files.ImgPath))) {
+         fsPromises.unlink(path.join(__dirname, files.ImgPath));
+         fsPromises.unlink(path.join(__dirname, files.ThumbPath));
 
         const del=  Media.destroy({where: { MediaId: files.MediaId }});
       }
@@ -178,9 +278,9 @@ exports.deleteFiles = (req, res) => {
 
     .then((files) => {
      
-      if (fs.existsSync(path.join(__dirname, files.url))) {
-         fsPromises.unlink(path.join(__dirname, files.url));
-         fsPromises.unlink(path.join(__dirname, files.ThumbUrl));
+      if (fs.existsSync(path.join(__dirname, files.ImgPath))) {
+         fsPromises.unlink(path.join(__dirname, files.ImgPath));
+         fsPromises.unlink(path.join(__dirname, files.ThumbPath));
 
       const del=  Media.destroy({where: { MediaId: files.MediaId }});
 

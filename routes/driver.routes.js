@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     // console.log('req.body', req.body);
     const { Email, CompanyId } = req.body;
 
-    const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
+    const dir = `./uploads/${process.env.PROFILE_IMG_URL}${req.body.CompanyId}/${req.body.Email}`;
     fs.exists(dir, (exist) => {
       if (!exist) {
         return fs.mkdir(dir, { recursive: true }, (error) => cb(error, dir));
@@ -48,7 +48,7 @@ const imageUploader = multer({
 
 storageDocuments = multer.diskStorage({
   destination: (req, res, cb) => {
-    cb(null, 'uploads/docs');
+    cb(null, process.env.DOC_URL);
   },
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
@@ -66,6 +66,7 @@ module.exports = function (app) {
   //, [authJwt.verifyToken]
 
   app.get('/api/driver/findOne/:driverId', controller.findOne);
+  app.get('/api/driver/findOneAssigned/:driverId', controller.findOneAssigned);
 
   app.get('/api/driver/findAll', controller.findAll);
 

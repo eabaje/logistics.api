@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
     // console.log('req.body', req.body);
     const { Email, CompanyId } = req.body;
 
-    const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
+    const dir = `./uploads/profile/${req.body.CompanyId}/${req.body.Email}`;
     fs.exists(dir, (exist) => {
       if (!exist) {
         return fs.mkdir(dir, { recursive: true }, (error) => cb(error, dir));
@@ -116,6 +116,13 @@ module.exports = function (app) {
   app.post('/api/user/createCompany', controller.createCompany);
 
   app.put('/api/user/updateCompany/:companyId', controller.updateCompany);
+
+  app.post(
+    '/api/user/company/uploadCompanyDoc',
+
+    imageUploader.single('file'),
+    controller.uploadCompanyDoc,
+  );
 
   app.get('/api/user/findCompany/:companyId', controller.findCompany);
 

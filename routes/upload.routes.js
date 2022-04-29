@@ -8,7 +8,19 @@ const fs = require('fs');
 
 storageProfile = multer.diskStorage({
   destination: (req, res, cb) => {
-    cb(null, 'uploads/pics');
+
+    const { RefId,UploadType } = req.body;
+    
+    const dir =UploadType==='vehicle'? `./uploads/${process.env.VEHICLE_IMG_URL}${RefId}`:`./uploads/${process.env.SHIPMENT_IMG_URL}${RefId}`;
+    fs.exists(dir, (exist) => {
+      if (!exist) {
+        return fs.mkdir(dir, { recursive: true }, (error) => cb(error, dir));
+      }
+     
+      cb(null, dir);
+      //file exists
+    });
+  
   },
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));

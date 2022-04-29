@@ -29,10 +29,10 @@ const Subscription = db.subscribe;
 const UserSubscription = db.usersubscription;
 //db.sequelize.sync();
 //force: true will drop the table if it already exists
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and Resync Database with { force: true }');
-  initial();
-});
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log('Drop and Resync Database with { force: true }');
+//   initial();
+// });
 
 // app.use(
 //   session({
@@ -79,7 +79,7 @@ app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 //bcrypt.hashSync(req.body.password, 8)
 function initial() {
   const { v1: uuidv1, v4: uuidv4 } = require('uuid');
-  encryptedPassword = bcrypt.hashSync('Web@6790', 8);
+  encryptedPassword = bcrypt.hashSync('Web@2022', 8);
   initialUserId = uuidv4();
   shipperRoleId = uuidv4();
   carrierRoleId = uuidv4();

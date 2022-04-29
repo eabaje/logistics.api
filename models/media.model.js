@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     RefId: { type: DataTypes.STRING },
     FileType: { type: DataTypes.STRING },
     FileName: { type: DataTypes.STRING },
-    url: { type: DataTypes.STRING },
-    ThumbUrl: { type: DataTypes.STRING },
+    ImgPath: { type: DataTypes.STRING },
+    ThumbPath: { type: DataTypes.STRING },
     UploadDate: { type: DataTypes.DATEONLY },
   });
 

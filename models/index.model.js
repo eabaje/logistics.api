@@ -58,6 +58,7 @@ db.usersubscription = require('./user.subscription.model.js')(sequelize, Sequeli
 db.insurance = require('./insurance.model.js')(sequelize, Sequelize);
 db.interested = require('./shipment.interested.model.js')(sequelize, Sequelize);
 db.media = require('./media.model.js')(sequelize, Sequelize);
+db.review = require('./review.model.js')(sequelize, Sequelize);
 
 db.assignshipment = require('./assign.shipment.model.js')(sequelize, Sequelize);
 
@@ -136,6 +137,9 @@ db.interested.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
 
 db.driver.hasOne(db.interested, { foreignKey: 'DriverId' });
 db.interested.belongsTo(db.driver, { foreignKey: 'DriverId' });
+
+db.driver.hasOne(db.review, { foreignKey: 'DriverId' });
+db.review.belongsTo(db.driver, { foreignKey: 'DriverId' });
 
 db.user.hasMany(db.shipment, { foreignKey: 'UserId' });
 db.shipment.belongsTo(db.user, { foreignKey: 'UserId' });
