@@ -104,6 +104,31 @@ exports.findOne = (req, res) => {
     });
 };
 
+exports.findAllCarriersByCompany = (req, res) => {
+  
+  const id = req.params.companyId;
+
+  Carrier.findAll({
+    where: { CompanyId: id },
+
+    include: {
+      model: Company,
+      attributes: ['CompanyName'],
+    },
+  })
+
+    .then((data) => {
+      res.status(200).send({
+        message: 'Success',
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving Carriers.',
+      });
+    });
+};
 // Update a Carrier by the id in the request
 exports.update = (req, res) => {
   const id = req.params.carrierId;

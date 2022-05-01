@@ -11,6 +11,8 @@ module.exports = function (app) {
 
   app.get('/api/carrier/findAll', controller.findAll);
 
+  app.get('/api/carrier/findAllCarriersByCompany/:companyId', controller.findAllCarriersByCompany);
+
   app.get('/api/carrier/findAllCarriersLicensed', controller.findAllCarriersLicensed);
 
   app.get('/api/carrier/findAllCarriersByDate/:startDate/:endDate', controller.findAllCarriersByDate);
