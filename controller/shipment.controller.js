@@ -399,10 +399,8 @@ exports.showInterest = (req, res) => {
               ],
             });
 
-            const url = process.env.ADMIN_URL + `user-profile-info/${req.body.UserId}`;
-            console.log(`interestedUser`, interestedUser);
-            console.log(`shipmentUser`, shipmentUser);
-
+            const url = process.env.ADMIN_URL + `driver-profile-info/${req.body.UserId}`;
+          
             const transporter = nodemailer.createTransport({
               service: 'gmail',
               auth: {
