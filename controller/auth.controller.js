@@ -62,7 +62,7 @@ exports.signup = (req, res) => {
         Region: req.body.Region,
         Country: req.body.Country,
         CompanyType: req.body.RoleType,
-        Specilaization: req.body.Specilaization,
+        Specialization: req.body.Specialization,
       })
         .then((company) => {
           //const company = Company.save();
@@ -85,6 +85,7 @@ exports.signup = (req, res) => {
             UserName: req.body.Email.toLowerCase(),
             AcceptTerms: req.body.AcceptTerms,
             PaymentMethod: req.body.PaymentMethod,
+            IsActivated:false,
             Password: encryptedPassword,
           })
             .then((user) => {
@@ -217,10 +218,10 @@ exports.signup = (req, res) => {
 
 exports.signin = async(req, res) => {
   // where: { [Op.and]: [{ Email: req.body.Email }, { IsActivated: true }] },
-const foundUser = await  User.findOne({where: {Email: req.body.Email}})
+
 try {
   
-
+const foundUser = await  User.findOne({where: {Email: req.body.Email}})
   if (!foundUser) {
     return res.status(404).send({ message: 'User Not found' });
   } else {
@@ -263,7 +264,7 @@ try {
           })
 
           console.log('UserSub', userSub)
-          const subExpired=userSub!==null?true :false ;
+          const subExpired=(userSub!==null)?true :false ;
  
   const company= await Company.findOne({ where: { CompanyId: foundUser.CompanyId }})
   
