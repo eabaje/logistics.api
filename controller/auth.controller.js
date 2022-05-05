@@ -19,6 +19,7 @@ const UserRole = db.userrole;
 const Company = db.company;
 const Subscribe = db.subscribe;
 const UserSubscription = db.usersubscription;
+const Op = db.Sequelize.Op;
 
 //const authware = require('../middleware/auth');
 
@@ -54,7 +55,7 @@ exports.signup = (req, res) => {
       return res.status(404).send({ message: 'Email already exists' });
     } else {
       Company.create({
-        CompanyName: req.body.CompanyName,
+        CompanyName: req.body.CompanyName? req.body.CompanyName:"NA",
         ContactEmail: req.body.ContactEmail,
         ContactPhone: req.body.ContactPhone,
         Address: req.body.CompanyAddress,
@@ -214,75 +215,88 @@ exports.signup = (req, res) => {
   });
 };
 
-exports.signin = (req, res) => {
+exports.signin = async(req, res) => {
   // where: { [Op.and]: [{ Email: req.body.Email }, { IsActivated: true }] },
-  User.findOne({
-    where: { Email: req.body.Email },
-  })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'User Not found.' });
-      }
+const foundUser = await  User.findOne({where: {Email: req.body.Email}})
+try {
+  
 
-      var passwordIsValid = bcrypt.compareSync(req.body.Password, user.Password);
+  if (!foundUser) {
+    return res.status(404).send({ message: 'User Not found' });
+  } else {
 
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          //  Token: null,
-          message: 'Invalid Password!',
-        });
-      }
-    
-      // var token = jwt.sign({ id: user.UserId }, process.env, {
-      //   expiresIn: 86400, // 24 hours
-      // }); .toUpperCase()
-      const token = jwt.sign({ UserId: user.UserId }, `${process.env.ACCESS_TOKEN_SECRET}`, {
-        expiresIn: '86400s',
-      });
-      const refreshToken = jwt.sign({ UserId: user.UserId }, `${process.env.REFRESH_TOKEN_SECRET}`, {
-        expiresIn: '2d',
-      });
-      user.Token=refreshToken;
-      user.save();
-      var authorities = [];
-      UserRole.findOne({
-        where: { UserId: user.UserId },
-      }).then((userrole) => {
-        if (!userrole) {
-          return res.status(404).send({ message: 'User does not have a Role.' });
-        }
-        Role.findOne({
-          where: { RoleId: userrole.RoleId },
-        }).then((role) => {
-          // for (let i = 0; i < userrole.length; i++) {
-          //   authorities.push(userrole[i].Name);
-          // }
-          Company.findOne({
-            where: { CompanyId: user.CompanyId },
-          }).then((company) => {
-            res.status(200).send({
-              message: 'Success',
-              token: token,
+    var passwordIsValid =  bcrypt.compareSync(req.body.Password, foundUser.Password);
 
-              user: {
-                UserId: user.UserId,
-                FullName: user.FullName,
-                Email: user.Email,
-                CompanyId: user.CompanyId,
-                CompanyName: company.CompanyName,
-                roles: role.Name,
-                UserPicUrl: user.UserPicUrl,
-              },
-            });
-         //   res.cookie('jwt',refreshToken,{httpOnly:true,MaxAge:24*60*60*1000});
-          });
-        });
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        //  Token: null,
+        message: 'Invalid Password!',
       });
-    })
-    .catch((err) => {
-      console.log('state:', err.message);
-      res.status(500).send({ message: err.message });
+    }
+
+
+    const token = jwt.sign({ UserId: foundUser.UserId }, `${process.env.ACCESS_TOKEN_SECRET}`, {
+      expiresIn: '86400s',
     });
+    const refreshToken = jwt.sign({ UserId: foundUser.UserId }, `${process.env.REFRESH_TOKEN_SECRET}`, {
+      expiresIn: '2d',
+    });
+    foundUser.Token=refreshToken;
+    foundUser.save();
+ 
+  var authorities = [];
+  const userRole= await UserRole.findOne({where: { UserId: foundUser.UserId },})
+ 
+      if (!userRole) {
+        return res.status(404).send({ message: 'User does not have a Role.' });
+      }
+
+
+ const role= await Role.findOne({ where: { RoleId: userRole.RoleId },})
+
+ let endDate = new Date();
+ const userSub = await UserSubscription.findOne({where: { UserId: foundUser.UserId, Active: true,EndDate: {
+              [Op.lt]: new Date()
+           
+            }},
+        
+          })
+
+          console.log('UserSub', userSub)
+          const subExpired=userSub!==null?true :false ;
+ 
+  const company= await Company.findOne({ where: { CompanyId: foundUser.CompanyId }})
+  
+          if(company)
+          {
+                      res.status(200).send({
+                        message: 'Success',
+                        token: token,
+
+                        user: {
+                          UserId: foundUser.UserId,
+                          FullName: foundUser.FullName,
+                          Email: foundUser.Email,
+                          CompanyId: foundUser.CompanyId,
+                          CompanyName: company.CompanyName,
+                          roles: role.Name,
+                          isActivated:foundUser.IsActivated,
+                          subExpired:subExpired,
+                          UserPicUrl: foundUser.UserPicUrl,
+                        },
+                      });
+
+          }
+
+
+        }
+
+} catch (error) {
+  console.log('error:', error.message);
+  res.status(500).send({ message: error.message });
+}
+
+ 
 };
 
 exports.reset = (req, res) => {
