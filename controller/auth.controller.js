@@ -145,10 +145,12 @@ exports.signup = (req, res) => {
                   });
 
                   const transporter = nodemailer.createTransport({
-                    service: `${process.env.MAIL_SERVICE}`,
+                   // service: `${process.env.MAIL_SERVICE}`,
+                    host: `${process.env.SMTP_HOST}`,
+                    port: `${process.env.SMTP_PORT}`,
                     auth: {
-                      user: `${process.env.EMAIL_USERNAME}`,
-                      pass: `${process.env.EMAIL_PASSWORD}`,
+                      user: `${process.env.SMTP_USER}`,
+                      pass: `${process.env.SMTP_PASSWORD}`,
                     },
                   });
                   // //  mailgun
@@ -171,7 +173,7 @@ exports.signup = (req, res) => {
                   const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
                   transporter
                     .sendMail({
-                      from: `${process.env.FROM_EMAIL}`,
+                      from: `${process.env.STMP_FROM_EMAIL}`,
                       to: email,
                       template: 'email2', // the name of the template file i.e email.handlebars
                       context: {
@@ -324,11 +326,12 @@ exports.reset = (req, res) => {
         .then((num) => {
           if (num == 1) {
             const transporter = nodemailer.createTransport({
-              service: `${process.env.MAIL_SERVICE}`,
-              auth: {
-                user: `${process.env.EMAIL_USERNAME}`,
-                pass: `${process.env.EMAIL_PASSWORD}`,
-              },
+                    host: `${process.env.SMTP_HOST}`,
+                    port: `${process.env.SMTP_PORT}`,
+                    auth: {
+                      user: `${process.env.SMTP_USER}`,
+                      pass: `${process.env.SMTP_PASSWORD}`,
+                    },
             });
             // //  mailgun
             // // Step 2 - Generate a verification token with the user's ID
@@ -349,7 +352,7 @@ exports.reset = (req, res) => {
 
             const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
             transporter.sendMail({
-              from: `${process.env.FROM_EMAIL}`,
+              from: `${process.env.STMP_FROM_EMAIL}`,
               to: req.body.Email,
               template: 'emailPassword', // the name of the template file i.e email.handlebars
               context: {

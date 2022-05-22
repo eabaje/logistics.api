@@ -139,10 +139,11 @@ exports.create =  (req, res) => {
         });
 
         const transporter = nodemailer.createTransport({
-          service: `${process.env.MAIL_SERVICE}`,
+          host: `${process.env.SMTP_HOST}`,
+          port: `${process.env.SMTP_PORT}`,
           auth: {
-            user: `${process.env.EMAIL_USERNAME}`,
-            pass: `${process.env.EMAIL_PASSWORD}`,
+            user: `${process.env.SMTP_USER}`,
+            pass: `${process.env.SMTP_PASSWORD}`,
           },
         });
         // //  mailgun
@@ -164,7 +165,7 @@ exports.create =  (req, res) => {
 
         //   const url = process.env.BASE_URL + `auth/verify/${token}`;
         transporter.sendMail({
-          from: process.env.FROM_EMAIL,
+          from: process.env.STMP_FROM_EMAIL,
           to: req.body.Email,
           template: 'emailPassword', // the name of the template file i.e email.handlebars
           context: {
