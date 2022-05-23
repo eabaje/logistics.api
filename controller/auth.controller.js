@@ -433,6 +433,107 @@ exports.verify = (req, res) => {
     });
 };
 
+
+exports.userActivation = (req, res) => {
+  // const token = req.params.token;
+  // // Check we have an id
+  // if (!token) {
+  //   return res.status(422).send({
+  //     message: 'Missing Token',
+  //   });
+  // }
+  // Step 1 -  Verify the token from the URL
+  // let payload = null;
+  // try {
+  //   payload = jwt.verify(token, process.env.TOKEN_KEY);
+  // } catch (err) {
+  //   return res.status(500).send(err);
+  // }
+  // console.log(`payload`, payload.UserId);
+   const UserId = req.params.userId;
+  User.findOne({
+    where: { UserId: UserId },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'User Not found.' });
+      }
+
+      user.IsActivated = true;
+      user.save();
+      // console.log(`payload`, payload.UserId);
+      // console.log('User:', user.UserId);
+      User.findOne({ where: { UserId: user.UserId, IsActivated: true } }).then((isActivated) => {
+        if (!isActivated) {
+          return res.status(404).send({
+            message: 'Kindly click to confirm again',
+          });
+        }
+
+
+
+        const transporter = nodemailer.createTransport({
+          host: `${process.env.SMTP_HOST}`,
+          port: `${process.env.SMTP_PORT}`,
+          auth: {
+            user: `${process.env.SMTP_USER}`,
+            pass: `${process.env.SMTP_PASSWORD}`,
+          },
+  });
+  // //  mailgun
+  // // Step 2 - Generate a verification token with the user's ID
+  // const verificationToken = user.generateVerificationToken();
+  // // Step 3 - Email the user a unique verification link
+
+  // point to the template folder
+  const handlebarOptions = {
+    viewEngine: {
+      partialsDir: path.resolve('./views/'),
+      defaultLayout: false,
+    },
+    viewPath: path.resolve('./views/'),
+  };
+
+  // use a template file with nodemailer
+  transporter.use('compile', hbs(handlebarOptions));
+
+  const url = `${process.env.ADMIN_URL}` + `auth/verify/${token}`;
+  const m=`<h1>Email Confirmation</h1>
+  <h2>Hello ${user.FullName}</h2>
+   <p>congratulations for the completion of your registration.After a careful review, we are happy to inform you that are fully vetted to use the .
+   Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+   
+   <p> yours sincerely</p>
+   
+   <p> Global LoadBoard Services </p>
+  
+   `;
+  transporter.sendMail({
+    from: `${process.env.STMP_FROM_EMAIL}`,
+    to: req.body.Email,
+    template: 'generic', // the name of the template file i.e email.handlebars
+    context: {
+      name: user.FullName,
+      msg: encryptedPassword,
+    },
+    subject: 'Information Successfully Vetted',
+    
+  });
+
+      });
+        // send mail to user
+
+
+      
+
+      return res.redirect(process.env.ADMIN_URL);
+    })
+    .catch((err) => {
+      console.log('Error:', err.message);
+      return res.status(500).send({ message: err.message });
+    });
+};
+
 exports.activation = (req, res) => {
   const { token } = req.body;
 
