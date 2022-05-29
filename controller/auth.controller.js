@@ -55,7 +55,7 @@ exports.signup = (req, res) => {
       return res.status(404).send({ message: 'Email already exists' });
     } else {
       Company.create({
-        CompanyName: req.body.CompanyName? req.body.CompanyName:"NA",
+        CompanyName: req.body.CompanyName ? req.body.CompanyName : 'NA',
         ContactEmail: req.body.ContactEmail,
         ContactPhone: req.body.ContactPhone,
         Address: req.body.CompanyAddress,
@@ -85,7 +85,9 @@ exports.signup = (req, res) => {
             UserName: req.body.Email.toLowerCase(),
             AcceptTerms: req.body.AcceptTerms,
             PaymentMethod: req.body.PaymentMethod,
-            IsActivated:false,
+            Currency: req.body.Currency,
+            IsActivated: false,
+            IsConfirmed: false,
             Password: encryptedPassword,
           })
             .then((user) => {
@@ -145,7 +147,7 @@ exports.signup = (req, res) => {
                   });
 
                   const transporter = nodemailer.createTransport({
-                   // service: `${process.env.MAIL_SERVICE}`,
+                    // service: `${process.env.MAIL_SERVICE}`,
                     host: `${process.env.SMTP_HOST}`,
                     port: `${process.env.SMTP_PORT}`,
                     auth: {
@@ -218,88 +220,80 @@ exports.signup = (req, res) => {
   });
 };
 
-exports.signin = async(req, res) => {
+exports.signin = async (req, res) => {
   // where: { [Op.and]: [{ Email: req.body.Email }, { IsActivated: true }] },
 
-try {
-  
-const foundUser = await  User.findOne({where: {Email: req.body.Email}})
-  if (!foundUser) {
-    return res.status(404).send({ message: 'User Not found' });
-  } else {
+  try {
+    const foundUser = await User.findOne({ where: { Email: req.body.Email } });
+    if (!foundUser) {
+      return res.status(404).send({ message: 'User Not found' });
+    } else {
+      var passwordIsValid = bcrypt.compareSync(req.body.Password, foundUser.Password);
 
-    var passwordIsValid =  bcrypt.compareSync(req.body.Password, foundUser.Password);
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          //  Token: null,
+          message: 'Invalid Password!',
+        });
+      }
 
-    if (!passwordIsValid) {
-      return res.status(401).send({
-        //  Token: null,
-        message: 'Invalid Password!',
+      const token = jwt.sign({ UserId: foundUser.UserId }, `${process.env.ACCESS_TOKEN_SECRET}`, {
+        expiresIn: '86400s',
       });
-    }
+      const refreshToken = jwt.sign({ UserId: foundUser.UserId }, `${process.env.REFRESH_TOKEN_SECRET}`, {
+        expiresIn: '2d',
+      });
+      foundUser.Token = refreshToken;
+      foundUser.save();
 
+      var authorities = [];
+      const userRole = await UserRole.findOne({ where: { UserId: foundUser.UserId } });
 
-    const token = jwt.sign({ UserId: foundUser.UserId }, `${process.env.ACCESS_TOKEN_SECRET}`, {
-      expiresIn: '86400s',
-    });
-    const refreshToken = jwt.sign({ UserId: foundUser.UserId }, `${process.env.REFRESH_TOKEN_SECRET}`, {
-      expiresIn: '2d',
-    });
-    foundUser.Token=refreshToken;
-    foundUser.save();
- 
-  var authorities = [];
-  const userRole= await UserRole.findOne({where: { UserId: foundUser.UserId },})
- 
       if (!userRole) {
         return res.status(404).send({ message: 'User does not have a Role.' });
       }
 
+      const role = await Role.findOne({ where: { RoleId: userRole.RoleId } });
 
- const role= await Role.findOne({ where: { RoleId: userRole.RoleId },})
+      let endDate = new Date();
+      const userSub = await UserSubscription.findOne({
+        where: {
+          UserId: foundUser.UserId,
+          Active: true,
+          EndDate: {
+            [Op.lt]: new Date(),
+          },
+        },
+      });
 
- let endDate = new Date();
- const userSub = await UserSubscription.findOne({where: { UserId: foundUser.UserId, Active: true,EndDate: {
-              [Op.lt]: new Date()
-           
-            }},
-        
-          })
+      console.log('UserSub', userSub);
+      const subExpired = userSub !== null ? true : false;
 
-          console.log('UserSub', userSub)
-          const subExpired=(userSub!==null)?true :false ;
- 
-  const company= await Company.findOne({ where: { CompanyId: foundUser.CompanyId }})
-  
-          if(company)
-          {
-                      res.status(200).send({
-                        message: 'Success',
-                        token: token,
+      const company = await Company.findOne({ where: { CompanyId: foundUser.CompanyId } });
 
-                        user: {
-                          UserId: foundUser.UserId,
-                          FullName: foundUser.FullName,
-                          Email: foundUser.Email,
-                          CompanyId: foundUser.CompanyId,
-                          CompanyName: company.CompanyName,
-                          roles: role.Name,
-                          isActivated:foundUser.IsActivated,
-                          subExpired:subExpired,
-                          UserPicUrl: foundUser.UserPicUrl,
-                        },
-                      });
+      if (company) {
+        res.status(200).send({
+          message: 'Success',
+          token: token,
 
-          }
-
-
-        }
-
-} catch (error) {
-  console.log('error:', error.message);
-  res.status(500).send({ message: error.message });
-}
-
- 
+          user: {
+            UserId: foundUser.UserId,
+            FullName: foundUser.FullName,
+            Email: foundUser.Email,
+            CompanyId: foundUser.CompanyId,
+            CompanyName: company.CompanyName,
+            roles: role.Name,
+            isActivated: foundUser.IsActivated,
+            subExpired: subExpired,
+            UserPicUrl: foundUser.UserPicUrl,
+          },
+        });
+      }
+    }
+  } catch (error) {
+    console.log('error:', error.message);
+    res.status(500).send({ message: error.message });
+  }
 };
 
 exports.reset = (req, res) => {
@@ -326,12 +320,12 @@ exports.reset = (req, res) => {
         .then((num) => {
           if (num == 1) {
             const transporter = nodemailer.createTransport({
-                    host: `${process.env.SMTP_HOST}`,
-                    port: `${process.env.SMTP_PORT}`,
-                    auth: {
-                      user: `${process.env.SMTP_USER}`,
-                      pass: `${process.env.SMTP_PASSWORD}`,
-                    },
+              host: `${process.env.SMTP_HOST}`,
+              port: `${process.env.SMTP_PORT}`,
+              auth: {
+                user: `${process.env.SMTP_USER}`,
+                pass: `${process.env.SMTP_PASSWORD}`,
+              },
             });
             // //  mailgun
             // // Step 2 - Generate a verification token with the user's ID
@@ -433,7 +427,6 @@ exports.verify = (req, res) => {
     });
 };
 
-
 exports.userActivation = (req, res) => {
   // const token = req.params.token;
   // // Check we have an id
@@ -450,7 +443,7 @@ exports.userActivation = (req, res) => {
   //   return res.status(500).send(err);
   // }
   // console.log(`payload`, payload.UserId);
-   const UserId = req.params.userId;
+  const UserId = req.params.userId;
   User.findOne({
     where: { UserId: UserId },
   })
@@ -470,8 +463,6 @@ exports.userActivation = (req, res) => {
           });
         }
 
-
-
         const transporter = nodemailer.createTransport({
           host: `${process.env.SMTP_HOST}`,
           port: `${process.env.SMTP_PORT}`,
@@ -479,28 +470,28 @@ exports.userActivation = (req, res) => {
             user: `${process.env.SMTP_USER}`,
             pass: `${process.env.SMTP_PASSWORD}`,
           },
-  });
-  // //  mailgun
-  // // Step 2 - Generate a verification token with the user's ID
-  // const verificationToken = user.generateVerificationToken();
-  // // Step 3 - Email the user a unique verification link
+        });
+        // //  mailgun
+        // // Step 2 - Generate a verification token with the user's ID
+        // const verificationToken = user.generateVerificationToken();
+        // // Step 3 - Email the user a unique verification link
 
-  // point to the template folder
-  const handlebarOptions = {
-    viewEngine: {
-      partialsDir: path.resolve('./views/'),
-      defaultLayout: false,
-    },
-    viewPath: path.resolve('./views/'),
-  };
+        // point to the template folder
+        const handlebarOptions = {
+          viewEngine: {
+            partialsDir: path.resolve('./views/'),
+            defaultLayout: false,
+          },
+          viewPath: path.resolve('./views/'),
+        };
 
-  // use a template file with nodemailer
-  transporter.use('compile', hbs(handlebarOptions));
+        // use a template file with nodemailer
+        transporter.use('compile', hbs(handlebarOptions));
 
-  const url = `${process.env.ADMIN_URL}` + `auth/verify/${token}`;
-  const m=`<h1>Email Confirmation</h1>
+        const url = `${process.env.ADMIN_URL}` + `auth/verify/${token}`;
+        const m = `<h1>Email Confirmation</h1>
   <h2>Hello ${user.FullName}</h2>
-   <p>congratulations for the completion of your registration.After a careful review, we are happy to inform you that are fully vetted to use the .
+   <p>congratulations for the completion of your registration.After a careful review, we are happy to inform you that are fully vetted to use the
    Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
    
    <p> yours sincerely</p>
@@ -508,23 +499,18 @@ exports.userActivation = (req, res) => {
    <p> Global LoadBoard Services </p>
   
    `;
-  transporter.sendMail({
-    from: `${process.env.STMP_FROM_EMAIL}`,
-    to: req.body.Email,
-    template: 'generic', // the name of the template file i.e email.handlebars
-    context: {
-      name: user.FullName,
-      msg: encryptedPassword,
-    },
-    subject: 'Information Successfully Vetted',
-    
-  });
-
+        transporter.sendMail({
+          from: `${process.env.STMP_FROM_EMAIL}`,
+          to: req.body.Email,
+          template: 'generic', // the name of the template file i.e email.handlebars
+          context: {
+            name: user.FullName,
+            msg: encryptedPassword,
+          },
+          subject: 'Information Successfully Vetted',
+        });
       });
-        // send mail to user
-
-
-      
+      // send mail to user
 
       return res.redirect(process.env.ADMIN_URL);
     })
@@ -577,28 +563,25 @@ exports.activation = (req, res) => {
   }
 };
 
-exports.logout = async(req, res) => {
-  
-
+exports.logout = async (req, res) => {
   const cookies = req.cookies;
-    if (!cookies?.jwt) return res.sendStatus(204); //No content
-    const refreshToken = cookies.jwt;
+  if (!cookies?.jwt) return res.sendStatus(204); //No content
+  const refreshToken = cookies.jwt;
 
-    // Is refreshToken in db?
-    const foundUser = await User.findOne({ refreshToken }).exec();
-    if (!foundUser) {
-        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
-        return res.sendStatus(204);
-    }
-
-    // Delete refreshToken in db
-    foundUser.refreshToken = '';
-    const result = await foundUser.save();
-    console.log(result);
-
+  // Is refreshToken in db?
+  const foundUser = await User.findOne({ refreshToken }).exec();
+  if (!foundUser) {
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
-    res.sendStatus(204);
+    return res.sendStatus(204);
+  }
 
+  // Delete refreshToken in db
+  foundUser.refreshToken = '';
+  const result = await foundUser.save();
+  console.log(result);
+
+  res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+  res.sendStatus(204);
 };
 
 exports.redirect = (req, res) => {

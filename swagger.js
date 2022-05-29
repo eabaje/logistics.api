@@ -2,16 +2,18 @@ const swaggerAutogen = require('swagger-autogen')();
 
 const outputFile = './swagger_output.json';
 const endpointsFiles = [
-  './routes/auth.route.js',
-  './routes/user.route.js',
-  './routes/carrier.route.js',
-  './routes/driver.route.js',
-  './routes/vehicle.route.js',
-  './routes/shipment.route.js',
-  './routes/payment.route.js',
-  './routes/order.route.js',
-  './routes/subscription.route.js',
-  './routes/trip.route.js',
+  './routes/auth.routes.js',
+  './routes/carrier.routes.js',
+  './routes/delete.routes.js',
+  './routes/driver.routes.js',
+  './routes/order.routes.js',
+  './routes/payment.routes.js',
+  './routes/shipment.routes.js',
+  './routes/subscription.routes.js',
+  './routes/trip.routes.js',
+  './routes/upload.routes.js',
+  './routes/user.routes.js',
+  './routes/vehicle.routes.js',
 ];
 
 swaggerAutogen(outputFile, endpointsFiles);

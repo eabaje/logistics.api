@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     Password: { type: DataTypes.STRING },
     UserPicUrl: { type: DataTypes.STRING },
     Token: { type: DataTypes.STRING },
+    IsConfirmed: { type: DataTypes.BOOLEAN },
     IsActivated: { type: DataTypes.BOOLEAN },
     AcceptTerms: { type: DataTypes.BOOLEAN },
     LoginCount: { type: DataTypes.INTEGER, defaultValue: 0 },

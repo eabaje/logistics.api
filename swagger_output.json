@@ -47,7 +47,7 @@
                 "RoleType": {
                   "example": "any"
                 },
-                "Specilaization": {
+                "Specialization": {
                   "example": "any"
                 },
                 "Password\r": {
@@ -131,6 +131,40 @@
         }
       }
     },
+    "/api/auth/reset": {
+      "put": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "example": "any"
+                },
+                "Password\r": {
+                  "example": "any"
+                },
+                "Password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/auth/verify/{token}": {
       "get": {
         "tags": [],
@@ -164,747 +198,6 @@
         "responses": {}
       }
     },
-    "/api/user/create": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Email": {
-                  "example": "any"
-                },
-                "CompanyName": {
-                  "example": "any"
-                },
-                "ContactEmail": {
-                  "example": "any"
-                },
-                "ContactPhone": {
-                  "example": "any"
-                },
-                "CompanyAddress": {
-                  "example": "any"
-                },
-                "Region": {
-                  "example": "any"
-                },
-                "Country": {
-                  "example": "any"
-                },
-                "RoleType": {
-                  "example": "any"
-                },
-                "Specilaization": {
-                  "example": "any"
-                },
-                "Password\r": {
-                  "example": "any"
-                },
-                "Password": {
-                  "example": "any"
-                },
-                "FullName": {
-                  "example": "any"
-                },
-                "FirstName": {
-                  "example": "any"
-                },
-                "LastName": {
-                  "example": "any"
-                },
-                "Phone": {
-                  "example": "any"
-                },
-                "Address": {
-                  "example": "any"
-                },
-                "AcceptTerms": {
-                  "example": "any"
-                },
-                "PaymentMethod": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findOne/{userId}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findAll": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findAllBySearch/{name}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findAllUsersByDate/{startDate}/{toDate}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "toDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/update/{userId}": {
-      "put": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "UserId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/delete": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/deleteAll": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findRoles": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findUserRoles": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/updateRole/{roleId}": {
-      "put": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "roleId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/updateUserRole/{userId}": {
-      "put": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "UserId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/deleteRole/{roleId}": {
-      "delete": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "roleId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/subscribe": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "SubscriptionId": {
-                  "example": "any"
-                },
-                "SubscriptionName": {
-                  "example": "any"
-                },
-                "UserId": {
-                  "example": "any"
-                },
-                "Active": {
-                  "example": "any"
-                },
-                "StartDate": {
-                  "example": "any"
-                },
-                "EndDate": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "409": {
-            "description": "Conflict"
-          }
-        }
-      }
-    },
-    "/api/user/upgradeUserSubscription": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "SubscriptionId": {
-                  "example": "any"
-                },
-                "SubscriptionName": {
-                  "example": "any"
-                },
-                "UserId": {
-                  "example": "any"
-                },
-                "Active": {
-                  "example": "any"
-                },
-                "StartDate": {
-                  "example": "any"
-                },
-                "EndDate": {
-                  "example": "any"
-                },
-                "UserSubscriptionId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/updateUserSubscription/{userSubscriptionId}": {
-      "put": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "userSubscriptionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "UserSubscriptionId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findUserSubscription/{userId}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findAllUserSubscriptions/{subscriptionId}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "subscriptionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findAllUserSubscriptionsByDate/{startDate}/{toDate}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "toDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "\r/api/user/findAllUserSubscriptionsByStartDate/{startDate}/{toDate}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "toDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "\r/api/user/findAllUserSubscriptionsByEndDate/{startDate}/{toDate}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "toDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/createCompany": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "CompanyName": {
-                  "example": "any"
-                },
-                "ContactEmail": {
-                  "example": "any"
-                },
-                "ContactPhone": {
-                  "example": "any"
-                },
-                "Address": {
-                  "example": "any"
-                },
-                "Country": {
-                  "example": "any"
-                },
-                "CompanyType": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/updateCompany/{companyId}": {
-      "put": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "companyId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "CompanyId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findCompany/{companyId}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "companyId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findAllCompanys/": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "companyType",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/findAllCompanysByDate/{startDate}/{toDate}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "toDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/user/deleteCompany/{companyId}": {
-      "delete": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "companyId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/api/carrier/findOne/{carrierId}": {
       "get": {
         "tags": [],
@@ -932,6 +225,28 @@
         "tags": [],
         "description": "",
         "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/carrier/findAllCarriersByCompany/{companyId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1093,7 +408,60 @@
         }
       }
     },
+    "/api/delete/deleteRecord": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tbl": {
+                  "example": "any"
+                },
+                "fld": {
+                  "example": "any"
+                },
+                "val": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/driver/findOne/{driverId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "driverId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/driver/findOneAssigned/{driverId}": {
       "get": {
         "tags": [],
         "description": "",
@@ -1254,7 +622,7 @@
         }
       }
     },
-    "/api/driver/create": {
+    "\r/api/driver/create": {
       "post": {
         "tags": [],
         "description": "",
@@ -1265,13 +633,19 @@
             "schema": {
               "type": "object",
               "properties": {
+                "Email": {
+                  "example": "any"
+                },
+                "Password\r": {
+                  "example": "any"
+                },
+                "Password": {
+                  "example": "any"
+                },
                 "CompanyId": {
                   "example": "any"
                 },
                 "DriverName": {
-                  "example": "any"
-                },
-                "Email": {
                   "example": "any"
                 },
                 "Phone": {
@@ -1297,14 +671,36 @@
                 },
                 "Rating": {
                   "example": "any"
-                },
-                "DriverDocs": {
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "\r/api/driver/updateFile": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "DriverId": {
                   "example": "any"
                 },
-                "Password\r": {
-                  "example": "any"
-                },
-                "Password": {
+                "FileType": {
                   "example": "any"
                 }
               }
@@ -1334,9 +730,6 @@
                 },
                 "VehicleId": {
                   "example": "any"
-                },
-                "AssignedDate": {
-                  "example": "any"
                 }
               }
             }
@@ -1362,6 +755,42 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "DriverName": {
+                  "example": "any"
+                },
+                "Email": {
+                  "example": "any"
+                },
+                "Phone": {
+                  "example": "any"
+                },
+                "Address": {
+                  "example": "any"
+                },
+                "DOB": {
+                  "example": "any"
+                },
+                "City": {
+                  "example": "any"
+                },
+                "Region": {
+                  "example": "any"
+                },
+                "Country": {
+                  "example": "any"
+                },
+                "Licensed": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -1394,7 +823,25 @@
       "delete": {
         "tags": [],
         "description": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "401": {
             "description": "Unauthorized"
@@ -1408,7 +855,78 @@
         }
       }
     },
-    "/api/vehicle/create": {
+    "/api/order/findOne/{orderId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/order/findAll": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "OrderType",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/order/findAllOrdersByDate/{startDate}/{endDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/order/create": {
       "post": {
         "tags": [],
         "description": "",
@@ -1419,43 +937,180 @@
             "schema": {
               "type": "object",
               "properties": {
-                "CarrierId": {
+                "title": {
                   "example": "any"
                 },
-                "VehicleType": {
+                "UserId": {
                   "example": "any"
                 },
-                "VehicleNumber": {
+                "OrderId": {
                   "example": "any"
                 },
-                "SerialNumber": {
+                "TotalPrice": {
                   "example": "any"
                 },
-                "VehicleMake": {
+                "OrderSessionId": {
                   "example": "any"
                 },
-                "VehicleColor": {
+                "ReferenceId": {
                   "example": "any"
                 },
-                "VehicleModel": {
+                "OrderStatus": {
                   "example": "any"
                 },
-                "LicensePlate": {
+                "OrderMethod": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/order/update/{orderId}": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/order/delete/{orderId}": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/order/deleteAll": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/payment/findOne/{paymentId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/payment/findAllPaymentsByDate/{startDate}/{endDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/payment/create": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserId": {
                   "example": "any"
                 },
-                "VehicleModelYear": {
+                "OrderId": {
                   "example": "any"
                 },
-                "PurchaseYear": {
+                "TotalPrice": {
                   "example": "any"
                 },
-                "Insured": {
+                "PaymentSessionId": {
                   "example": "any"
                 },
-                "PicUrl": {
+                "ReferenceId": {
                   "example": "any"
                 },
-                "VehicleDocs": {
+                "OrderStatus": {
+                  "example": "any"
+                },
+                "PaymentMethod": {
+                  "example": "any"
+                },
+                "PaymentDate": {
                   "example": "any"
                 }
               }
@@ -1472,143 +1127,13 @@
         }
       }
     },
-    "/api/vehicle/findOne/{vehicleId}": {
-      "get": {
+    "/api/payment/update/{id}": {
+      "post": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "vehicleId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/vehicle/findAll": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/vehicle/findAllVehiclesInsured": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/vehicle/findAllVehiclesByCategory/{carrierId}/{vehicleType}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "carrierId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "vehicleType",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/vehicle/findAllVehiclesByCompany/{companyId}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "companyId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/vehicle/findAllVehiclesByDate/{startDate}/{toDate}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "toDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/vehicle/update/{vehicleId}": {
-      "put": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "vehicleId",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1621,13 +1146,13 @@
         }
       }
     },
-    "/api/vehicle/delete/{vehicleId}": {
+    "/api/payment/delete/{paymentId}": {
       "delete": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "vehicleId",
+            "name": "paymentId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1640,7 +1165,7 @@
         }
       }
     },
-    "/api/vehicle/deleteAll": {
+    "/api/payment/deleteAll": {
       "delete": {
         "tags": [],
         "description": "",
@@ -2015,325 +1540,6 @@
     },
     "/api/shipment/deleteAll": {
       "delete": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/payment/findOne/{paymentId}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "paymentId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/payment/findAllPaymentsByDate/{startDate}/{endDate}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "endDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/payment/create": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "UserId": {
-                  "example": "any"
-                },
-                "OrderId": {
-                  "example": "any"
-                },
-                "TotalPrice": {
-                  "example": "any"
-                },
-                "PaymentSessionId": {
-                  "example": "any"
-                },
-                "ReferenceId": {
-                  "example": "any"
-                },
-                "OrderStatus": {
-                  "example": "any"
-                },
-                "PaymentMethod": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/payment/update/{id}": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/payment/delete/{paymentId}": {
-      "delete": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "paymentId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/payment/deleteAll": {
-      "delete": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/order/findOne/{orderId}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "orderId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/order/findAll": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "OrderType",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/order/findAllOrdersByDate/{startDate}/{endDate}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "endDate",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/order/create": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "any"
-                },
-                "UserId": {
-                  "example": "any"
-                },
-                "OrderId": {
-                  "example": "any"
-                },
-                "TotalPrice": {
-                  "example": "any"
-                },
-                "OrderSessionId": {
-                  "example": "any"
-                },
-                "ReferenceId": {
-                  "example": "any"
-                },
-                "OrderStatus": {
-                  "example": "any"
-                },
-                "OrderMethod": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/order/update/{orderId}": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "orderId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/order/delete/{orderId}": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "orderId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/order/deleteAll": {
-      "post": {
         "tags": [],
         "description": "",
         "parameters": [],
@@ -2977,6 +2183,1158 @@
       }
     },
     "/api/trip/deleteAll": {
+      "delete": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/upload/getFiles/{refId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "refId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/upload/uploadImage": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/upload/uploadDocument": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/upload/uploadImageWithData": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RefId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/upload/deleteFile/{mediaId}": {
+      "delete": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "mediaId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/upload/deleteFiles/{refId}": {
+      "delete": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "refId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/create": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "example": "any"
+                },
+                "CompanyName": {
+                  "example": "any"
+                },
+                "ContactEmail": {
+                  "example": "any"
+                },
+                "ContactPhone": {
+                  "example": "any"
+                },
+                "CompanyAddress": {
+                  "example": "any"
+                },
+                "Region": {
+                  "example": "any"
+                },
+                "Country": {
+                  "example": "any"
+                },
+                "RoleType": {
+                  "example": "any"
+                },
+                "Specilaization": {
+                  "example": "any"
+                },
+                "Password\r": {
+                  "example": "any"
+                },
+                "Password": {
+                  "example": "any"
+                },
+                "FullName": {
+                  "example": "any"
+                },
+                "FirstName": {
+                  "example": "any"
+                },
+                "LastName": {
+                  "example": "any"
+                },
+                "Phone": {
+                  "example": "any"
+                },
+                "Address": {
+                  "example": "any"
+                },
+                "AcceptTerms": {
+                  "example": "any"
+                },
+                "PaymentMethod": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findOne/{userId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findAll": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findAllBySearch/{name}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findAllUsersByDate/{startDate}/{toDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "toDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/update/{userId}": {
+      "put": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "\r/api/user/updateFile": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserId": {
+                  "example": "any"
+                },
+                "FileType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/delete": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/deleteAll": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findRoles": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findUserRoles": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/updateRole/{roleId}": {
+      "put": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/updateUserRole/{userId}": {
+      "put": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/deleteRole/{roleId}": {
+      "delete": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/subscribe": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserId": {
+                  "example": "any"
+                },
+                "SubscriptionId": {
+                  "example": "any"
+                },
+                "SubscriptionName": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/user/upgradeUserSubscription": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserSubscriptionId": {
+                  "example": "any"
+                },
+                "UserId": {
+                  "example": "any"
+                },
+                "SubscriptionId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/updateUserSubscription/{userSubscriptionId}": {
+      "put": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userSubscriptionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserSubscriptionId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findUserSubscription/{userId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findAllUserSubscriptions/{subscriptionId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findAllUserSubscriptionsByDate/{startDate}/{toDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "toDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "\r/api/user/findAllUserSubscriptionsByStartDate/{startDate}/{toDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "toDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "\r/api/user/findAllUserSubscriptionsByEndDate/{startDate}/{toDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "toDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/createCompany": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CompanyName": {
+                  "example": "any"
+                },
+                "ContactEmail": {
+                  "example": "any"
+                },
+                "ContactPhone": {
+                  "example": "any"
+                },
+                "Address": {
+                  "example": "any"
+                },
+                "Country": {
+                  "example": "any"
+                },
+                "CompanyType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/updateCompany/{companyId}": {
+      "put": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CompanyId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "\r/api/user/company/uploadCompanyDoc": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UserId": {
+                  "example": "any"
+                },
+                "FileType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findCompany/{companyId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findAllCompanys/": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyType",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/findAllCompanysByDate/{startDate}/{toDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "toDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/deleteCompany/{companyId}": {
+      "delete": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/create": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CompanyId": {
+                  "example": "any"
+                },
+                "CarrierId": {
+                  "example": "any"
+                },
+                "VehicleType": {
+                  "example": "any"
+                },
+                "VehicleNumber": {
+                  "example": "any"
+                },
+                "SerialNumber": {
+                  "example": "any"
+                },
+                "VehicleMake": {
+                  "example": "any"
+                },
+                "VehicleColor": {
+                  "example": "any"
+                },
+                "VehicleModel": {
+                  "example": "any"
+                },
+                "LicensePlate": {
+                  "example": "any"
+                },
+                "Description": {
+                  "example": "any"
+                },
+                "VehicleModelYear": {
+                  "example": "any"
+                },
+                "PurchaseYear": {
+                  "example": "any"
+                },
+                "Insured": {
+                  "example": "any"
+                },
+                "PicUrl": {
+                  "example": "any"
+                },
+                "VehicleDocs": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/findOne/{vehicleId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "vehicleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/findAll": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/findAllVehiclesInsured": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/findAllVehiclesByCategory/{carrierId}/{vehicleType}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "carrierId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "vehicleType",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/findAllVehiclesByCompany/{companyId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/findAllVehiclesByDate/{startDate}/{toDate}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "toDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/update/{vehicleId}": {
+      "put": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "vehicleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/delete/{vehicleId}": {
+      "delete": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "vehicleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle/deleteAll": {
       "delete": {
         "tags": [],
         "description": "",
