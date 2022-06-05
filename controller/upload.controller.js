@@ -58,13 +58,13 @@ exports.uploadImage = async function (req, res) {
   }
 };
 
-exports.uploadImageWithData = async function (req, res) {
+exports.uploadImageWithData1 = async function (req, res) {
   const { filename: image } = req.file;
 
   try {
-    const picName = req.file.fieldname + '-' + Date.now() ;
+    const picName = req.file.fieldname + '-' + Date.now();
     const picurl = picName + path.extname(req.file.originalname);
-    const thumbnailurl = picName +'_thumb'+ path.extname(req.file.originalname);
+    const thumbnailurl = picName + '_thumb' + path.extname(req.file.originalname);
     const thumbpath = path.resolve(`uploads/pics/${thumbnailurl}`);
     const picpath = path.resolve(`uploads/pics/${picurl}`);
     console.log(`imagefile0`, picpath);
@@ -75,7 +75,7 @@ exports.uploadImageWithData = async function (req, res) {
       .jpeg({ quality: 90 })
       .toFile(thumbpath);
 
-      await sharp(req.file.buffer)
+    await sharp(req.file.buffer)
       .resize({ fit: sharp.fit.contain, width: 500 })
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
@@ -101,12 +101,24 @@ exports.uploadImageWithData = async function (req, res) {
 
 exports.uploadImageWithData = async function (req, res) {
   const { filename: image } = req.file;
+  const RefId = req.body.RefId;
+  const UploadType = req.body.UploadType;
 
-  const dir =req.body.UploadType==='vehicle'? `${process.env.VEHICLE_IMG_URL}${RefId}`:`${process.env.VEHICLE_IMG_URL}${RefId}`;
+  // const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
+  const dir = `${process.env.UPLOADS_URL}/${UploadType}/${RefId}`;
+  fs.exists(dir, (exist) => {
+    if (!exist) {
+      return fs.mkdir(dir, { recursive: true }, (err, info) => {
+        console.log(err);
+      });
+    }
+  });
+  // const dir = `${process.env.UPLOADS_URL}/${UploadType}/${RefId}`;
+
   try {
-    const picName = req.file.fieldname + '-' + Date.now() ;
+    const picName = req.file.fieldname + '-' + Date.now();
     const picurl = picName + path.extname(req.file.originalname);
-    const thumbnailurl = picName +'_thumb'+ path.extname(req.file.originalname);
+    const thumbnailurl = picName + '_thumb' + path.extname(req.file.originalname);
     const thumbpath = path.resolve(`${dir}/${thumbnailurl}`);
     const picpath = path.resolve(`${dir}/${picurl}`);
     console.log(`imagefile0`, picpath);
@@ -117,7 +129,7 @@ exports.uploadImageWithData = async function (req, res) {
       .jpeg({ quality: 90 })
       .toFile(thumbpath);
 
-      await sharp(req.file.buffer)
+    await sharp(req.file.buffer)
       .resize({ fit: sharp.fit.contain, width: 500 })
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
@@ -129,8 +141,8 @@ exports.uploadImageWithData = async function (req, res) {
     Media.create({
       RefId: req.body.RefId,
       FileName: req.file.originalname,
-      ImgPath: picurl,
-      ThumbPath: thumbnailurl,
+      ImgPath: `${dir}/${picurl}`,
+      ThumbPath: `${dir}/${thumbnailurl}`,
       UploadDate: new Date(),
     });
 
@@ -138,71 +150,79 @@ exports.uploadImageWithData = async function (req, res) {
       filename: picurl,
     });
   } catch (error) {
-    console.log(`An error occurred during processing: ${error}`);
+    console.log(`An error occurred during processing: ${error.message}`);
   }
 };
 
 exports.updateImageWithData = async function (req, res) {
   const { filename: image } = req.file;
-
- 
-
+  const RefId = req.body.RefId;
+  const UploadType = req.body.UploadType;
+  const dir = `${process.env.UPLOADS_URL}/${UploadType}/${RefId}`;
   try {
+    const foundMedia = Media.findOne({
+      where: { MediaId: req.body.MediaId },
+    });
 
-  const foundMedia=  Media.findOne({
-      where: { MediaId: req.body.MediaId } })
+    if (foundMedia) {
+      fs.exists(path.resolve(`${foundMedia.ImgPath}`), (exist) => {
+        if (exist) {
+          fs.unlink(path.resolve(`${foundMedia.ImgPath}`));
+          fs.unlink(path.resolve(`${foundMedia.ThumbPath}`));
+        }
+      });
 
-      if(foundMedia){
-
-        await fs.unlink(path.resolve(`${foundMedia.ImgPath}`))
-        await fs.unlink(path.resolve(`${foundMedia.ThumbPath}`))
-
-      
-    const dir =req.body.UploadType==='vehicle'? `${process.env.VEHICLE_IMG_URL}${RefId}`:`${process.env.VEHICLE_IMG_URL}${RefId}`;
-    const picName = req.file.fieldname + '-' + Date.now() ;
-    const picurl = picName + path.extname(req.file.originalname);
-    const thumbnailurl = picName +'_thumb'+ path.extname(req.file.originalname);
-    const thumbpath = path.resolve(`${dir}${thumbnailurl}`);
-    const picpath = path.resolve(`u${dir}${picurl}`);
-    console.log(`imagefile0`, picpath);
-
-    await sharp(req.file.buffer)
-      .resize({ fit: sharp.fit.contain, width: 200 })
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(thumbpath);
+      //  const dir = `${process.env.UPLOADS_URL}/${foundMedia.UploadType}/${foundMedia.RefId}`;
+      const picName = req.file.fieldname + '-' + Date.now();
+      const picurl = picName + path.extname(req.file.originalname);
+      const thumbnailurl = picName + '_thumb' + path.extname(req.file.originalname);
+      const thumbpath = path.resolve(`${dir}/${thumbnailurl}`);
+      const picpath = path.resolve(`${dir}/${picurl}`);
+      console.log(`imagefile0`, picpath);
 
       await sharp(req.file.buffer)
-      .resize({ fit: sharp.fit.contain, width: 500 })
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(picpath);
+        .resize({ fit: sharp.fit.contain, width: 200 })
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(thumbpath);
 
-    console.log(`imagefile`, req.file);
+      await sharp(req.file.buffer)
+        .resize({ fit: sharp.fit.contain, width: 500 })
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(picpath);
 
-    Media.create({
-      RefId: req.body.RefId,
-      FileName: req.file.originalname,
-      ImgPath: picurl,
-      ThumbPath: thumbnailurl,
-      UploadDate: new Date(),
-    });
-
-    return res.status(200).send({
-      filename: picurl,
-    });
-  }
+      //console.log(`imagefile`, req.file);
+      const updateMedia = Media.update(
+        {
+          RefId: req.body.RefId,
+          FileName: req.file.originalname,
+          FileType: req.file.originalname,
+          ImgPath: `${dir}/${picurl}`,
+          ThumbPath: `${dir}/${thumbnailurl}`,
+          updatedAt: new Date(),
+        },
+        {
+          where: { MediaId: req.body.MediaId },
+        },
+      );
+      if (updateMedia) {
+        return res.status(200).send({
+          filename: picurl,
+        });
+      }
+    }
   } catch (error) {
     console.log(`An error occurred during processing: ${error}`);
   }
 };
 
-
 exports.getFiles = (req, res) => {
   const refId = req.params.refId;
-
+  const fileType = req.params.fileType;
+  var condition = fileType ? { RefId: { refId }, FileType: { fileType } } : { RefId: { refId } };
   Media.findAll({
-    where: { RefId: refId },
+    where: { condition },
 
     // include: {
     //   model: Trip,
@@ -223,13 +243,88 @@ exports.getFiles = (req, res) => {
     });
 };
 
-
 exports.uploadDocument = function (req, res) {
   try {
+    const { filename: image } = req.file;
+    const RefId = req.body.RefId;
+    const UploadType = req.body.UploadType;
+    const dir = `${process.env.UPLOADS_URL}/${UploadType}/${RefId}`;
     console.log(`docfile`, req.file);
+
+    const picName = req.file.fieldname + '-' + Date.now();
+    const picurl = picName + path.extname(req.file.originalname);
+
+    // if (foundMedia) {
+    //   fs.exists(path.resolve(`${foundMedia.ImgPath}`), (exist) => {
+    //     if (exist) {
+    //       fs.unlink(path.resolve(`${foundMedia.ImgPath}`));
+    //       fs.unlink(path.resolve(`${foundMedia.ThumbPath}`));
+    //     }
+    //   });
+
+    Media.create({
+      RefId: req.body.RefId,
+      FileName: req.file.originalname,
+      ImgPath: `${dir}/${picurl}`,
+
+      UploadDate: new Date(),
+    });
+
     return res.status(200).send({
       filename: req.file.filename,
     });
+  } catch (error) {
+    console.log(`An error occurred during processing: ${error}`);
+  }
+};
+
+exports.updateDocument = function (req, res) {
+  try {
+    const { filename: image } = req.file;
+    const RefId = req.body.RefId;
+    const UploadType = req.body.UploadType;
+    const dir = `${process.env.UPLOADS_URL}/${UploadType}/${RefId}`;
+    console.log(`docfile`, req.file);
+
+    const foundMedia = Media.findOne({
+      where: { MediaId: req.body.MediaId },
+    });
+
+    if (foundMedia) {
+      fs.exists(path.resolve(`${foundMedia.ImgPath}`), (exist) => {
+        if (exist) {
+          fs.unlink(path.resolve(`${foundMedia.ImgPath}`));
+        }
+      });
+    }
+    const picName = req.file.fieldname + '-' + Date.now();
+    const picurl = picName + path.extname(req.file.originalname);
+
+    // if (foundMedia) {
+    //   fs.exists(path.resolve(`${foundMedia.ImgPath}`), (exist) => {
+    //     if (exist) {
+    //       fs.unlink(path.resolve(`${foundMedia.ImgPath}`));
+    //       fs.unlink(path.resolve(`${foundMedia.ThumbPath}`));
+    //     }
+    //   });
+
+    const updateMedia = Media.update(
+      {
+        RefId: req.body.RefId,
+        FileName: req.file.originalname,
+        ImgPath: `${dir}/${picurl}`,
+        updatedAt: new Date(),
+      },
+      {
+        where: { MediaId: req.body.MediaId },
+      },
+    );
+
+    if (updateMedia) {
+      return res.status(200).send({
+        filename: picurl,
+      });
+    }
   } catch (error) {
     console.log(`An error occurred during processing: ${error}`);
   }
@@ -239,25 +334,24 @@ exports.deleteFile = (req, res) => {
   const mediaId = req.params.mediaId;
 
   Media.findAll({
-    where: { MediaId: mediaId } })
+    where: { MediaId: mediaId },
+  })
 
     .then((files) => {
       if (fs.existsSync(path.join(__dirname, files.ImgPath))) {
-         fsPromises.unlink(path.join(__dirname, files.ImgPath));
-         fsPromises.unlink(path.join(__dirname, files.ThumbPath));
+        fsPromises.unlink(path.join(__dirname, files.ImgPath));
+        fsPromises.unlink(path.join(__dirname, files.ThumbPath));
 
-        const del=  Media.destroy({where: { MediaId: files.MediaId }});
+        Media.destroy({ where: { MediaId: files.MediaId } }).then((num) => {
+          if (num == 1) {
+            res.send({
+              message: 'Picture deleted successfully!',
+            });
+          }
+        });
       }
     })
-    .then((num) => {
-      if (num == 1) {
-        
-        res.send({
-          message: 'Picture deleted successfully!',
-        })
-      }
 
-    })
     .catch((err) => {
       res.status(500).send({
         message: err.message || 'Some error occurred while retrieving files.',
@@ -268,42 +362,29 @@ exports.deleteFile = (req, res) => {
 exports.deleteFiles = (req, res) => {
   const id = req.params.refId;
 
-
   //Delete all files
   Media.findAll({
     where: { RefId: refId },
-
-   
   })
 
     .then((files) => {
-     
       if (fs.existsSync(path.join(__dirname, files.ImgPath))) {
-         fsPromises.unlink(path.join(__dirname, files.ImgPath));
-         fsPromises.unlink(path.join(__dirname, files.ThumbPath));
+        fsPromises.unlink(path.join(__dirname, files.ImgPath));
+        fsPromises.unlink(path.join(__dirname, files.ThumbPath));
 
-      const del=  Media.destroy({where: { MediaId: files.MediaId }});
-
-    }
-
-
+        const del = Media.destroy({ where: { MediaId: files.MediaId } });
+      }
     })
     .then((num) => {
       if (num == 1) {
-        
         res.send({
           message: 'Pictures deleted successfully!',
-        })
+        });
       }
-
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || 'Some error occurred while retrieving files.',
       });
     });
-
-
-
-  
 };

@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     // console.log('req.body', req.body);
     const { Email, CompanyId } = req.body;
 
-    const dir = `./uploads/${process.env.PROFILE_IMG_URL}${req.body.CompanyId}/${req.body.Email}`;
+    const dir = `${process.env.UPLOADS_URL}${req.body.CompanyId}/${req.body.Email}`;
     fs.exists(dir, (exist) => {
       if (!exist) {
         return fs.mkdir(dir, { recursive: true }, (error) => cb(error, dir));
