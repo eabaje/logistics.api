@@ -86,6 +86,7 @@ exports.uploadImageWithData1 = async function (req, res) {
     Media.create({
       RefId: req.body.RefId,
       FileName: req.file.originalname,
+      FileType: req.file.mimetype,
       url: picurl,
       ThumbUrl: thumbnailurl,
       UploadDate: new Date(),
@@ -141,6 +142,7 @@ exports.uploadImageWithData = async function (req, res) {
     Media.create({
       RefId: req.body.RefId,
       FileName: req.file.originalname,
+      FileType: req.file.mimetype,
       ImgPath: `${dir}/${picurl}`,
       ThumbPath: `${dir}/${thumbnailurl}`,
       UploadDate: new Date(),
@@ -197,7 +199,7 @@ exports.updateImageWithData = async function (req, res) {
         {
           RefId: req.body.RefId,
           FileName: req.file.originalname,
-          FileType: req.file.originalname,
+          FileType: req.file.mimetype,
           ImgPath: `${dir}/${picurl}`,
           ThumbPath: `${dir}/${thumbnailurl}`,
           updatedAt: new Date(),
@@ -265,8 +267,8 @@ exports.uploadDocument = function (req, res) {
     Media.create({
       RefId: req.body.RefId,
       FileName: req.file.originalname,
+      FileType: req.file.mimetype,
       ImgPath: `${dir}/${picurl}`,
-
       UploadDate: new Date(),
     });
 
@@ -312,6 +314,7 @@ exports.updateDocument = function (req, res) {
       {
         RefId: req.body.RefId,
         FileName: req.file.originalname,
+        FileType: req.file.mimetype,
         ImgPath: `${dir}/${picurl}`,
         updatedAt: new Date(),
       },
