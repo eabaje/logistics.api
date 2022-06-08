@@ -222,10 +222,10 @@ exports.updateImageWithData = async function (req, res) {
 exports.getFiles = (req, res) => {
   const refId = req.params.refId;
   const fileType = req.params.fileType;
-  var condition = fileType ? { RefId: { refId }, FileType: { fileType } } : { RefId: { refId } };
+  var condition =
+    fileType !== undefined ? { RefId: refId, FileType: { [Op.iLike]: `%${fileType}%` } } : { RefId: refId };
+  console.log('condition', condition);
   Media.findAll({
-    where: { condition },
-
     // include: {
     //   model: Trip,
     //   attributes: ['DeliveryDate', 'PickUpDate', 'PickUpLocation', 'DeliveryLocation'],
@@ -239,6 +239,7 @@ exports.getFiles = (req, res) => {
       });
     })
     .catch((err) => {
+      console.log('err', err);
       res.status(500).send({
         message: err.message || 'Some error occurred while retrieving files.',
       });

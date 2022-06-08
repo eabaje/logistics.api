@@ -76,6 +76,9 @@
                 },
                 "PaymentMethod": {
                   "example": "any"
+                },
+                "Currency": {
+                  "example": "any"
                 }
               }
             }
@@ -2194,13 +2197,19 @@
         }
       }
     },
-    "/api/upload/getFiles/{refId}": {
+    "/api/upload/getFiles/{refId}/{fileType*?}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
             "name": "refId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fileType*?",
             "in": "path",
             "required": true,
             "type": "string"
@@ -2232,7 +2241,54 @@
       "post": {
         "tags": [],
         "description": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RefId": {
+                  "example": "any"
+                },
+                "UploadType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/upload/updateDocument": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RefId": {
+                  "example": "any"
+                },
+                "UploadType": {
+                  "example": "any"
+                },
+                "MediaId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -2252,6 +2308,40 @@
               "type": "object",
               "properties": {
                 "RefId": {
+                  "example": "any"
+                },
+                "UploadType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/upload/updateImageWithData": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RefId": {
+                  "example": "any"
+                },
+                "UploadType": {
+                  "example": "any"
+                },
+                "MediaId": {
                   "example": "any"
                 }
               }

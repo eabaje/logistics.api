@@ -83,7 +83,8 @@ module.exports = function (app) {
   });
   //[verifySignUp.checkDuplicateUsernameOrEmail,verifySignUp.checkRolesExisted],upLoadPics,
 
-  app.get('/api/upload/getFiles/:refId/:fileType', controller.getFiles);
+  app.get('/api/upload/getFiles/:refId/:fileType*?', controller.getFiles);
+
   app.post('/api/upload/uploadImage', imageUploader.single('filePicUrl'), controller.uploadImage);
 
   app.post('/api/upload/uploadDocument', upLoadDocuments.single('doc'), controller.uploadDocument);
