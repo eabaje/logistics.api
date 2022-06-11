@@ -103,10 +103,10 @@ exports.uploadImageWithData1 = async function (req, res) {
 exports.uploadImageWithData = async function (req, res) {
   const { filename: image } = req.file;
   const RefId = req.body.RefId;
-  const UploadType = req.body.UploadType;
+  const uploadUrl = req.body.uploadUrl;
 
   // const dir = `./uploads/${req.body.CompanyId}/${req.body.Email}`;
-  const dir = `${process.env.UPLOADS_URL}/${UploadType}/${RefId}`;
+  const dir = `${process.env.UPLOADS_URL}/${uploadUrl}/${RefId}`;
   fs.exists(dir, (exist) => {
     if (!exist) {
       return fs.mkdir(dir, { recursive: true }, (err, info) => {
@@ -159,8 +159,8 @@ exports.uploadImageWithData = async function (req, res) {
 exports.updateImageWithData = async function (req, res) {
   const { filename: image } = req.file;
   const RefId = req.body.RefId;
-  const UploadType = req.body.UploadType;
-  const dir = `${process.env.UPLOADS_URL}/${UploadType}/${RefId}`;
+  const uploadUrl = req.body.UploadUrl;
+  const dir = `${process.env.UPLOADS_URL}/${uploadUrl}/${RefId}`;
   try {
     const foundMedia = Media.findOne({
       where: { MediaId: req.body.MediaId },
@@ -226,6 +226,7 @@ exports.getFiles = (req, res) => {
     fileType !== undefined ? { RefId: refId, FileType: { [Op.iLike]: `%${fileType}%` } } : { RefId: refId };
   console.log('condition', condition);
   Media.findAll({
+    where: condition,
     // include: {
     //   model: Trip,
     //   attributes: ['DeliveryDate', 'PickUpDate', 'PickUpLocation', 'DeliveryLocation'],

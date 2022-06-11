@@ -26,7 +26,7 @@ const UserRole = db.userrole;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
-exports.create =  (req, res) => {
+exports.create = (req, res) => {
   // sharp options
 
   //
@@ -41,17 +41,19 @@ exports.create =  (req, res) => {
     }
   });
 
-  
   const picFile = req.files.filePicUrl[0] ? req.files.filePicUrl[0] : null;
 
   const licenseFile = req.files.fileLicenseUrl[0] ? req.files.fileLicenseUrl[0] : null;
 
   const newFileName = picFile.fieldname + '-' + Date.now() + path.extname(picFile.originalname);
-  
 
-  const picpath = picFile ? `${process.env.PROFILE_IMG_URL}/${req.body.CompanyId}/${req.body.Email}/${picFile.originalname}` : '';
+  const picpath = picFile
+    ? `${process.env.UPLOADS_URL}/${req.body.CompanyId}/${req.body.Email}/${picFile.originalname}`
+    : '';
 
-  const licensepath = licenseFile ? `${process.env.PROFILE_IMG_URL}/${req.body.CompanyId}/${req.body.Email}/${licenseFile.originalname}` : '';
+  const licensepath = licenseFile
+    ? `${process.env.UPLOADS_URL}/${req.body.CompanyId}/${req.body.Email}/${licenseFile.originalname}`
+    : '';
 
   // await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
 
@@ -215,12 +217,12 @@ exports.findAll = (req, res) => {
       },
       {
         model: Vehicle,
-         
-        attributes: ["VehicleNumber","VehicleId"],
+
+        attributes: ['VehicleNumber', 'VehicleId'],
         through: {
-          attributes: ["VehicleId", "DriverId"],
-        }
-      }
+          attributes: ['VehicleId', 'DriverId'],
+        },
+      },
     ],
     order: [['createdAt', 'DESC']],
   })
@@ -237,7 +239,6 @@ exports.findAll = (req, res) => {
       });
     });
 };
-
 
 // find all Licensed Driver
 exports.findAllDriversByDriverName = (req, res) => {
@@ -307,14 +308,12 @@ exports.findAllDriversByCompany = (req, res) => {
       {
         model: User,
         attributes: ['FullName'],
-      }
-      
+      },
     ],
     order: [['createdAt', 'DESC']],
   })
 
     .then((data) => {
-    
       res.status(200).send({
         message: 'Success',
         data: data,
@@ -330,8 +329,9 @@ exports.findAllAssignedDrivers = (req, res) => {
   //  const vehicleId = req.query.VehicleId;
   const companyId = req.params.companyId;
   var condition = companyId ? { CompanyId: { [Op.eq]: companyId } } : null;
-  Driver.findAll({  where: condition,
-    
+  Driver.findAll({
+    where: condition,
+
     include: [
       {
         model: Company,
@@ -344,14 +344,13 @@ exports.findAllAssignedDrivers = (req, res) => {
       {
         model: Vehicle,
         required: true,
-         attributes: ["VehicleId","VehicleNumber","VehicleMake"],
+        attributes: ['VehicleId', 'VehicleNumber', 'VehicleMake'],
         // through: {
         //   attributes: ["VehicleId","DriverId"],
-          
+
         //   where:{Assigned:true}
         // }
-       
-      }
+      },
     ],
     order: [['createdAt', 'DESC']],
   })
@@ -439,8 +438,7 @@ exports.findOne = (req, res) => {
       {
         model: User,
         attributes: ['FullName'],
-      }
-      
+      },
     ],
   })
 
@@ -457,7 +455,6 @@ exports.findOne = (req, res) => {
       });
     });
 };
-
 
 // Find a single Driver with an id
 exports.findOneAssigned = (req, res) => {
@@ -476,14 +473,13 @@ exports.findOneAssigned = (req, res) => {
       },
       {
         model: Vehicle,
-         
-        attributes: ["VehicleId","VehicleNumber","VehicleMake"],
+
+        attributes: ['VehicleId', 'VehicleNumber', 'VehicleMake'],
         through: {
-          attributes: ["VehicleId"],
-           where:{Assigned:true}
-        }
-       
-      }
+          attributes: ['VehicleId'],
+          where: { Assigned: true },
+        },
+      },
     ],
   })
 
@@ -500,7 +496,6 @@ exports.findOneAssigned = (req, res) => {
       });
     });
 };
-
 
 // Update a Driver by the id in the request
 exports.update = (req, res) => {
@@ -545,7 +540,6 @@ exports.update = (req, res) => {
 
 // Update a Driver by the id in the request
 exports.updateFile = (req, res) => {
- 
   Driver.findOne({
     where: {
       DriverId: req.body.DriverId,
@@ -557,7 +551,7 @@ exports.updateFile = (req, res) => {
       const picpath = uploadFile ? `${driver.CompanyId}/${driver.Email}/${uploadFile.originalname}` : '';
 
       var condition = req.body.FileType === 'image' ? { PicUrl: picpath } : { DriverDocs: picpath };
-     
+
       Driver.update(condition, {
         where: { DriverId: req.body.DriverId },
       })
@@ -592,6 +586,72 @@ exports.updateFile = (req, res) => {
   //         });
   //   }
   // });
+};
+exports.updateDriverPic = async (req, res) => {
+  try {
+    const foundDriver = Driver.findOne({
+      where: {
+        DriverId: req.body.RefId,
+      },
+    });
+
+    if (foundDriver) {
+      const dir = `${process.env.UPLOADS_URL}/${foundDriver.CompanyId}/${foundDriver.Email}`;
+
+      fs.exists(path.resolve(`${foundDriver.PicUrl}`), (exist) => {
+        if (exist) {
+          fs.unlink(path.resolve(`${foundDriver.PicUrl}`));
+        } else {
+          return fs.mkdir(dir, { recursive: true }, (err, info) => {
+            console.log(err);
+          });
+        }
+      });
+
+      //  const dir = `${process.env.UPLOADS_URL}/${foundMedia.UploadType}/${foundMedia.RefId}`;
+
+      const uploadFile = req.file ? req.file : null;
+
+      const picpath = uploadFile ? `${foundDriver.CompanyId}/${foundDriver.Email}/${uploadFile.originalname}` : '';
+
+      var condition = req.body.FileType === 'image' ? { PicUrl: picpath } : { DriverDocs: picpath };
+
+      const picName = req.file.fieldname + '-' + Date.now();
+      const picurl = picName + path.extname(req.file.originalname);
+      const thumbnailurl = picName + '_thumb' + path.extname(req.file.originalname);
+      const thumbpath = path.resolve(`${dir}/${thumbnailurl}`);
+      //  const picpath = path.resolve(`${dir}/${picurl}`);
+      console.log(`imagefile0`, picpath);
+
+      await sharp(req.file.buffer)
+        .resize({ fit: sharp.fit.contain, width: 200 })
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(picpath);
+
+      // await sharp(req.file.buffer)
+      //   .resize({ fit: sharp.fit.contain, width: 500 })
+      //   .toFormat('jpeg')
+      //   .jpeg({ quality: 90 })
+      //   .toFile(picpath);
+
+      Driver.update(condition, {
+        where: { DriverId: req.body.RefId },
+      });
+
+      //console.log(`imagefile`, req.file);
+      const updateDriver = Driver.update(condition, {
+        where: { DriverId: req.body.RefId },
+      });
+      if (updateDriver) {
+        return res.status(200).send({
+          filename: picurl,
+        });
+      }
+    }
+  } catch (error) {
+    console.log(`An error occurred during processing: ${error}`);
+  }
 };
 
 // Delete a Driver with the specified id in the request
@@ -723,5 +783,3 @@ exports.AssignDriverToVehicle = (req, res) => {
       });
     });
 };
-
-
