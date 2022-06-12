@@ -26,218 +26,186 @@ const UserRole = db.userrole;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Driver
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // sharp options
 
   //
   try {
-    const foundDriver = Driver.findOne({
+    const foundDriver = await Driver.findOne({
       where: {
         Email: req.body.Email,
       },
     });
 
     if (foundDriver) {
-
       return res.status(404).send({ message: 'Email already exists for Driver' });
       process.exit;
     }
 
+    // const dir = `${process.env.UPLOADS_URL}/${foundDriver.CompanyId}/${foundDriver.Email}`;
 
+    // fs.exists(path.resolve(`${foundDriver.PicUrl}`), (exist) => {
+    //   if (exist) {
+    //     fs.unlink(path.resolve(`${foundDriver.PicUrl}`));
+    //   } else {
+    //     return fs.mkdir(dir, { recursive: true }, (err, info) => {
+    //       console.log(err);
+    //     });
+    //   }
+    // });
 
-      const dir = `${process.env.UPLOADS_URL}/${foundDriver.CompanyId}/${foundDriver.Email}`;
+    const picFile = req.files.filePicUrl[0] ? req.files.filePicUrl[0] : null;
 
-      fs.exists(path.resolve(`${foundDriver.PicUrl}`), (exist) => {
-        if (exist) {
-          fs.unlink(path.resolve(`${foundDriver.PicUrl}`));
-        } else {
-          return fs.mkdir(dir, { recursive: true }, (err, info) => {
-            console.log(err);
-          });
-        }
+    const licenseFile = req.files.fileLicenseUrl[0] ? req.files.fileLicenseUrl[0] : null;
+
+    const newFileName = picFile.fieldname + '-' + Date.now() + path.extname(picFile.originalname);
+
+    const picpath = picFile
+      ? `${process.env.UPLOADS_URL}/${req.body.CompanyId}/${req.body.Email}/${picFile.originalname}`
+      : '';
+
+    const licensepath = licenseFile
+      ? `${process.env.UPLOADS_URL}/${req.body.CompanyId}/${req.body.Email}/${licenseFile.originalname}`
+      : '';
+
+    // await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
+
+    const { filename: image } = req.files.filePicUrl[0];
+    console.log('picFile', picFile);
+
+    //  const picpath = path.resolve(`${dir}/${picurl}`);
+    console.log(`imagefile0`, picpath);
+
+    // await sharp(req.file.buffer)
+    //   .resize({ fit: sharp.fit.contain, width: 200 })
+    //   .toFormat('jpeg')
+    //   .jpeg({ quality: 90 })
+    //   .toFile(picpath);
+
+    await sharp(picFile.path)
+      .resize(200, 200)
+      .jpeg({ quality: 90 })
+      .toFile(path.resolve(picFile.destination, 'resized', image));
+    // fs.unlinkSync(picFile.path);
+
+    // await sharp(req.file.buffer)
+    //   .resize({ fit: sharp.fit.contain, width: 500 })
+    //   .toFormat('jpeg')
+    //   .jpeg({ quality: 90 })
+    //   .toFile(picpath);
+
+    const generatedPassword = generator.generate({ length: 8, numbers: true });
+    const encryptedPassword = req.body.Password
+      ? bcrypt.hashSync(req.body.Password, 10)
+      : bcrypt.hashSync(generatedPassword, 10);
+    // Create a Driver
+    const driver = {
+      CompanyId: req.body.CompanyId,
+      DriverName: req.body.DriverName,
+      Email: req.body.Email,
+      Phone: req.body.Phone,
+      Address: req.body.Address,
+      DOB: req.body.DOB,
+      City: req.body.City,
+      Region: req.body.Region,
+      Country: req.body.Country,
+      PicUrl: picpath, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
+      Licensed: req.body.Licensed,
+      Rating: req.body.Rating,
+      DriverDocs: licensepath,
+    };
+
+    const user = {
+      CompanyId: req.body.CompanyId,
+      FullName: req.body.DriverName,
+      Email: req.body.Email.toLowerCase(),
+      Phone: req.body.Phone,
+      Address: req.body.Address,
+      City: req.body.Region,
+      Region: req.body.Region,
+      Country: req.body.Country,
+      UserName: req.body.Email.toLowerCase(),
+      Password: encryptedPassword,
+    };
+    console.log(`driver`, driver);
+
+    // Save Driver in the database
+    const newUser = await User.create(user);
+    if (newUser) {
+      console.log('data', newUser);
+      const newDriver = await Driver.create({
+        CompanyId: req.body.CompanyId,
+        DriverName: req.body.DriverName,
+        Email: req.body.Email,
+        Phone: req.body.Phone,
+        Address: req.body.Address,
+        DOB: req.body.DOB,
+        City: req.body.City,
+        Region: req.body.Region,
+        Country: req.body.Country,
+        PicUrl: picpath,
+        Licensed: req.body.Licensed,
+        DriverDocs: licensepath,
+        UserId: userdata.UserId,
       });
 
-      const picFile = req.files.filePicUrl[0] ? req.files.filePicUrl[0] : null;
+      if (newDriver) {
+        const foundRole = await Role.findOne({ where: { Name: 'driver' } });
 
-      const licenseFile = req.files.fileLicenseUrl[0] ? req.files.fileLicenseUrl[0] : null;
-    
-      const newFileName = picFile.fieldname + '-' + Date.now() + path.extname(picFile.originalname);
-    
-      const picpath = picFile
-        ? `${process.env.UPLOADS_URL}/${req.body.CompanyId}/${req.body.Email}/${picFile.originalname}`
-        : '';
-    
-      const licensepath = licenseFile
-        ? `${process.env.UPLOADS_URL}/${req.body.CompanyId}/${req.body.Email}/${licenseFile.originalname}`
-        : '';
-    
-      // await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
-    
-      const { filename: image } = req.files.filePicUrl[0];
-      console.log('picFile', picFile);
-    
-
-     
-
-    
-
-     
-
-  
-      //  const picpath = path.resolve(`${dir}/${picurl}`);
-      console.log(`imagefile0`, picpath);
-
-      // await sharp(req.file.buffer)
-      //   .resize({ fit: sharp.fit.contain, width: 200 })
-      //   .toFormat('jpeg')
-      //   .jpeg({ quality: 90 })
-      //   .toFile(picpath);
-
-        await sharp(picFile.path)
-        .resize(200, 200)
-        .jpeg({ quality: 90 })
-        .toFile(
-            path.resolve(picFile.destination,'resized',image)
-        )
-        fs.unlinkSync(picFile.path)
-
-      // await sharp(req.file.buffer)
-      //   .resize({ fit: sharp.fit.contain, width: 500 })
-      //   .toFormat('jpeg')
-      //   .jpeg({ quality: 90 })
-      //   .toFile(picpath);
-
-
- const generatedPassword = generator.generate({ length: 8, numbers: true });
-  const encryptedPassword = req.body.Password
-    ? bcrypt.hashSync(req.body.Password, 10)
-    : bcrypt.hashSync(generatedPassword, 10);
-  // Create a Driver
-  const driver = {
-    CompanyId: req.body.CompanyId,
-    DriverName: req.body.DriverName,
-    Email: req.body.Email,
-    Phone: req.body.Phone,
-    Address: req.body.Address,
-    DOB: req.body.DOB,
-    City: req.body.City,
-    Region: req.body.Region,
-    Country: req.body.Country,
-    PicUrl: picpath, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
-    Licensed: req.body.Licensed,
-    Rating: req.body.Rating,
-    DriverDocs: licensepath,
-  };
-
-  const user = {
-    CompanyId: req.body.CompanyId,
-    FullName: req.body.DriverName,
-    Email: req.body.Email.toLowerCase(),
-    Phone: req.body.Phone,
-    Address: req.body.Address,
-    City: req.body.Region,
-    Region: req.body.Region,
-    Country: req.body.Country,
-    UserName: req.body.Email.toLowerCase(),
-    Password: encryptedPassword,
-  };
-  console.log(`driver`, driver);
-
-   // Save Driver in the database
-   const newUser=  User.create(user)
-   if(newUser){
-     console.log('data', newUser);
-     const newDriver= Driver.create({
-       CompanyId: req.body.CompanyId,
-       DriverName: req.body.DriverName,
-       Email: req.body.Email,
-       Phone: req.body.Phone,
-       Address: req.body.Address,
-       DOB: req.body.DOB,
-       City: req.body.City,
-       Region: req.body.Region,
-       Country: req.body.Country,
-       PicUrl: picpath,
-       Licensed: req.body.Licensed,
-       DriverDocs: licensepath,
-       UserId: userdata.UserId,
-     })
-
-       if(newDriver){
-
-         const foundRole=Role.findOne({ where: {Name: 'driver', }, });
-             
-          if(foundRole){
-             
-           const newUserRole= UserRole.create({ UserId: newUser.UserId, RoleId: foundRole.RoleId });
-         
-
-          }
-          
-        
-
-       
-       
-       
-          const transporter = nodemailer.createTransport({
-            host: `${process.env.SMTP_HOST}`,
-            port: `${process.env.SMTP_PORT}`,
-            auth: {
-              user: `${process.env.SMTP_USER}`,
-              pass: `${process.env.SMTP_PASSWORD}`,
-            },
-          });
-          // //  mailgun
-          // // Step 2 - Generate a verification token with the user's ID
-          // const verificationToken = user.generateVerificationToken();
-          // // Step 3 - Email the user a unique verification link
-  
-          // point to the template folder
-          const handlebarOptions = {
-            viewEngine: {
-              partialsDir: path.resolve('./views/'),
-              defaultLayout: false,
-            },
-            viewPath: path.resolve('./views/'),
-          };
-  
-          // use a template file with nodemailer
-          transporter.use('compile', hbs(handlebarOptions));
-  
-          //   const url = process.env.BASE_URL + `auth/verify/${token}`;
-          transporter.sendMail({
-            from: process.env.STMP_FROM_EMAIL,
-            to: req.body.Email,
-            template: 'emailPassword', // the name of the template file i.e email.handlebars
-            context: {
-              name: req.body.DriverName,
-              password: generatedPassword,
-              // url: url,
-            },
-            subject: 'Welcome to Global Load Dispatch',
-            //     html: `<h1>Email Confirmation</h1>
-            // <h2>Hello ${fullname}</h2>
-  
-            // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
-            // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-            // </div>`,
-          });
-       
-       
-          res.send({
-            message: 'Driver was added successfully.',
-            data: newDriver,
-          });
-       
+        if (foundRole) {
+          const newUserRole = await UserRole.create({ UserId: newUser.UserId, RoleId: foundRole.RoleId });
         }
 
+        const transporter = nodemailer.createTransport({
+          host: `${process.env.SMTP_HOST}`,
+          port: `${process.env.SMTP_PORT}`,
+          auth: {
+            user: `${process.env.SMTP_USER}`,
+            pass: `${process.env.SMTP_PASSWORD}`,
+          },
+        });
+        // //  mailgun
+        // // Step 2 - Generate a verification token with the user's ID
+        // const verificationToken = user.generateVerificationToken();
+        // // Step 3 - Email the user a unique verification link
 
-}
+        // point to the template folder
+        const handlebarOptions = {
+          viewEngine: {
+            partialsDir: path.resolve('./views/'),
+            defaultLayout: false,
+          },
+          viewPath: path.resolve('./views/'),
+        };
 
+        // use a template file with nodemailer
+        transporter.use('compile', hbs(handlebarOptions));
 
- 
-      
-    
+        //   const url = process.env.BASE_URL + `auth/verify/${token}`;
+        transporter.sendMail({
+          from: process.env.STMP_FROM_EMAIL,
+          to: req.body.Email,
+          template: 'emailPassword', // the name of the template file i.e email.handlebars
+          context: {
+            name: req.body.DriverName,
+            password: generatedPassword,
+            // url: url,
+          },
+          subject: 'Welcome to Global Load Dispatch',
+          //     html: `<h1>Email Confirmation</h1>
+          // <h2>Hello ${fullname}</h2>
+
+          // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
+          // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
+          // </div>`,
+        });
+
+        res.send({
+          message: 'Driver was added successfully.',
+          data: newDriver,
+        });
+      }
+    }
   } catch (error) {
     console.log(`An error occurred during processing: ${error}`);
 
@@ -246,8 +214,6 @@ exports.create = (req, res) => {
     });
   }
 
- 
- 
   //  await sharp(picFile.path)
   //     .resize(200, 200)
   //     .jpeg({ quality: 90 })
@@ -263,16 +229,6 @@ exports.create = (req, res) => {
   //fs.unlinkSync(req.files.filePicUrl[0].path);
 
   // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
-
-  
-
- 
-
-
-
-      
-
-     
 };
 
 // Retrieve all Drivers start the database.
