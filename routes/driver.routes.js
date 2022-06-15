@@ -11,7 +11,9 @@ const storage = multer.diskStorage({
     // console.log('req.body', req.body);
     const { Email, CompanyId } = req.body;
 
-    const dir = `${process.env.UPLOADS_URL}/${req.body.CompanyId}/${req.body.Email}`;
+    const dir = req.body.UploadUrl
+      ? `${process.env.UPLOADS_URL}/${req.body.UploadUrl}`
+      : `${process.env.UPLOADS_URL}/${req.body.CompanyId}/${req.body.Email}`;
     fs.exists(dir, (exist) => {
       if (!exist) {
         return fs.mkdir(dir, { recursive: true }, (error) => cb(error, dir));
@@ -113,7 +115,7 @@ module.exports = function (app) {
   app.post(
     '/api/driver/updateDriverPic',
 
-    imageUploaderInMemory.single('file'),
+    imageUploader.single('file'),
     controller.updateDriverPic,
   );
 

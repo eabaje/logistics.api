@@ -71,6 +71,7 @@ exports.create = async (req, res) => {
     // await sharp(req.file.buffer).resize(200, 200).toFormat('jpeg').jpeg({ quality: 90 }).toFile(picpath);
 
     const { filename: image } = req.files.filePicUrl[0];
+
     console.log('picFile', picFile);
 
     //  const picpath = path.resolve(`${dir}/${picurl}`);
@@ -85,7 +86,7 @@ exports.create = async (req, res) => {
     await sharp(picFile.path)
       .resize(200, 200)
       .jpeg({ quality: 90 })
-      .toFile(path.resolve(picFile.destination, 'resized', image));
+      .toFile(path.resolve(picFile.destination, newFileName));
     // fs.unlinkSync(picFile.path);
 
     // await sharp(req.file.buffer)
@@ -109,7 +110,7 @@ exports.create = async (req, res) => {
       City: req.body.City,
       Region: req.body.Region,
       Country: req.body.Country,
-      PicUrl: picpath, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
+      PicUrl: newFileName, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
       Licensed: req.body.Licensed,
       Rating: req.body.Rating,
       DriverDocs: licensepath,
@@ -146,7 +147,7 @@ exports.create = async (req, res) => {
         PicUrl: picpath,
         Licensed: req.body.Licensed,
         DriverDocs: licensepath,
-        UserId: userdata.UserId,
+        UserId: newUser.UserId,
       });
 
       if (newDriver) {
@@ -583,7 +584,7 @@ exports.updateFile = (req, res) => {
 
       const picpath = uploadFile ? `${driver.CompanyId}/${driver.Email}/${uploadFile.originalname}` : '';
 
-      var condition = req.body.FileType === 'image' ? { PicUrl: picpath } : { DriverDocs: picpath };
+      var condition = { DriverDocs: picpath };
 
       Driver.update(condition, {
         where: { DriverId: req.body.DriverId },
@@ -629,48 +630,43 @@ exports.updateDriverPic = async (req, res) => {
     });
 
     if (foundDriver) {
-      const dir = `${process.env.UPLOADS_URL}/${foundDriver.CompanyId}/${foundDriver.Email}`;
+      // const dir = `${process.env.UPLOADS_URL}/${foundDriver.CompanyId}/${foundDriver.Email}`;
 
-      fs.exists(path.resolve(`${foundDriver.PicUrl}`), (exist) => {
-        if (exist) {
-          fs.unlink(path.resolve(`${foundDriver.PicUrl}`));
-        } else {
-          return fs.mkdir(dir, { recursive: true }, (err, info) => {
-            console.log(err);
-          });
-        }
-      });
+      // fs.exists(path.resolve(`${foundDriver.PicUrl}`), (exist) => {
+      //   if (exist) {
+      //     fs.unlink(path.resolve(`${foundDriver.PicUrl}`));
+      //   } else {
+      //     return fs.mkdir(dir, { recursive: true }, (err, info) => {
+      //       console.log(err);
+      //     });
+      //   }
+      // });
 
       //  const dir = `${process.env.UPLOADS_URL}/${foundMedia.UploadType}/${foundMedia.RefId}`;
 
       const uploadFile = req.file ? req.file : null;
 
-      const picpath = uploadFile ? `${foundDriver.CompanyId}/${foundDriver.Email}/${uploadFile.originalname}` : '';
+      const picName = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
 
-      var condition = req.body.FileType === 'image' ? { PicUrl: picpath } : { DriverDocs: picpath };
+      const picpath = uploadFile ? path.resolve(uploadFile.destination, picName) : '';
 
-      const picName = req.file.fieldname + '-' + Date.now();
-      const picurl = picName + path.extname(req.file.originalname);
-      const thumbnailurl = picName + '_thumb' + path.extname(req.file.originalname);
-      const thumbpath = path.resolve(`${dir}/${thumbnailurl}`);
-      //  const picpath = path.resolve(`${dir}/${picurl}`);
+      const picRelPath = `${uploadFile.destination}/${picName}`;
+
+      var condition = req.body.FileType === 'image' ? { PicUrl: picRelPath } : { DriverDocs: picRelPath };
+
       console.log(`imagefile0`, picpath);
 
-      await sharp(req.file.buffer)
+      // await sharp(req.file.buffer)
+      //   .resize({ fit: sharp.fit.contain, width: 200 })
+      //   .toFormat('jpeg')
+      //   .jpeg({ quality: 90 })
+      //   .toFile(picpath);
+      await sharp(uploadFile.path)
         .resize({ fit: sharp.fit.contain, width: 200 })
         .toFormat('jpeg')
         .jpeg({ quality: 90 })
         .toFile(picpath);
-
-      // await sharp(req.file.buffer)
-      //   .resize({ fit: sharp.fit.contain, width: 500 })
-      //   .toFormat('jpeg')
-      //   .jpeg({ quality: 90 })
-      //   .toFile(picpath);
-
-      Driver.update(condition, {
-        where: { DriverId: req.body.RefId },
-      });
+      // fs.unlinkSync(picFile.path);
 
       //console.log(`imagefile`, req.file);
       const updateDriver = Driver.update(condition, {
@@ -678,7 +674,7 @@ exports.updateDriverPic = async (req, res) => {
       });
       if (updateDriver) {
         return res.status(200).send({
-          filename: picurl,
+          filename: picRelPath,
         });
       }
     }
