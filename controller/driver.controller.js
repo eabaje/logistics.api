@@ -576,7 +576,7 @@ exports.update = (req, res) => {
 exports.updateFile = (req, res) => {
   Driver.findOne({
     where: {
-      DriverId: req.body.DriverId,
+      DriverId: req.body.RefId,
     },
   }).then((driver) => {
     if (driver) {
@@ -587,7 +587,7 @@ exports.updateFile = (req, res) => {
       var condition = { DriverDocs: picpath };
 
       Driver.update(condition, {
-        where: { DriverId: req.body.DriverId },
+        where: { DriverId: req.body.RefId },
       })
         .then((num) => {
           if (num == 1) {
