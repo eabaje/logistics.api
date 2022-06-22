@@ -14,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       PickUpDate: { type: DataTypes.DATE },
       DeliveryDate: { type: DataTypes.DATE },
       ShipmentDate: { type: DataTypes.DATE },
-      Licensed: { type: DataTypes.BOOLEAN }
+      Licensed: { type: DataTypes.BOOLEAN },
+      createdAt: { type: DataTypes.DATE },
+      updatedAt: { type: DataTypes.DATE }
     });
   
     return ShipmentDetail;

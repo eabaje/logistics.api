@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     Assigned: { type: DataTypes.BOOLEAN },
 
     AssignedDate: { type: DataTypes.DATE },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
+
 
     // VehicleId: {
     //   type: DataTypes.STRING,

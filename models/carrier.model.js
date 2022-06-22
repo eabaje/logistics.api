@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     ServiceDescription: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER, defaultValue: 0 },
     Licensed: { type: DataTypes.BOOLEAN },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
 
     // CompanyId: {
     //   type: DataTypes.INTEGER,

@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     CarrierId: { type: DataTypes.STRING, default: null },
     IsInterested: { type: DataTypes.BOOLEAN },
     InterestDate: { type: DataTypes.DATEONLY },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
 
     // DriverId: {
     //   type: DataTypes.STRING,

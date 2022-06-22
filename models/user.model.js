@@ -25,6 +25,8 @@ module.exports = (sequelize, DataTypes) => {
     LoginCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     PaymentMethod: { type: DataTypes.STRING },
     Currency: { type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
 
     // CompanyId: {
     //   type: DataTypes.INTEGER,

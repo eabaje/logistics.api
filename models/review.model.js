@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
       Name: { type: DataTypes.STRING },
       Comment: { type: DataTypes.STRING },
       Rating: { type: DataTypes.STRING },
+      createdAt: { type: DataTypes.DATE },
+      updatedAt: { type: DataTypes.DATE }
       
     });
   

@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     Active: { type: DataTypes.BOOLEAN },
     StartDate: { type: DataTypes.DATEONLY },
     EndDate: { type: DataTypes.DATEONLY },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
 
     // UserId: {
     //   type: DataTypes.STRING,

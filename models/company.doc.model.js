@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       DocName: { type: DataTypes.STRING },
       DocType: { type: DataTypes.STRING },
       DocUrl: { type: DataTypes.STRING },
+      createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
       
     });
   

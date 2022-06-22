@@ -13,6 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     Address: { type: DataTypes.STRING },
     InsureranceDoc: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
   });
 
   return Insurance;
