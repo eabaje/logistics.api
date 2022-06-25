@@ -7,6 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     UserId: { type: DataTypes.STRING },
     RoleId: { type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
   });
 
   return UserRole;

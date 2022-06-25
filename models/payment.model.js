@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     PaymentMethod: { type: DataTypes.STRING },
     PaymentDate: { type: DataTypes.DATEONLY },
     Currency: { type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
   });
 
   return Payment;

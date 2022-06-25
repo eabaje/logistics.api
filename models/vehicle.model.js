@@ -41,7 +41,8 @@ module.exports = (sequelize, DataTypes) => {
     Description: { type: DataTypes.STRING },
 
     VehicleDocs: { type: DataTypes.STRING },
-
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
     // CarrierId: {
     //   type: DataTypes.STRING,
     //   references: {

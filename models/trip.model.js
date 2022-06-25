@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     DriverNote: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
     Review: { type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
 
     // ShipmentId: {
     //   type: DataTypes.STRING,

@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     ImgPath: { type: DataTypes.STRING },
     ThumbPath: { type: DataTypes.STRING },
     UploadDate: { type: DataTypes.DATEONLY },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
   });
 
   return Media;

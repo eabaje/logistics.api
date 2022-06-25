@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     CompanyType: { type: DataTypes.STRING },
     Specilaization: { type: DataTypes.STRING },
     IsVetted: { type: DataTypes.BOOLEAN },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE },
   });
 
   return Company;

@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     AssignedDate: { type: DataTypes.DATE },
 
     AssignedTo: { type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
 
     // VehicleId: {
     //   type: DataTypes.STRING,

@@ -13,6 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     Description: { type: DataTypes.STRING },
     Active: { type: DataTypes.BOOLEAN },
     Duration: { type: DataTypes.INTEGER },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
   });
 
   return Subscription;

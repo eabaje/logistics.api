@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     Summary: { type: DataTypes.STRING },
     ContentDetail: { type: DataTypes.STRING },
     Active: { type: DataTypes.BOOLEAN },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
   });
 
   return SiteContent;

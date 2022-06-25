@@ -20,6 +20,8 @@ module.exports = (sequelize, DataTypes) => {
     LicenseUrl: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
     DriverDocs: { type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
 
     // CompanyId: {
     //   type: DataTypes.INTEGER,

@@ -4,8 +4,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,autoIncrement:true,primaryKey: true 
           },
           UserId: { type: DataTypes.INTEGER },
-          Token: { type: DataTypes.STRING }
-          
+          Token: { type: DataTypes.STRING },
+          createdAt: { type: DataTypes.DATE },
+          updatedAt: { type: DataTypes.DATE }
           
          
     });

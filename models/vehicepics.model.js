@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema({
   Insured: { type: Boolean },
   PicUrl: { type: String },
   VehicleDocs: { type: String },
+  createdAt: { type: DataTypes.DATE },
+  updatedAt: { type: DataTypes.DATE }
 
  
  

@@ -13,7 +13,7 @@
 
 // module.exports = mongoose.model("carrier", userSchema);
 
-Company = require('./company.model.js')
+//Company = require('./company.model.js')
 
 module.exports = (sequelize, DataTypes) => {
   const Carrier = sequelize.define('Carriers', {
@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     ServiceDescription: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER, defaultValue: 0 },
     Licensed: { type: DataTypes.BOOLEAN },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE },
 
     // CompanyId: {
     //   type: DataTypes.INTEGER,

@@ -8,6 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     // TripId: { type: DataTypes.STRING },
     Status: { type: DataTypes.STRING },
     TrackNote: { type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE }
 
     // TripId: {
     //   type: DataTypes.STRING,
