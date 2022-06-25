@@ -580,6 +580,30 @@ exports.updateCompany = (req, res) => {
     });
 };
 
+exports.vetCompany = (req, res) => {
+  const id = req.body.CompanyId;
+
+  Company.update(req.body, {
+    where: { CompanyId: id },
+  })
+    .then((num) => {
+      if (num == 1) {
+        res.send({
+          message: 'Company is vetted successfully.',
+        });
+      } else {
+        res.send({
+          message: `Cannot update Company with id=${id}. Maybe Company was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: 'Error updating Company with id=' + id,
+      });
+    });
+};
+
 exports.uploadCompanyDoc = (req, res) => {
   // console.log('req.body.UserId', req.body.UserId);
   User.findOne({
@@ -620,8 +644,6 @@ exports.uploadCompanyDoc = (req, res) => {
       });
     }
   });
-
- 
 };
 
 exports.findCompany = (req, res) => {

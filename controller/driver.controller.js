@@ -370,6 +370,7 @@ exports.findAllAssignedDrivers = (req, res) => {
       {
         model: Company,
         attributes: ['CompanyName'],
+        where: { IsVetted: true },
       },
       {
         model: User,

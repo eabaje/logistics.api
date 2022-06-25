@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     Region: { type: DataTypes.STRING },
     CompanyType: { type: DataTypes.STRING },
     Specilaization: { type: DataTypes.STRING },
+    IsVetted: { type: DataTypes.BOOLEAN },
   });
 
   return Company;
