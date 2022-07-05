@@ -1,8 +1,11 @@
 require('../config/db.postgres.config');
 var generator = require('generate-password');
 require('dotenv').config();
+const { mailExports } = require('../middleware');
 
 const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
+const handlebars = require('handlebars');
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -11,6 +14,7 @@ const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+const { mailFunc } = require('../middleware');
 const db = require('../models/index.model');
 const { exit } = require('process');
 const User = db.user;
@@ -146,54 +150,61 @@ exports.signup = (req, res) => {
                     }
                   });
 
-                  const transporter = nodemailer.createTransport({
-                    // service: `${process.env.MAIL_SERVICE}`,
-                    host: `${process.env.SMTP_HOST}`,
-                    port: `${process.env.SMTP_PORT}`,
-                    auth: {
-                      user: `${process.env.SMTP_USER}`,
-                      pass: `${process.env.SMTP_PASSWORD}`,
+                  const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
+                  mailFunc.sendEmailMailGun({
+                    template: 'email2',
+                    subject: 'Welcome to Global Load Dispatch',
+                    toEmail: email,
+                    msg: {
+                      name: fullname,
+                      url: url,
                     },
                   });
+
+                  // const transporter = nodemailer.createTransport({
+                  //   // service: `${process.env.MAIL_SERVICE}`,
+                  //   host: `${process.env.SMTP_HOST}`,
+                  //   port: `${process.env.SMTP_PORT}`,
+                  //   auth: {
+                  //     user: `${process.env.SMTP_USER}`,
+                  //     pass: `${process.env.SMTP_PASSWORD}`,
+                  //   },
+                  // });
+
                   // //  mailgun
                   // // Step 2 - Generate a verification token with the user's ID
                   // const verificationToken = user.generateVerificationToken();
                   // // Step 3 - Email the user a unique verification link
 
                   // point to the template folder
-                  const handlebarOptions = {
-                    viewEngine: {
-                      partialsDir: path.resolve('./views/'),
-                      defaultLayout: false,
-                    },
-                    viewPath: path.resolve('./views/'),
-                  };
+
+                  // const handlebarOptions = {
+                  //   viewEngine: {
+                  //     partialsDir: path.resolve('./views/'),
+                  //     defaultLayout: false,
+                  //   },
+                  //   viewPath: path.resolve('./views/'),
+                  // };
 
                   // use a template file with nodemailer
-                  transporter.use('compile', hbs(handlebarOptions));
+                  // transporter.use('compile', hbs(handlebarOptions));
 
-                  const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
-                  transporter
-                    .sendMail({
-                      from: `${process.env.STMP_FROM_EMAIL}`,
-                      to: email,
-                      template: 'email2', // the name of the template file i.e email.handlebars
-                      context: {
-                        name: fullname,
-                        url: url,
-                      },
-                      subject: 'Welcome to Global Load Dispatch',
-                      //     html: `<h1>Email Confirmation</h1>
-                      // <h2>Hello ${fullname}</h2>
+                  // transporter
+                  //   .sendMail({
+                  //     from: `${process.env.STMP_FROM_EMAIL}`,
+                  //     to: email,
+                  //     template: 'email2', // the name of the template file i.e email.handlebars
+                  //     context: {
+                  //       name: fullname,
+                  //       url: url,
+                  //     },
+                  //     subject: 'Welcome to Global Load Dispatch',
 
-                      // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
-                      // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-                      // </div>`,
-                    })
-                    .then((info) => {
-                      console.log({ info });
-                    })
-                    .catch(console.error);
+                  //   })
+                  //   .then((info) => {
+                  //     console.log({ info });
+                  //   })
+                  //   .catch(console.error);
 
                   res.status(200).send({ message: 'User registered successfully!' });
                   // });
