@@ -15,6 +15,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const { exit } = require('process');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const { mailFunc } = require('../middleware');
 
 const Driver = db.driver;
 const AssignDriver = db.assigndriver;
@@ -157,48 +158,15 @@ exports.create = async (req, res) => {
           const newUserRole = await UserRole.create({ UserId: newUser.UserId, RoleId: foundRole.RoleId });
         }
 
-        const transporter = nodemailer.createTransport({
-          host: `${process.env.SMTP_HOST}`,
-          port: `${process.env.SMTP_PORT}`,
-          auth: {
-            user: `${process.env.SMTP_USER}`,
-            pass: `${process.env.SMTP_PASSWORD}`,
-          },
-        });
-        // //  mailgun
-        // // Step 2 - Generate a verification token with the user's ID
-        // const verificationToken = user.generateVerificationToken();
-        // // Step 3 - Email the user a unique verification link
-
-        // point to the template folder
-        const handlebarOptions = {
-          viewEngine: {
-            partialsDir: path.resolve('./views/'),
-            defaultLayout: false,
-          },
-          viewPath: path.resolve('./views/'),
-        };
-
-        // use a template file with nodemailer
-        transporter.use('compile', hbs(handlebarOptions));
-
-        //   const url = process.env.BASE_URL + `auth/verify/${token}`;
-        transporter.sendMail({
-          from: process.env.STMP_FROM_EMAIL,
-          to: req.body.Email,
-          template: 'emailPassword', // the name of the template file i.e email.handlebars
-          context: {
+        await mailFunc.sendEmail({
+          template: 'emailPassword',
+          subject: 'Welcome to Global Load Dispatch',
+          toEmail: req.body.Email,
+          msg: {
             name: req.body.DriverName,
             password: generatedPassword,
             // url: url,
           },
-          subject: 'Welcome to Global Load Dispatch',
-          //     html: `<h1>Email Confirmation</h1>
-          // <h2>Hello ${fullname}</h2>
-
-          // <p>By signing up for a free 90 day trial with Load Dispatch Service, you can connect with carriers,shippers and drivers.<br/></p>
-          // To finish up the process kindly click on the link to confirm your email <a href = '${url}'>Click here</a>
-          // </div>`,
         });
 
         res.send({
@@ -230,6 +198,35 @@ exports.create = async (req, res) => {
   //fs.unlinkSync(req.files.filePicUrl[0].path);
 
   // filename: req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname)
+};
+
+exports.sendDriverRegistrationLink = async (req, res) => {
+  try {
+    const { Email, DriverName, CompanyId } = req.body;
+
+    const url = `${process.env.MAIN_SITE_URL}` + `driver/register/?companyId=${CompanyId}`;
+
+    await mailFunc.sendEmail({
+      template: 'generic',
+      subject: 'Welcome to Global Load Dispatch',
+      toEmail: Email,
+      msg: {
+        name: DriverName,
+        msg: `
+          
+          To sign up as a driver with this company, kindly click the link below
+            `,
+        url: url,
+      },
+    });
+    return res.status(200).json({
+      message: 'Registration Link Sent',
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || 'Some error occurred .',
+    });
+  }
 };
 
 // Retrieve all Drivers start the database.

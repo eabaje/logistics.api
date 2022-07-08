@@ -231,6 +231,60 @@ exports.signup = (req, res) => {
   });
 };
 
+exports.sendRegistrationLink = (req, res) => {
+  const { Email, Name } = req.body;
+
+  const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
+  mailFunc.sendEmailMailGun({
+    template: 'email2',
+    subject: 'Welcome to Global Load Dispatch',
+    toEmail: Email,
+    msg: {
+      name: Name,
+      url: url,
+    },
+  });
+
+  if (token) {
+    jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, (err, decoded) => {
+      if (err) {
+        console.log('Activation error');
+        return res.status(401).json({
+          errors: 'Expired link. Signup again',
+        });
+      } else {
+        const { name, email, password } = jwt.decode(token);
+
+        console.log(email);
+        const user = new User({
+          name,
+          email,
+          password,
+        });
+
+        user.save((err, user) => {
+          if (err) {
+            console.log('Save error', errorHandler(err));
+            return res.status(401).json({
+              errors: errorHandler(err),
+            });
+          } else {
+            return res.json({
+              success: true,
+              data: user,
+              message: 'Signup success',
+            });
+          }
+        });
+      }
+    });
+  } else {
+    return res.json({
+      message: 'error happening please try again',
+    });
+  }
+};
+
 exports.signin = async (req, res) => {
   // where: { [Op.and]: [{ Email: req.body.Email }, { IsActivated: true }] },
 

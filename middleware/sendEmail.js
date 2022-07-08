@@ -27,8 +27,8 @@ const sendEmail = async (options) => {
 
   const msg = {
     from: `${process.env.STMP_FROM_NAME} < ${process.env.STMP_FROM_EMAIL}>`,
-    to: email,
-    template: options.email, // the name of the template file i.e email.handlebars
+    to: options.toEmail,
+    template: options.template, // the name of the template file i.e email.handlebars
     context: options.msg,
     subject: options.subject,
   };
@@ -44,7 +44,7 @@ const sendEmailMailGun = async (options) => {
     },
   };
 
-  const emailTemplateSource = fs.readFileSync(path.join(__dirname, `/views/${options.template}`), 'utf8');
+  const emailTemplateSource = fs.readFileSync(path.resolve(`./views/${options.template}`), 'utf8');
   const smtpTransport = nodemailer.createTransport(mg(mailgunAuth));
   const template = handlebars.compile(emailTemplateSource);
 

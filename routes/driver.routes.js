@@ -122,6 +122,8 @@ module.exports = function (app) {
   //[, upLoadDocuments.single('fileLicenseUrl')]
   app.post('/api/driver/AssignDriverToVehicle', controller.AssignDriverToVehicle);
 
+  app.post('/api/driver/sendDriverRegistrationLink', controller.sendDriverRegistrationLink);
+
   app.put('/api/driver/update/:driverId', controller.update);
 
   app.delete('/api/driver/delete/:driverId', controller.delete);
