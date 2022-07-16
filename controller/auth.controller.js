@@ -49,186 +49,126 @@ auth.use(express.json({ limit: '50mb' }));
 
 // module.exports = auth;
 
-exports.signup = (req, res) => {
-  User.findOne({
-    where: {
-      Email: req.body.Email,
-    },
-  }).then((user) => {
-    if (user) {
+exports.signup = async (req, res) => {
+  try {
+    const isUser = await User.findOne({ where: { Email: req.body.Email } });
+    if (isUser) {
       return res.status(404).send({ message: 'Email already exists' });
-    } else {
-      Company.create({
-        CompanyName: req.body.CompanyName ? req.body.CompanyName : 'NA',
-        ContactEmail: req.body.ContactEmail,
-        ContactPhone: req.body.ContactPhone,
-        Address: req.body.CompanyAddress,
-        Region: req.body.Region,
-        Country: req.body.Country,
-        CompanyType: req.body.RoleType,
-        Specialization: req.body.Specialization,
-      })
-        .then((company) => {
-          //const company = Company.save();
-          const encryptedPassword = req.body.Password
-            ? bcrypt.hashSync(req.body.Password, 10)
-            : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);
-
-          //console.log('Password:', encryptedPassword);
-          const email = req.body.ContactEmail ? req.body.ContactEmail : req.body.Email;
-          const fullname = req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName;
-
-          User.create({
-            CompanyId: company.CompanyId,
-            FullName: req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName,
-            Email: req.body.Email.toLowerCase(),
-            Phone: req.body.Phone,
-            Address: req.body.Address,
-            City: req.body.Region,
-            Country: req.body.Country,
-            UserName: req.body.Email.toLowerCase(),
-            AcceptTerms: req.body.AcceptTerms,
-            PaymentMethod: req.body.PaymentMethod,
-            Currency: req.body.Currency,
-            IsActivated: false,
-            IsConfirmed: false,
-            Password: encryptedPassword,
-          })
-            .then((user) => {
-              console.log(`RoleType`, req.body.RoleType);
-              if (req.body.RoleType) {
-                Role.findOne({
-                  where: {
-                    Name: req.body.RoleType,
-                  },
-                }).then((role) => {
-                  UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });
-
-                  // Add User Subscription
-                  // user.setRoles(roles).then(() => {
-                  const token = jwt.sign({ UserId: user.UserId }, `${process.env.TOKEN_KEY}`, {
-                    expiresIn: '2h',
-                  });
-                  // save user token
-                  user.Token = token;
-                  user.save();
-                  // Get free subscription
-                  // const free = 'Free';
-                  //  var condition = free ? { SubscriptionType: { [Op.iLike]: `%${free}%` } } : null;
-                  const subscribePrk = 1;
-                  Subscribe.findOne({
-                    where: {
-                      SubscribeId: subscribePrk,
-                    },
-                  }).then((subscribeRes) => {
-                    if (subscribeRes) {
-                      // Add user free subscription
-                      const startDate = new Date();
-
-                      const endDate = new Date();
-                      endDate.setDate(endDate.getDate() + subscribeRes.Duration);
-
-                      UserSubscription.create({
-                        // UserSubscriptionId: 2,
-                        SubscribeId: subscribeRes.SubscribeId,
-                        SubscriptionName: subscribeRes.SubscriptionName,
-                        UserId: user.UserId,
-                        Active: subscribeRes.Active,
-                        StartDate: startDate,
-                        EndDate: endDate,
-                      }).then((userSubscription) => {});
-                      const subscribeObj = {
-                        SubscribeId: subscribeRes.SubscribeId,
-                        SubscriptionName: subscribeRes.SubscriptionName,
-                        UserId: user.UserId,
-                        Active: subscribeRes.Active,
-                        StartDate: startDate,
-                        EndDate: endDate,
-                      };
-                      console.log('subscribeObj', subscribeObj);
-                      //  UserSubscription.create(subscribeObj);
-                    }
-                  });
-
-                  const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
-                  mailFunc.sendEmailMailGun({
-                    template: 'email2',
-                    subject: 'Welcome to Global Load Dispatch',
-                    toEmail: email,
-                    msg: {
-                      name: fullname,
-                      url: url,
-                    },
-                  });
-
-                  // const transporter = nodemailer.createTransport({
-                  //   // service: `${process.env.MAIL_SERVICE}`,
-                  //   host: `${process.env.SMTP_HOST}`,
-                  //   port: `${process.env.SMTP_PORT}`,
-                  //   auth: {
-                  //     user: `${process.env.SMTP_USER}`,
-                  //     pass: `${process.env.SMTP_PASSWORD}`,
-                  //   },
-                  // });
-
-                  // //  mailgun
-                  // // Step 2 - Generate a verification token with the user's ID
-                  // const verificationToken = user.generateVerificationToken();
-                  // // Step 3 - Email the user a unique verification link
-
-                  // point to the template folder
-
-                  // const handlebarOptions = {
-                  //   viewEngine: {
-                  //     partialsDir: path.resolve('./views/'),
-                  //     defaultLayout: false,
-                  //   },
-                  //   viewPath: path.resolve('./views/'),
-                  // };
-
-                  // use a template file with nodemailer
-                  // transporter.use('compile', hbs(handlebarOptions));
-
-                  // transporter
-                  //   .sendMail({
-                  //     from: `${process.env.STMP_FROM_EMAIL}`,
-                  //     to: email,
-                  //     template: 'email2', // the name of the template file i.e email.handlebars
-                  //     context: {
-                  //       name: fullname,
-                  //       url: url,
-                  //     },
-                  //     subject: 'Welcome to Global Load Dispatch',
-
-                  //   })
-                  //   .then((info) => {
-                  //     console.log({ info });
-                  //   })
-                  //   .catch(console.error);
-
-                  res.status(200).send({ message: 'User registered successfully!' });
-                  // });
-                });
-                // } else {
-                //   // user role = 1
-                //   user.setRoles([1]).then(() => {
-                //     res.send({ message: 'User registered successfully!' });
-                //   });
-              }
-            })
-
-            .catch((err) => {
-              console.log(`err`, err);
-              res.status(500).send({ message: err.message });
-            });
-        })
-
-        .catch((err) => {
-          console.log(`err`, err);
-          res.status(500).send({ message: 'Company Error:' + err.message });
-        });
     }
-  });
+
+    const company = await Company.create({
+      CompanyName: req.body.CompanyName ? req.body.CompanyName : 'NA',
+      ContactEmail: req.body.ContactEmail,
+      ContactPhone: req.body.ContactPhone,
+      Address: req.body.CompanyAddress,
+      Region: req.body.Region,
+      Country: req.body.Country,
+      CompanyType: req.body.RoleType,
+      Specialization: req.body.Specialization,
+    });
+    if (!company) {
+      return res.status(404).send({ message: 'An error occurred with company registration' });
+    }
+
+    const encryptedPassword = req.body.Password
+      ? bcrypt.hashSync(req.body.Password, 10)
+      : bcrypt.hashSync(generator.generate({ length: 8, numbers: true }), 10);
+
+    //console.log('Password:', encryptedPassword);
+    const email = req.body.ContactEmail ? req.body.ContactEmail : req.body.Email;
+    const fullname = req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName;
+
+    const user = await User.create({
+      CompanyId: company.CompanyId,
+      FullName: req.body.FullName ? req.body.FullName : req.body.FirstName + ' ' + req.body.LastName,
+      Email: req.body.Email.toLowerCase(),
+      Phone: req.body.Phone,
+      Address: req.body.Address,
+      City: req.body.Region,
+      Country: req.body.Country,
+      UserName: req.body.Email.toLowerCase(),
+      AcceptTerms: req.body.AcceptTerms,
+      PaymentMethod: req.body.PaymentMethod,
+      Currency: req.body.Currency,
+      IsActivated: false,
+      IsConfirmed: false,
+      Password: encryptedPassword,
+    });
+
+    if (!req.body.RoleType) {
+      return res.status(404).send({ message: 'An error occurred with Role Type Provision' });
+    }
+    const role = await Role.findOne({ where: { Name: req.body.RoleType } });
+
+    if (!role) {
+      return res.status(404).send({ message: 'An error occurred with role creation for user' });
+    }
+
+    const userrole = await UserRole.create({ UserId: user.UserId, RoleId: role.RoleId });
+
+    if (!userrole) {
+      return res.status(404).send({ message: 'An error occurred with user role' });
+    }
+
+    const token = jwt.sign({ UserId: user.UserId }, `${process.env.TOKEN_KEY}`, {
+      expiresIn: '2h',
+    });
+
+    user.Token = token;
+    await user.save();
+
+    const subscribePrk = 1;
+    const subscribeRes = await Subscribe.findOne({ where: { SubscribeId: subscribePrk } });
+
+    if (!subscribeRes) {
+      return res.status(404).send({ message: 'An error occurred with subscription' });
+    }
+    // Add user free subscription
+    const startDate = new Date();
+
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + subscribeRes.Duration);
+
+    const userSubscription = await UserSubscription.create({
+      // UserSubscriptionId: 2,
+      SubscribeId: subscribeRes.SubscribeId,
+      SubscriptionName: subscribeRes.SubscriptionName,
+      UserId: user.UserId,
+      Active: subscribeRes.Active,
+      StartDate: startDate,
+      EndDate: endDate,
+    });
+
+    const subscribeObj = {
+      SubscribeId: subscribeRes.SubscribeId,
+      SubscriptionName: subscribeRes.SubscriptionName,
+      UserId: user.UserId,
+      Active: subscribeRes.Active,
+      StartDate: startDate,
+      EndDate: endDate,
+    };
+    console.log('subscribeObj', subscribeObj);
+
+    if (!userSubscription) {
+      return res.status(404).send({ message: 'An error occurred with user subscription' });
+    }
+
+    const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
+    await mailFunc.sendEmail({
+      template: 'email2',
+      subject: 'Welcome to Global Load Dispatch',
+      toEmail: email,
+      msg: {
+        name: fullname,
+        url: url,
+      },
+    });
+
+    return res.status(200).send({ message: 'User registered successfully!' });
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(500).send({ message: error.message });
+  }
 };
 
 exports.sendRegistrationLink = (req, res) => {

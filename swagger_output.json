@@ -5,10 +5,12 @@
     "title": "REST API",
     "description": ""
   },
-  "host": "localhost:8000",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [],
-  "schemes": ["http"],
+  "schemes": [
+    "http"
+  ],
   "consumes": [],
   "produces": [],
   "paths": {
@@ -669,7 +671,7 @@
                 "Country": {
                   "example": "any"
                 },
-                "Licensed": {
+                "LicenseNo": {
                   "example": "any"
                 },
                 "Rating": {
@@ -700,7 +702,32 @@
             "schema": {
               "type": "object",
               "properties": {
-                "DriverId": {
+                "RefId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "\r/api/driver/updateDriverPic": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "RefId": {
                   "example": "any"
                 },
                 "FileType": {
@@ -711,8 +738,8 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal Server Error"
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -732,6 +759,40 @@
                   "example": "any"
                 },
                 "VehicleId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/driver/sendDriverRegistrationLink": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "example": "any"
+                },
+                "DriverName": {
+                  "example": "any"
+                },
+                "CompanyId": {
                   "example": "any"
                 }
               }
@@ -1329,13 +1390,13 @@
         }
       }
     },
-    "/api/shipment/findAllShipmentsAssigned/{shipmentid}/{assignedshipment}": {
+    "/api/shipment/findAllShipmentsAssigned/{shipmentId}/{assignedshipment}": {
       "get": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "shipmentid",
+            "name": "shipmentId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1372,6 +1433,50 @@
         }
       }
     },
+    "\r/api/shipment/findAllShipmentsInterestByShipmentId/{shipmentId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "shipmentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/shipment/findAllShipmentsInterestByCompany/{companyId}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/shipment/showInterest": {
       "post": {
         "tags": [],
@@ -1383,10 +1488,84 @@
             "schema": {
               "type": "object",
               "properties": {
-                "ShipmentId": {
+                "CompanyId": {
                   "example": "any"
                 },
                 "UserId": {
+                  "example": "any"
+                },
+                "ShipmentId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/shipment/assignCompanyShipment": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CompanyId": {
+                  "example": "any"
+                },
+                "UserId": {
+                  "example": "any"
+                },
+                "ShipmentId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/shipment/assignDriverShipment": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CompanyId": {
+                  "example": "any"
+                },
+                "UserId": {
+                  "example": "any"
+                },
+                "DriverId": {
+                  "example": "any"
+                },
+                "ShipmentId": {
                   "example": "any"
                 }
               }
@@ -1450,10 +1629,16 @@
                 "PickUpRegion": {
                   "example": "any"
                 },
+                "PickUpCity": {
+                  "example": "any"
+                },
                 "DeliveryCountry": {
                   "example": "any"
                 },
                 "DeliveryRegion": {
+                  "example": "any"
+                },
+                "DeliveryCity": {
                   "example": "any"
                 },
                 "ExpectedPickUpDate": {
@@ -2310,7 +2495,7 @@
                 "RefId": {
                   "example": "any"
                 },
-                "UploadType": {
+                "uploadUrl": {
                   "example": "any"
                 }
               }
@@ -2338,7 +2523,7 @@
                 "RefId": {
                   "example": "any"
                 },
-                "UploadType": {
+                "UploadUrl": {
                   "example": "any"
                 },
                 "MediaId": {

@@ -11,14 +11,21 @@ module.exports = (sequelize, DataTypes) => {
     // DriverId: { type: DataTypes.STRING },
     PickUpLocation: { type: DataTypes.STRING },
     DeliveryLocation: { type: DataTypes.STRING },
+
     PickUpDate: { type: DataTypes.DATEONLY },
     Duration: { type: DataTypes.STRING },
     DeliveryDate: { type: DataTypes.DATEONLY },
+
+    Mileage: { type: DataTypes.DECIMAL },
+    TripUnit: { type: DataTypes.STRING },
+
+    TripCost: { type: DataTypes.DOUBLE },
+
     DriverNote: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
     Review: { type: DataTypes.STRING },
     createdAt: { type: DataTypes.DATE },
-    updatedAt: { type: DataTypes.DATE }
+    updatedAt: { type: DataTypes.DATE },
 
     // ShipmentId: {
     //   type: DataTypes.STRING,

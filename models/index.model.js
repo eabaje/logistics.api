@@ -5,8 +5,6 @@ const env = process.env.NODE_ENV.trim() || 'development';
 
 const config = require(__dirname + '/../config/config.json')[env];
 
-
-
 //console.log(process.env[config.use_env_variable]);
 
 const isProduction = process.env.NODE_ENV;
@@ -48,12 +46,15 @@ db.user = require('./user.model.js')(sequelize, Sequelize);
 db.role = require('./role.model.js')(sequelize, Sequelize);
 db.userrole = require('./user.role.model.js')(sequelize, Sequelize);
 db.shipment = require('./shipment.model.js')(sequelize, Sequelize);
+db.shipmentdetail = require('./shipment.details.model.js')(sequelize, Sequelize);
 db.order = require('./order.model.js')(sequelize, Sequelize);
 db.payment = require('./payment.model.js')(sequelize, Sequelize);
 db.subscribe = require('./subscription.model.js')(sequelize, Sequelize);
 db.trip = require('./trip.model.js')(sequelize, Sequelize);
 db.track = require('./track.model.js')(sequelize, Sequelize);
 db.assigndriver = require('./assign.driver.model.js')(sequelize, Sequelize);
+db.assignshipment = require('./assign.shipment.model.js')(sequelize, Sequelize);
+db.assigndrivershipment = require('./assign.driver.shipment.model.js')(sequelize, Sequelize);
 db.usersubscription = require('./user.subscription.model.js')(sequelize, Sequelize);
 db.insurance = require('./insurance.model.js')(sequelize, Sequelize);
 db.interested = require('./shipment.interested.model.js')(sequelize, Sequelize);
@@ -97,7 +98,6 @@ db.vehicle.belongsToMany(db.driver, {
 // db.user.hasMany(db.userrole, { foreignKey: { name: 'UserId' } });
 // db.userrole.belongsTo(db.user);
 
-
 db.vehicle.hasOne(db.trip, { foreignKey: 'VehicleId' });
 db.trip.belongsTo(db.vehicle, { foreignKey: 'VehicleId' });
 
@@ -132,8 +132,14 @@ db.usersubscription.belongsTo(db.subscribe, { foreignKey: 'SubscribeId' });
 db.user.hasMany(db.usersubscription, { foreignKey: 'UserId' });
 db.usersubscription.belongsTo(db.user, { foreignKey: 'UserId' });
 
+db.shipment.hasMany(db.shipmentdetail, { foreignKey: 'ShipmentId' });
+db.shipmentdetail.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
+
 db.shipment.hasMany(db.interested, { foreignKey: 'ShipmentId' });
 db.interested.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
+
+// db.shipmentdetail.hasMany(db.interested, { foreignKey: 'ShipmentDetailId' });
+// db.interested.belongsTo(db.shipmentdetail, { foreignKey: 'ShipmentDetailId' });
 
 db.driver.hasOne(db.interested, { foreignKey: 'DriverId' });
 db.interested.belongsTo(db.driver, { foreignKey: 'DriverId' });
@@ -143,6 +149,27 @@ db.review.belongsTo(db.driver, { foreignKey: 'DriverId' });
 
 db.user.hasMany(db.shipment, { foreignKey: 'UserId' });
 db.shipment.belongsTo(db.user, { foreignKey: 'UserId' });
+
+db.company.hasOne(db.assigndrivershipment, { foreignKey: 'CompanyId' });
+db.assigndrivershipment.belongsTo(db.company, { foreignKey: 'CompanyId' });
+
+db.company.hasOne(db.assignshipment, { foreignKey: 'CompanyId' });
+db.assignshipment.belongsTo(db.company, { foreignKey: 'CompanyId' });
+
+db.driver.hasOne(db.assigndrivershipment, { foreignKey: 'DriverId' });
+db.assigndrivershipment.belongsTo(db.driver, { foreignKey: 'DriverId' });
+
+db.driver.hasOne(db.assignshipment, { foreignKey: 'DriverId' });
+db.assignshipment.belongsTo(db.driver, { foreignKey: 'DriverId' });
+
+db.shipment.hasOne(db.assigndrivershipment, { foreignKey: 'ShipmentId' });
+db.assigndrivershipment.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
+
+db.user.hasOne(db.assignshipment, { foreignKey: 'UserId' });
+db.assignshipment.belongsTo(db.user, { foreignKey: 'UserId' });
+
+db.user.hasOne(db.assigndrivershipment, { foreignKey: 'UserId' });
+db.assigndrivershipment.belongsTo(db.user, { foreignKey: 'UserId' });
 
 db.shipment.hasOne(db.trip, { foreignKey: 'ShipmentId' });
 db.trip.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });

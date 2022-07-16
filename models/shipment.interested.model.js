@@ -6,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV1,
     },
     // ShipmentId: { type: DataTypes.STRING },
-    CarrierId: { type: DataTypes.STRING, default: null },
+    CompanyId: { type: DataTypes.STRING, default: null },
     IsInterested: { type: DataTypes.BOOLEAN },
     InterestDate: { type: DataTypes.DATEONLY },
     createdAt: { type: DataTypes.DATE },
-    updatedAt: { type: DataTypes.DATE }
+    updatedAt: { type: DataTypes.DATE },
 
     // DriverId: {
     //   type: DataTypes.STRING,

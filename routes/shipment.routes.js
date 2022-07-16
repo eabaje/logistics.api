@@ -22,11 +22,22 @@ module.exports = function (app) {
 
   app.get('/api/shipment/findAllShipmentsByRecordDate/:startDate/:endDate', controller.findAllShipmentsByRecordDate);
 
-  app.get('/api/shipment/findAllShipmentsAssigned/:shipmentid/:assignedshipment', controller.findAllShipmentsAssigned);
+  app.get('/api/shipment/findAllShipmentsAssigned/:shipmentId/:assignedshipment', controller.findAllShipmentsAssigned);
 
   app.get('/api/shipment/findAllShipmentsInterest', controller.findAllShipmentsInterest);
 
+  app.get(
+    '/api/shipment/findAllShipmentsInterestByShipmentId/:shipmentId',
+    controller.findAllShipmentsInterestByShipmentId,
+  );
+
+  app.get('/api/shipment/findAllShipmentsInterestByCompany/:companyId', controller.findAllShipmentsInterestByCompany);
+
   app.post('/api/shipment/showInterest', controller.showInterest);
+
+  app.post('/api/shipment/assignCompanyShipment', controller.assignCompanyShipment);
+
+  app.post('/api/shipment/assignDriverShipment', controller.assignDriverShipment);
 
   app.post('/api/shipment/create', controller.create);
 

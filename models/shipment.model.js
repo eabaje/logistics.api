@@ -33,9 +33,12 @@ module.exports = (sequelize, DataTypes) => {
     Description: { type: DataTypes.STRING },
     PickUpCountry: { type: DataTypes.STRING },
     PickUpRegion: { type: DataTypes.STRING },
+    PickUpCity: { type: DataTypes.STRING },
     PickUpLocation: { type: DataTypes.STRING },
+
     DeliveryCountry: { type: DataTypes.STRING },
     DeliveryRegion: { type: DataTypes.STRING },
+    DeliveryCity: { type: DataTypes.STRING },
     DeliveryLocation: { type: DataTypes.STRING },
     ExpectedPickUpDate: { type: DataTypes.DATEONLY },
     ExpectedDeliveryDate: { type: DataTypes.DATEONLY },
@@ -45,11 +48,12 @@ module.exports = (sequelize, DataTypes) => {
     DeliveryContactPhone: { type: DataTypes.STRING },
     DeliveryEmail: { type: DataTypes.STRING },
     AssignedShipment: { type: DataTypes.BOOLEAN },
+    AssignedCarrier: { type: DataTypes.INTEGER },
     ShipmentDate: { type: DataTypes.DATEONLY },
     ShipmentDocs: { type: DataTypes.STRING },
     ShipmentStatus: { type: DataTypes.STRING },
     createdAt: { type: DataTypes.DATE },
-    updatedAt: { type: DataTypes.DATE }
+    updatedAt: { type: DataTypes.DATE },
 
     // CompanyId: {
     //   type: DataTypes.INTEGER,

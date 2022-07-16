@@ -10,18 +10,19 @@ module.exports = (sequelize, DataTypes) => {
     Email: { type: DataTypes.STRING },
     Phone: { type: DataTypes.STRING },
     SecondaryPhone: { type: DataTypes.STRING },
-     DOB: { type: DataTypes.DATEONLY },
+    DOB: { type: DataTypes.DATEONLY },
     Address: { type: DataTypes.STRING },
     City: { type: DataTypes.STRING },
-     Region: { type: DataTypes.STRING },
+    Region: { type: DataTypes.STRING },
     Country: { type: DataTypes.STRING },
     PicUrl: { type: DataTypes.STRING },
     Licensed: { type: DataTypes.BOOLEAN },
+    LicenseNo: { type: DataTypes.STRING },
     LicenseUrl: { type: DataTypes.STRING },
     Rating: { type: DataTypes.INTEGER },
     DriverDocs: { type: DataTypes.STRING },
     createdAt: { type: DataTypes.DATE },
-    updatedAt: { type: DataTypes.DATE }
+    updatedAt: { type: DataTypes.DATE },
 
     // CompanyId: {
     //   type: DataTypes.INTEGER,

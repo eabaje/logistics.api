@@ -112,7 +112,7 @@ exports.create = async (req, res) => {
       Region: req.body.Region,
       Country: req.body.Country,
       PicUrl: newFileName, // req.PicUrl.fieldname + '-' + Date.now() + path.extname(req.PicUrl.originalname),
-      Licensed: req.body.Licensed,
+      LicenseNo: req.body.LicenseNo,
       Rating: req.body.Rating,
       DriverDocs: licensepath,
     };
@@ -146,7 +146,7 @@ exports.create = async (req, res) => {
         Region: req.body.Region,
         Country: req.body.Country,
         PicUrl: picpath,
-        Licensed: req.body.Licensed,
+        Licensed: req.body.LicenseNo,
         DriverDocs: licensepath,
         UserId: newUser.UserId,
       });

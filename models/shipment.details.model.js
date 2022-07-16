@@ -1,24 +1,33 @@
 module.exports = (sequelize, DataTypes) => {
-    const ShipmentDetail = sequelize.define("ShipmentDetails", {
-      ShipmentDetailId: {
-        type: DataTypes.Integer,autoIncrement:true,primaryKey: true 
-      },
-      ShipmentId: { type: DataTypes.STRING },
-      LoadCategory: { type: DataTypes.STRING },
-      LoadType: { type: DataTypes.STRING },
-      LoadWeight: { type: DataTypes.DECIMAL },
-      LoadUnit: { type: DataTypes.STRING },
-      Description: { type: DataTypes.STRING },
-      PickUpLocation: { type: DataTypes.STRING },
-      DeliveryLocation: { type: DataTypes.STRING },
-      PickUpDate: { type: DataTypes.DATE },
-      DeliveryDate: { type: DataTypes.DATE },
-      ShipmentDate: { type: DataTypes.DATE },
-      Licensed: { type: DataTypes.BOOLEAN },
-      createdAt: { type: DataTypes.DATE },
-      updatedAt: { type: DataTypes.DATE }
-    });
-  
-    return ShipmentDetail;
-  };
-  
+  const ShipmentDetail = sequelize.define('ShipmentDetails', {
+    ShipmentDetailId: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
+    ShipmentType: { type: DataTypes.STRING },
+    LoadCategory: { type: DataTypes.STRING },
+    LoadType: { type: DataTypes.STRING },
+    LoadWeight: { type: DataTypes.DECIMAL },
+    LoadUnit: { type: DataTypes.STRING },
+
+    DeliveryPrice: { type: DataTypes.DOUBLE },
+
+    VehicleType: { type: DataTypes.STRING, default: null },
+    VIN: { type: DataTypes.STRING },
+    VehicleMake: { type: DataTypes.STRING },
+    VehicleColor: { type: DataTypes.STRING },
+    VehicleModel: { type: DataTypes.STRING },
+    Qty: { type: DataTypes.INTEGER },
+    VehicleModelYear: { type: DataTypes.DATEONLY },
+    PurchaseYear: { type: DataTypes.DATEONLY },
+
+    Description: { type: DataTypes.STRING },
+
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE },
+  });
+
+  return ShipmentDetail;
+};
