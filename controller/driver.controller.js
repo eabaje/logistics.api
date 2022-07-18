@@ -146,7 +146,7 @@ exports.create = async (req, res) => {
         Region: req.body.Region,
         Country: req.body.Country,
         PicUrl: picpath,
-        Licensed: req.body.LicenseNo,
+        LicenseNo: req.body.LicenseNo,
         DriverDocs: licensepath,
         UserId: newUser.UserId,
       });
@@ -161,9 +161,9 @@ exports.create = async (req, res) => {
         await mailFunc.sendEmail({
           template: 'emailPassword',
           subject: 'Welcome to Global Load Dispatch',
-          toEmail: req.body.Email,
+          toEmail: newDriver.Email,
           msg: {
-            name: req.body.DriverName,
+            name: newDriver.DriverName,
             password: generatedPassword,
             // url: url,
           },
@@ -204,18 +204,20 @@ exports.sendDriverRegistrationLink = async (req, res) => {
   try {
     const { Email, DriverName, CompanyId } = req.body;
 
-    const url = `${process.env.MAIN_SITE_URL}` + `driver/register/?companyId=${CompanyId}`;
+    const company = await Company.findOne({ where: { CompanyId: CompanyId } });
 
+    const url = `${process.env.MAIN_SITE_URL}` + `driver/register/?companyId=${CompanyId}`;
+    const link = '<a href=' + url + '>Register</a>';
     await mailFunc.sendEmail({
-      template: 'generic',
+      template: 'driver',
       subject: 'Welcome to Global Load Dispatch',
       toEmail: Email,
       msg: {
         name: DriverName,
         msg: `
           
-          To sign up as a driver with this company, kindly click the link below
-            `,
+          To sign up as a driver with  ${company.CompanyName}, kindly click the link below
+           `,
         url: url,
       },
     });

@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV1,
     },
     // ShipmentId: { type: DataTypes.STRING },
-    CompanyId: { type: DataTypes.STRING, default: null },
+
     IsInterested: { type: DataTypes.BOOLEAN },
     InterestDate: { type: DataTypes.DATEONLY },
     createdAt: { type: DataTypes.DATE },

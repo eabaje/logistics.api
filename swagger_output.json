@@ -5,12 +5,10 @@
     "title": "REST API",
     "description": ""
   },
-  "host": "localhost:3000",
+  "host": "localhost:8000",
   "basePath": "/",
   "tags": [],
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["http"],
   "consumes": [],
   "produces": [],
   "paths": {

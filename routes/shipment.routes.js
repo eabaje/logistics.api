@@ -11,6 +11,10 @@ module.exports = function (app) {
 
   app.get('/api/shipment/findAll', controller.findAll);
 
+  app.get('/api/shipment/findAllAssignShipment', controller.findAllAssignShipment);
+
+  app.get('/api/shipment/findAllAssignDriverShipment', controller.findAllAssignDriverShipment);
+
   app.get('/api/shipment/findAllShipmentsByStatus/:shipmentStatus/:shipmentid', controller.findAllShipmentsByStatus);
 
   app.get(
@@ -33,11 +37,19 @@ module.exports = function (app) {
 
   app.get('/api/shipment/findAllShipmentsInterestByCompany/:companyId', controller.findAllShipmentsInterestByCompany);
 
-  app.post('/api/shipment/showInterest', controller.showInterest);
-
   app.post('/api/shipment/assignCompanyShipment', controller.assignCompanyShipment);
 
   app.post('/api/shipment/assignDriverShipment', controller.assignDriverShipment);
+
+  app.post('/api/shipment/showInterest', controller.showInterest);
+
+  app.post('/api/shipment/dispatchShipment', controller.dispatchShipment);
+
+  app.post('/api/shipment/pickedUpShipment', controller.pickedUpShipment);
+
+  app.post('/api/shipment/deliveredShipment', controller.deliveredShipment);
+
+  app.post('/api/shipment/cancelShipment', controller.cancelShipment);
 
   app.post('/api/shipment/create', controller.create);
 
