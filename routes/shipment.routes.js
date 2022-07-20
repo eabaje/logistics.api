@@ -51,6 +51,8 @@ module.exports = function (app) {
 
   app.post('/api/shipment/cancelShipment', controller.cancelShipment);
 
+  app.post('/api/shipment/archiveShipment', controller.archiveShipment);
+
   app.post('/api/shipment/create', controller.create);
 
   app.put('/api/shipment/update/:shipmentId', controller.update);

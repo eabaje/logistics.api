@@ -52,6 +52,7 @@ module.exports = (sequelize, DataTypes) => {
     ShipmentDate: { type: DataTypes.DATEONLY },
     ShipmentDocs: { type: DataTypes.STRING },
     ShipmentStatus: { type: DataTypes.STRING },
+    IsAchived: { type: DataTypes.BOOLEAN, defaultValue: false },
     createdAt: { type: DataTypes.DATE },
     updatedAt: { type: DataTypes.DATE },
 

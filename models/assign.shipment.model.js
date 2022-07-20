@@ -10,26 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     IsAssigned: { type: DataTypes.BOOLEAN },
 
     AssignedDate: { type: DataTypes.DATE },
-
+    IsContractSigned: { type: DataTypes.BOOLEAN, default: false },
     AssignedTo: { type: DataTypes.STRING },
     createdAt: { type: DataTypes.DATE },
-    updatedAt: { type: DataTypes.DATE }
-
-    // VehicleId: {
-    //   type: DataTypes.STRING,
-    //   references: {
-    //     model: Vehicle,
-    //     key: 'VehicleId'
-    //   }
-    // },
-
-    // DriverId: {
-    //   type: DataTypes.STRING,
-    //   references: {
-    //     model: Driver,
-    //     key: 'DriverId'
-    //   }
-    // },
+    updatedAt: { type: DataTypes.DATE },
   });
 
   return AssignShipment;

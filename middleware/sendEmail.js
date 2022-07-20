@@ -31,6 +31,15 @@ const sendEmail = async (options) => {
     template: options.template, // the name of the template file i.e email.handlebars
     context: options.msg,
     subject: options.subject,
+    attachments: options.filename
+      ? [
+          {
+            filename: options.attachments.filename, // <= Here: made sure file name match  __dirname,
+            path: path.resolve(`../uploads/docs/${options.filename}`), // <= Here
+            contentType: 'application/pdf',
+          },
+        ]
+      : null,
   };
 
   await transporter.sendMail(msg);

@@ -141,9 +141,6 @@ db.interested.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
 db.company.hasMany(db.interested, { foreignKey: 'CompanyId' });
 db.interested.belongsTo(db.company, { foreignKey: 'CompanyId' });
 
-db.driver.hasOne(db.interested, { foreignKey: 'DriverId' });
-db.interested.belongsTo(db.driver, { foreignKey: 'DriverId' });
-
 db.driver.hasOne(db.review, { foreignKey: 'DriverId' });
 db.review.belongsTo(db.driver, { foreignKey: 'DriverId' });
 
@@ -159,11 +156,11 @@ db.assignshipment.belongsTo(db.company, { foreignKey: 'CompanyId' });
 db.shipment.hasOne(db.assignshipment, { foreignKey: 'ShipmentId' });
 db.assignshipment.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
 
+db.interested.hasOne(db.assignshipment, { foreignKey: 'ShipmentInterestId' });
+db.assignshipment.belongsTo(db.interested, { foreignKey: 'ShipmentInterestId' });
+
 db.driver.hasOne(db.assigndrivershipment, { foreignKey: 'DriverId' });
 db.assigndrivershipment.belongsTo(db.driver, { foreignKey: 'DriverId' });
-
-db.driver.hasOne(db.assignshipment, { foreignKey: 'DriverId' });
-db.assignshipment.belongsTo(db.driver, { foreignKey: 'DriverId' });
 
 db.shipment.hasOne(db.assigndrivershipment, { foreignKey: 'ShipmentId' });
 db.assigndrivershipment.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });

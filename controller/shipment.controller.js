@@ -632,8 +632,19 @@ exports.assignCompanyShipment = async (req, res) => {
   // const InterestDate = req.body.InterestDate;
 
   try {
-    // check if shipment was assigned to company
+    // check if interest is placed by company
+    const IsInterested = await Interested.findOne({
+      where: { ShipmentId: ShipmentId, CompanyId: CompanyId, IsInterested: true },
+    });
 
+    if (!IsInterested) {
+      const company = await Company.findOne({ where: { CompanyId: IsAssignedShipment.CompanyId } });
+      res.status(200).send({
+        message: `No interest placed on Shipment with ref ${ShipmentId} from ${company.CompanyName}`,
+      });
+    }
+
+    // check if shipment was assigned to company
     const IsAssignedShipment = await AssignShipment.findOne({
       where: { ShipmentId: ShipmentId, IsAssigned: true },
     });
@@ -650,6 +661,7 @@ exports.assignCompanyShipment = async (req, res) => {
       UserId: UserId,
       AssignedTo: CompanyId,
       IsAssigned: true,
+      ShipmentInterestId: IsInterested.ShipmentInterestId,
       AssignedDate: new Date(),
     });
 
@@ -687,7 +699,7 @@ exports.assignCompanyShipment = async (req, res) => {
     });
 
     //Send Mail to Carrier
-    const msgCarrier = `Congratulations! You have been assigned shipment with ref:${ShipmentId} for Load Boarding Services .Kindly check the details `;
+    const msgCarrier = `Congratulations! You have been assigned shipment with ref:${ShipmentId} for Load Boarding Services .Attched is an agreement for you to sign.Kindly check the details `;
 
     await mailFunc.sendEmail({
       template: 'interest',
@@ -697,6 +709,7 @@ exports.assignCompanyShipment = async (req, res) => {
         name: companyUser.FullName,
         msg: msgCarrier,
         url: url,
+        filename: 'shipper_carrier_agreement.pdf',
       },
     });
 
@@ -1231,6 +1244,161 @@ exports.cancelShipment = async (req, res) => {
     console.log(`err.message`, error.message);
     res.status(500).send({
       message: `${error.message} -Bad Operation` || 'Some error occurred while retrieving records.',
+    });
+  }
+};
+
+exports.archiveShipment = async (req, res) => {
+  const ShipmentId = req.body.ShipmentId;
+
+  // const InterestDate = req.body.InterestDate;
+
+  try {
+    // check if shipment was assigned to company
+
+    const shipmentArchived = await Shipment.findOne({
+      where: { ShipmentId: ShipmentId, IsArchived: true },
+    });
+    if (shipmentArchived) {
+      await Shipment.update(
+        {
+          IsArchived: false,
+          // AssignedCarrier: CompanyId,
+        },
+
+        { where: { ShipmentId: ShipmentId } },
+      );
+
+      return res.status(200).send({
+        message: `Shipment record with ref ${ShipmentId} is removed from the archived list`,
+      });
+    }
+
+    const updateShipment = await Shipment.update(
+      {
+        ShipmentStatus: true,
+        // AssignedCarrier: CompanyId,
+      },
+
+      { where: { ShipmentId: ShipmentId } },
+    );
+
+    if (updateShipment) {
+      return res.status(200).send({
+        message: `Shipment record with ref ${ShipmentId} is added to the archived list`,
+      });
+    }
+    //  console.log('TRIP_STATUS', TRIP_STATUS.find((item) => item.value === 'Assigned').value);
+
+    const user = await User.findOne({ where: { UserId: shipment.UserId } });
+
+    const company = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
+
+    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId } });
+
+    // const url = process.env.ADMIN_URL + `/shipment/assign-shipment/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
+
+    // const urltrack = process.env.ADMIN_URL + `/trip/track-info/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
+
+    //Send mail to Shipper
+    // const msgShipment = `Your Shipment with Ref No  ${ShipmentId} for Load Boarding Services from Company ${company.CompanyName} has been cancelled successfully.Kindly check the details by clicking below   `;
+
+    // await mailFunc.sendEmail({
+    //   template: 'generic',
+    //   subject: 'Cancelled Shipment ',
+    //   toEmail: user.Email,
+    //   msg: {
+    //     name: user.FullName,
+    //     msg: msgShipment,
+    //     url: url,
+    //   },
+    // });
+  } catch (error) {
+    console.log(`err.message`, error.message);
+    res.status(500).send({
+      message: `${error.message} -Bad Operation` || 'Some error occurred while retrieving records.',
+    });
+  }
+};
+
+exports.sendRemindEmail = (req, res) => {
+  const CompanyId = req.body.CompanyId;
+  const UserId = req.body.UserId;
+  const ShipmentId = req.body.ShipmentId;
+
+try {
+
+
+
+   const IsAssignedShipment = await AssignShipment.findOne({
+    where: { ShipmentId: ShipmentId, IsAssigned: true ,IsContractSigned:true},
+  });
+  if (IsAssignedShipment) {
+    const company = await Company.findOne({ where: { CompanyId: IsAssignedShipment.CompanyId } });
+    res.status(200).send({
+      message: `Shipment with ref ${ShipmentId} has not been officially assigned to ${company.CompanyName}`,
+    });
+  
+
+
+
+
+
+} catch (error) {
+  
+}
+
+
+ 
+  
+
+  const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
+  mailFunc.sendEmailMailGun({
+    template: 'email2',
+    subject: 'Welcome to Global Load Dispatch',
+    toEmail: Email,
+    msg: {
+      name: Name,
+      url: url,
+    },
+  });
+
+  if (token) {
+    jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, (err, decoded) => {
+      if (err) {
+        console.log('Activation error');
+        return res.status(401).json({
+          errors: 'Expired link. Signup again',
+        });
+      } else {
+        const { name, email, password } = jwt.decode(token);
+
+        console.log(email);
+        const user = new User({
+          name,
+          email,
+          password,
+        });
+
+        user.save((err, user) => {
+          if (err) {
+            console.log('Save error', errorHandler(err));
+            return res.status(401).json({
+              errors: errorHandler(err),
+            });
+          } else {
+            return res.json({
+              success: true,
+              data: user,
+              message: 'Signup success',
+            });
+          }
+        });
+      }
+    });
+  } else {
+    return res.json({
+      message: 'error happening please try again',
     });
   }
 };
