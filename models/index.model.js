@@ -52,6 +52,7 @@ db.payment = require('./payment.model.js')(sequelize, Sequelize);
 db.subscribe = require('./subscription.model.js')(sequelize, Sequelize);
 db.trip = require('./trip.model.js')(sequelize, Sequelize);
 db.track = require('./track.model.js')(sequelize, Sequelize);
+db.trackshipment = require('./track.shipment.model')(sequelize, Sequelize);
 db.assigndriver = require('./assign.driver.model.js')(sequelize, Sequelize);
 db.assignshipment = require('./assign.shipment.model.js')(sequelize, Sequelize);
 db.assigndrivershipment = require('./assign.driver.shipment.model.js')(sequelize, Sequelize);
@@ -176,6 +177,21 @@ db.trip.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
 
 db.shipment.hasMany(db.track, { foreignKey: 'ShipmentId' });
 db.track.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
+
+db.shipment.hasMany(db.trackshipment, { foreignKey: 'ShipmentId' });
+db.trackshipment.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
+
+db.company.hasMany(db.trackshipment, { foreignKey: 'CompanyId' });
+db.trackshipment.belongsTo(db.company, { foreignKey: 'CompanyId' });
+
+db.user.hasMany(db.trackshipment, { foreignKey: 'UserId' });
+db.trackshipment.belongsTo(db.user, { foreignKey: 'UserId' });
+
+db.assignshipment.hasMany(db.trackshipment, { foreignKey: 'AssignShipmentId' });
+db.trackshipment.belongsTo(db.assignshipment, { foreignKey: 'AssignShipmentId' });
+
+db.shipment.hasOne(db.assignshipment, { foreignKey: 'ShipmentId' });
+db.assignshipment.belongsTo(db.shipment, { foreignKey: 'ShipmentId' });
 
 db.user.hasMany(db.payment, { foreignKey: 'UserId' });
 db.payment.belongsTo(db.user, { foreignKey: 'UserId' });

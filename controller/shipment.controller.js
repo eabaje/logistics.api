@@ -1,6 +1,6 @@
 const db = require('../models/index.model');
 const { mailFunc } = require('../middleware');
-const { TRIP_STATUS } = require('../enum');
+const { TRIP_STATUS, ROLES, TRACK_SHIPMENT_STATUS } = require('../enum');
 const Shipment = db.shipment;
 const ShipmentDetail = db.shipmentdetail;
 const ShipmentInterested = db.interested;
@@ -10,6 +10,7 @@ const Company = db.company;
 const Interested = db.interested;
 const AssignDriverShipment = db.assigndrivershipment;
 const AssignShipment = db.assignshipment;
+const TrackShipment = db.trackshipment;
 //AssignDriverShipment
 
 const Op = db.Sequelize.Op;
@@ -121,8 +122,9 @@ exports.create = async (req, res) => {
 
 // Retrieve all Shipments start the database.
 exports.findAll = (req, res) => {
-  const loadCategory = req.params.loadCategory;
-  var condition = loadCategory ? { LoadCategory: { [Op.iLike]: `%${loadCategory}%` } } : null;
+  const UserId = req.params.userId;
+  // const id = req.params.companyId;
+  var condition = UserId ? { UserId: UserId } : null;
 
   Shipment.findAll({
     where: condition,
@@ -139,9 +141,15 @@ exports.findAll = (req, res) => {
       {
         model: AssignDriverShipment,
       },
-
+      {
+        model: AssignShipment,
+      },
       {
         model: ShipmentInterested,
+      },
+
+      {
+        model: TrackShipment,
       },
 
       {
@@ -180,7 +188,12 @@ exports.findOne = (req, res) => {
         model: Company,
         attributes: ['CompanyName'],
       },
-
+      {
+        model: AssignShipment,
+      },
+      {
+        model: ShipmentInterested,
+      },
       {
         model: ShipmentDetail,
       },
@@ -515,6 +528,20 @@ exports.showInterest = async (req, res) => {
         InterestDate: new Date(),
       });
 
+      const trackShipment = await TrackShipment.create({
+        ShipmentId: ShipmentId,
+        UserId: UserId,
+        CompanyId: CompanyId,
+        //  AssignShipmentId: IsAssignedShipment.AssignShipmentId ? IsAssignedShipment.AssignShipmentId : null,
+        StartBy: UserId,
+        StartByRole: ROLES.find((item) => item.value === 'carrier').value,
+        StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Interested').value,
+        StartActionDate: new Date(),
+        EndBy: UserId,
+        EndByRole: ROLES.find((item) => item.value === 'carrier').value,
+        EndAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Interested').value,
+        EndActionDate: new Date(),
+      });
       const interestedUser = await User.findOne({ where: { UserId: req.body.UserId } });
 
       const url = process.env.ADMIN_URL + `/company/review-company-action/?companyId=${CompanyId}&readOnly=true`;
@@ -557,11 +584,30 @@ exports.showInterest = async (req, res) => {
         where: { ShipmentId: ShipmentId, CompanyId: CompanyId, UserId: UserId, IsInterested: false },
       });
 
+      const IsAssignedShipment = await AssignShipment.findOne({
+        where: { ShipmentId: ShipmentId, CompanyId: CompanyId },
+      });
+
       if (IsInterestedResult) {
         const updatedInterestTrue = await Interested.update(
           { IsInterested: true },
           { where: { ShipmentId: ShipmentId, UserId: UserId, CompanyId: CompanyId } },
         );
+
+        const trackShipment = await TrackShipment.create({
+          ShipmentId: ShipmentId,
+          UserId: UserId,
+          CompanyId: CompanyId,
+          //  AssignShipmentId: IsAssignedShipment.AssignShipmentId ? IsAssignedShipment.AssignShipmentId : null,
+          StartBy: UserId,
+          StartByRole: ROLES.find((item) => item.value === 'carrier').value,
+          StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'RestoredInterest').value,
+          StartActionDate: new Date(),
+          EndBy: UserId,
+          EndByRole: ROLES.find((item) => item.value === 'carrier').value,
+          EndAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'RestoredInterest').value,
+          EndActionDate: new Date(),
+        });
 
         res.status(200).send({
           message: 'Restored Interest',
@@ -609,6 +655,21 @@ exports.showInterest = async (req, res) => {
           { IsInterested: false },
           { where: { ShipmentId: ShipmentId, UserId: UserId, CompanyId: CompanyId } },
         );
+
+        const trackShipment = await TrackShipment.create({
+          ShipmentId: ShipmentId,
+          UserId: UserId,
+          CompanyId: CompanyId,
+          //  AssignShipmentId: IsAssignedShipment.AssignShipmentId ? IsAssignedShipment.AssignShipmentId : null,
+          StartBy: UserId,
+          StartByRole: ROLES.find((item) => item.value === 'carrier').value,
+          StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'NotInterested').value,
+          StartActionDate: new Date(),
+          EndBy: UserId,
+          EndByRole: ROLES.find((item) => item.value === 'carrier').value,
+          EndAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'NotInterested').value,
+          EndActionDate: new Date(),
+        });
 
         res.status(200).send({
           message: 'Withdrawn Interest',
@@ -661,6 +722,8 @@ exports.assignCompanyShipment = async (req, res) => {
       UserId: UserId,
       AssignedTo: CompanyId,
       IsAssigned: true,
+      IsContractSigned: false,
+      IsContractAccepted: false,
       ShipmentInterestId: IsInterested.ShipmentInterestId,
       AssignedDate: new Date(),
     });
@@ -674,21 +737,37 @@ exports.assignCompanyShipment = async (req, res) => {
 
       { where: { ShipmentId: ShipmentId } },
     );
+
+    const trackShipment = await TrackShipment.create({
+      ShipmentId: ShipmentId,
+      UserId: UserId,
+      CompanyId: CompanyId,
+      AssignShipmentId: newAssignment.AssignShipmentId,
+      StartBy: UserId,
+      StartByRole: ROLES.find((item) => item.value === 'shipper').value,
+      StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Assigned').value,
+      StartActionDate: new Date(),
+      EndBy: UserId,
+      EndByRole: ROLES.find((item) => item.value === 'shipper').value,
+      EndAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Assigned').value,
+      EndActionDate: new Date(),
+    });
+
     //  console.log('TRIP_STATUS', TRIP_STATUS.find((item) => item.value === 'Assigned').value);
 
     const user = await User.findOne({ where: { UserId: req.body.UserId } });
 
-    const company = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
+    const companyCarrier = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
 
-    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId } });
+    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId }, order: [['createdAt', 'ASC']] });
 
     const url = process.env.ADMIN_URL + `/shipment/assign-shipment/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
 
     //Send mail to Shipper
-    const msgShipment = `You have an assigned Shipment with Ref No  ${ShipmentId} for Load Boarding Services to Company ${company.CompanyName}.Kindly check the details    `;
+    const msgShipment = `You have assigned Shipment with Ref No  ${ShipmentId} for Load Boarding Services to Company ${companyCarrier.CompanyName}.Kindly check the details    `;
 
     await mailFunc.sendEmail({
-      template: 'generic',
+      template: 'interest',
       subject: 'Request for LoadBoarding Services',
       toEmail: user.Email,
       msg: {
@@ -699,23 +778,23 @@ exports.assignCompanyShipment = async (req, res) => {
     });
 
     //Send Mail to Carrier
-    const msgCarrier = `Congratulations! You have been assigned shipment with ref:${ShipmentId} for Load Boarding Services .Attched is an agreement for you to sign.Kindly check the details `;
+    const msgCarrier = `Congratulations! You have been assigned shipment with ref:${ShipmentId} for Load Boarding Services .Find Attached an agreement for you to sign.Kindly check the details `;
 
     await mailFunc.sendEmail({
       template: 'interest',
       subject: 'Shipment Assignment for LoadBoarding Services',
-      toEmail: companyUser.Email,
+      toEmail: companyCarrier.ContactEmail,
       msg: {
         name: companyUser.FullName,
         msg: msgCarrier,
         url: url,
-        filename: 'shipper_carrier_agreement.pdf',
       },
+      filename: 'shipper_carrier_agreement.pdf',
     });
 
     res.status(200).send({
-      message: `Shipment with Ref ${ShipmentId} has been assigned to Company ${companyUser.CompanyName} `,
-      data: newAssignment,
+      message: `Shipment with Ref ${ShipmentId} has been assigned to Company ${companyCarrier.CompanyName} `,
+      // data: newAssignment,
     });
   } catch (error) {
     console.log(`err.message`, error.message);
@@ -754,11 +833,15 @@ exports.assignDriverShipment = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ where: { UserId: req.body.UserId } });
-
     const driver = await Driver.findOne({ where: { DriverId: req.body.DriverId } });
 
+    const shipment = await Shipment.findOne({ where: { ShipmentId: ShipmentId } });
+
+    const shipperUser = await User.findOne({ where: { UserId: shipment.UserId } });
+
     const company = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
+
+    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId }, order: [['createdAt', 'ASC']] });
 
     // AssignedTo Driver Field is populated with the Driver  UserId (Foriegn Key)  not the DriverId from Driver Entity
 
@@ -772,6 +855,21 @@ exports.assignDriverShipment = async (req, res) => {
       AssignedToDriver: driver.UserId,
     });
 
+    const trackShipment = await TrackShipment.create({
+      ShipmentId: ShipmentId,
+      UserId: UserId,
+      CompanyId: CompanyId,
+      AssignShipmentId: IsAssignedShipment?.AssignShipmentId,
+      StartBy: UserId,
+      StartByRole: ROLES.find((item) => item.value === 'carrier').value,
+      StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'AssignedDriverShipment').value,
+      StartActionDate: new Date(),
+      EndBy: UserId,
+      EndByRole: ROLES.find((item) => item.value === 'carrier').value,
+      EndAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'AssignedDriverShipment').value,
+      EndActionDate: new Date(),
+    });
+
     const url =
       process.env.ADMIN_URL + `/shipment/assign-shipment/?shipmentId=${ShipmentId}&driverId=${DriverId}&review=true`;
 
@@ -781,9 +879,9 @@ exports.assignDriverShipment = async (req, res) => {
     await mailFunc.sendEmail({
       template: 'interest',
       subject: 'Shipment Assignment for LoadBoarding Services',
-      toEmail: user.Email,
+      toEmail: companyUser.Email,
       msg: {
-        name: user.FullName,
+        name: companyUser.FullName,
         msg: msgShipment,
         url: url,
       },
@@ -795,9 +893,9 @@ exports.assignDriverShipment = async (req, res) => {
     await mailFunc.sendEmail({
       template: 'interest',
       subject: 'Shipment Assignment for LoadBoarding Services',
-      toEmail: user.Email,
+      toEmail: shipperUser.Email,
       msg: {
-        name: user.FullName,
+        name: shipperUser.FullName,
         msg: msgShipper,
         url: url,
       },
@@ -857,6 +955,21 @@ exports.dispatchShipment = async (req, res) => {
 
       { where: { ShipmentId: ShipmentId } },
     );
+
+    const trackShipment = await TrackShipment.create({
+      ShipmentId: ShipmentId,
+      UserId: UserId,
+      CompanyId: CompanyId,
+      AssignShipmentId: IsAssignedShipment.AssignShipmentId,
+      StartBy: UserId,
+      StartByRole: ROLES.find((item) => item.value === 'driver').value,
+      StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Dispatched').value,
+      StartActionDate: new Date(),
+      EndBy: UserId,
+      EndByRole: ROLES.find((item) => item.value === 'driver').value,
+      EndAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Dispatched').value,
+      EndActionDate: new Date(),
+    });
     //  console.log('TRIP_STATUS', TRIP_STATUS.find((item) => item.value === 'Assigned').value);
 
     const shipment = await Shipment.findOne({ where: { ShipmentId: ShipmentId } });
@@ -865,7 +978,7 @@ exports.dispatchShipment = async (req, res) => {
 
     const company = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
 
-    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId } });
+    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId }, order: [['createdAt', 'ASC']] });
 
     const IsAssignedDriverShipment = await AssignDriverShipment.findOne({
       where: { CompanyId: CompanyId, ShipmentId: ShipmentId, IsAssigned: true },
@@ -882,7 +995,7 @@ exports.dispatchShipment = async (req, res) => {
     const msgShipment = `Your Shipment with Ref No  ${ShipmentId} for Load Boarding Services to Company ${company.CompanyName} has been dispatched successfully.Kindly check the details by clicking below   `;
 
     await mailFunc.sendEmail({
-      template: 'generic',
+      template: 'interest',
       subject: 'Request for LoadBoarding Services',
       toEmail: user.Email,
       msg: {
@@ -914,15 +1027,14 @@ exports.dispatchShipment = async (req, res) => {
       subject: 'Shipment Assignment for LoadBoarding Services',
       toEmail: IsAssignedDriverShipment.Driver.Email,
       msg: {
-        name: IsAssignedDriverShipment.Driver.FullName,
+        name: IsAssignedDriverShipment.Driver.DriverName,
         msg: msgDriver,
         url: url,
       },
     });
 
     res.status(200).send({
-      message: `Shipment with Ref ${ShipmentId} has been assigned to Company ${companyUser.CompanyName} `,
-      data: newAssignment,
+      message: `Shipment with Ref ${ShipmentId} has been assigned to Company ${company.CompanyName} `,
     });
   } catch (error) {
     console.log(`err.message`, error.message);
@@ -936,7 +1048,7 @@ exports.pickedUpShipment = async (req, res) => {
   const CompanyId = req.body.CompanyId;
   const UserId = req.body.UserId;
   const ShipmentId = req.body.ShipmentId;
-
+  const Role = req.body.Role;
   // const InterestDate = req.body.InterestDate;
 
   try {
@@ -960,7 +1072,6 @@ exports.pickedUpShipment = async (req, res) => {
 
       { where: { ShipmentId: ShipmentId } },
     );
-    //  console.log('TRIP_STATUS', TRIP_STATUS.find((item) => item.value === 'Assigned').value);
 
     const shipment = await Shipment.findOne({ where: { ShipmentId: ShipmentId } });
 
@@ -968,7 +1079,7 @@ exports.pickedUpShipment = async (req, res) => {
 
     const company = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
 
-    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId } });
+    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId }, order: [['createdAt', 'ASC']] });
 
     const IsAssignedDriverShipment = await AssignDriverShipment.findOne({
       where: { CompanyId: CompanyId, ShipmentId: ShipmentId, IsAssigned: true },
@@ -979,6 +1090,59 @@ exports.pickedUpShipment = async (req, res) => {
       ],
     });
 
+    const trackShipmentResult = await TrackShipment.findOne({
+      where: {
+        ShipmentId: ShipmentId,
+        StartByRole: 'shipper',
+        StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'SubmitForPickedUp').value,
+      },
+    });
+
+    if (trackShipmentResult) {
+      const trackShipmentUpdate = await TrackShipment.update(
+        {
+          EndBy: Role === 'driver' ? IsAssignedDriverShipment.DriverId : UserId,
+          EndByRole:
+            Role === 'driver'
+              ? ROLES.find((item) => item.value === 'driver').value
+              : ROLES.find((item) => item.value === 'shipper').value,
+
+          EndAction: Role === 'driver' && TRACK_SHIPMENT_STATUS.find((item) => item.value === 'ConfirmPickedUp').value,
+          EndActionDate: new Date(),
+          // AssignedCarrier: CompanyId,
+        },
+
+        {
+          where: {
+            ShipmentId: ShipmentId,
+            StartByRole: 'shipper',
+            StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'SubmitForPickedUp').value,
+          },
+        },
+      );
+
+      return res.status(200).send({
+        message: `Shipment with Ref ${ShipmentId} has been Confirmed Picked Up by Driver  `,
+      });
+    }
+
+    const trackShipment = await TrackShipment.create({
+      ShipmentId: ShipmentId,
+      UserId: UserId,
+      CompanyId: CompanyId,
+      AssignShipmentId: IsAssignedShipment.AssignShipmentId,
+      StartBy: Role === 'driver' ? IsAssignedDriverShipment.DriverId : UserId,
+      StartByRole:
+        Role === 'driver'
+          ? ROLES.find((item) => item.value === 'driver').value
+          : ROLES.find((item) => item.value === 'shipper').value,
+
+      StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'SubmitForPickedUp').value,
+
+      StartActionDate: new Date(),
+    });
+    //  console.log('TRIP_STATUS', TRIP_STATUS.find((item) => item.value === 'Assigned').value);
+
     const url = process.env.ADMIN_URL + `/shipment/assign-shipment/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
 
     const urltrack = process.env.ADMIN_URL + `/trip/track-info/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
@@ -988,7 +1152,7 @@ exports.pickedUpShipment = async (req, res) => {
 
     await mailFunc.sendEmail({
       template: 'track',
-      subject: 'Request for LoadBoarding Services',
+      subject: 'Shipment Picked Up',
       toEmail: user.Email,
       msg: {
         name: user.FullName,
@@ -1020,15 +1184,14 @@ exports.pickedUpShipment = async (req, res) => {
       subject: 'Shipment Picked Up ',
       toEmail: IsAssignedDriverShipment.Driver.Email,
       msg: {
-        name: IsAssignedDriverShipment.Driver.FullName,
+        name: IsAssignedDriverShipment.Driver.DriverName,
         msg: msgDriver,
         url: url,
       },
     });
 
     res.status(200).send({
-      message: `Shipment with Ref ${ShipmentId} has picked Up by ${IsAssignedDriverShipment.Driver.FullName} for Company ${companyUser.CompanyName} `,
-      data: newAssignment,
+      message: `Shipment with Ref ${ShipmentId} has been picked Up by ${user.FullName} for Shipper  `,
     });
   } catch (error) {
     console.log(`err.message`, error.message);
@@ -1042,7 +1205,7 @@ exports.deliveredShipment = async (req, res) => {
   const CompanyId = req.body.CompanyId;
   const UserId = req.body.UserId;
   const ShipmentId = req.body.ShipmentId;
-
+  const Role = req.body.Role;
   // const InterestDate = req.body.InterestDate;
 
   try {
@@ -1074,7 +1237,7 @@ exports.deliveredShipment = async (req, res) => {
 
     const company = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
 
-    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId } });
+    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId }, order: [['createdAt', 'ASC']] });
 
     const IsAssignedDriverShipment = await AssignDriverShipment.findOne({
       where: { CompanyId: CompanyId, ShipmentId: ShipmentId, IsAssigned: true },
@@ -1085,6 +1248,49 @@ exports.deliveredShipment = async (req, res) => {
       ],
     });
 
+    const trackShipmentResult = await TrackShipment.findOne({
+      where: {
+        ShipmentId: ShipmentId,
+        StartByRole: 'driver',
+        StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Delivered').value,
+      },
+    });
+
+    if (trackShipmentResult) {
+      const trackShipmentUpdate = await TrackShipment.update(
+        {
+          EndBy: Role === UserId,
+          EndByRole: ROLES.find((item) => item.value === 'shipper').value,
+          EndAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'ConfirmDelivered').value,
+          EndActionDate: new Date(),
+          // AssignedCarrier: CompanyId,
+        },
+
+        {
+          where: {
+            ShipmentId: ShipmentId,
+            StartByRole: 'driver',
+            StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Delivered').value,
+          },
+        },
+      );
+      if (trackShipmentUpdate) {
+        return res.status(200).send({
+          message: `Shipment with Ref ${ShipmentId} has been Confirmed Delivered by Shipper  `,
+        });
+      }
+    }
+
+    const trackShipment = await TrackShipment.create({
+      ShipmentId: ShipmentId,
+      UserId: UserId,
+      CompanyId: CompanyId,
+      AssignShipmentId: IsAssignedShipment.AssignShipmentId,
+      StartBy: IsAssignedDriverShipment.DriverId,
+      StartByRole: ROLES.find((item) => item.value === 'driver').value,
+      StartAction: TRACK_SHIPMENT_STATUS.find((item) => item.value === 'Delivered').value,
+      StartActionDate: new Date(),
+    });
     const url = process.env.ADMIN_URL + `/shipment/assign-shipment/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
     const urltrack = process.env.ADMIN_URL + `/trip/track-info/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
 
@@ -1125,7 +1331,7 @@ exports.deliveredShipment = async (req, res) => {
       subject: 'Shipment Delivery for LoadBoarding Services',
       toEmail: IsAssignedDriverShipment.Driver.Email,
       msg: {
-        name: IsAssignedDriverShipment.Driver.FullName,
+        name: IsAssignedDriverShipment.Driver.DriverName,
         msg: msgDriver,
         url: url,
       },
@@ -1133,7 +1339,6 @@ exports.deliveredShipment = async (req, res) => {
 
     res.status(200).send({
       message: `Shipment with Ref ${ShipmentId} has been delivered `,
-      data: newAssignment,
     });
   } catch (error) {
     console.log(`err.message`, error.message);
@@ -1171,6 +1376,15 @@ exports.cancelShipment = async (req, res) => {
 
       { where: { ShipmentId: ShipmentId } },
     );
+
+    const assignedShipment = await AssignShipment.update(
+      {
+        IsAssigned: false,
+        // AssignedCarrier: CompanyId,
+      },
+
+      { where: { ShipmentId: ShipmentId, IsAssigned: true } },
+    );
     //  console.log('TRIP_STATUS', TRIP_STATUS.find((item) => item.value === 'Assigned').value);
 
     const shipment = await Shipment.findOne({ where: { ShipmentId: ShipmentId } });
@@ -1179,7 +1393,7 @@ exports.cancelShipment = async (req, res) => {
 
     const company = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
 
-    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId } });
+    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId }, order: [['createdAt', 'ASC']] });
 
     const IsAssignedDriverShipment = await AssignDriverShipment.findOne({
       where: { CompanyId: CompanyId, ShipmentId: ShipmentId, IsAssigned: true },
@@ -1276,7 +1490,7 @@ exports.archiveShipment = async (req, res) => {
 
     const updateShipment = await Shipment.update(
       {
-        ShipmentStatus: true,
+        IsArchived: true,
         // AssignedCarrier: CompanyId,
       },
 
@@ -1289,30 +1503,6 @@ exports.archiveShipment = async (req, res) => {
       });
     }
     //  console.log('TRIP_STATUS', TRIP_STATUS.find((item) => item.value === 'Assigned').value);
-
-    const user = await User.findOne({ where: { UserId: shipment.UserId } });
-
-    const company = await Company.findOne({ where: { CompanyId: req.body.CompanyId } });
-
-    const companyUser = await User.findOne({ where: { CompanyId: req.body.CompanyId } });
-
-    // const url = process.env.ADMIN_URL + `/shipment/assign-shipment/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
-
-    // const urltrack = process.env.ADMIN_URL + `/trip/track-info/?shipmentId=${ShipmentId}&companyId=${CompanyId}`;
-
-    //Send mail to Shipper
-    // const msgShipment = `Your Shipment with Ref No  ${ShipmentId} for Load Boarding Services from Company ${company.CompanyName} has been cancelled successfully.Kindly check the details by clicking below   `;
-
-    // await mailFunc.sendEmail({
-    //   template: 'generic',
-    //   subject: 'Cancelled Shipment ',
-    //   toEmail: user.Email,
-    //   msg: {
-    //     name: user.FullName,
-    //     msg: msgShipment,
-    //     url: url,
-    //   },
-    // });
   } catch (error) {
     console.log(`err.message`, error.message);
     res.status(500).send({
@@ -1321,84 +1511,182 @@ exports.archiveShipment = async (req, res) => {
   }
 };
 
-exports.sendRemindEmail = (req, res) => {
+exports.sendRemindEmail = async (req, res) => {
   const CompanyId = req.body.CompanyId;
   const UserId = req.body.UserId;
   const ShipmentId = req.body.ShipmentId;
 
-try {
-
-
-
-   const IsAssignedShipment = await AssignShipment.findOne({
-    where: { ShipmentId: ShipmentId, IsAssigned: true ,IsContractSigned:true},
-  });
-  if (IsAssignedShipment) {
-    const company = await Company.findOne({ where: { CompanyId: IsAssignedShipment.CompanyId } });
-    res.status(200).send({
-      message: `Shipment with ref ${ShipmentId} has not been officially assigned to ${company.CompanyName}`,
+  try {
+    const IsAssignedShipment = await AssignShipment.findOne({
+      where: { ShipmentId: ShipmentId, IsAssigned: true, CompanyId: CompanyId, IsContractSigned: false },
     });
-  
+    if (IsAssignedShipment) {
+      const companyCarrier = await Company.findOne({ where: { CompanyId: CompanyId } });
 
+      const shipment = await Shipment.findOne({ where: { ShipmentId: ShipmentId } });
 
+      const companyShipper = await Company.findOne({ where: { CompanyId: shipment.CompanyId } });
 
+      const companyUser = await User.findOne({ where: { CompanyId: CompanyId }, order: [['createdAt', 'ASC']] });
 
+      //Send Mail to Carrier
+      const msgCarrier = `Our Company (${companyShipper.CompanyName}) are waiting to get from you the signed copy of the dispatch agreement.Just in case you missed it,find attached the agreement for your perusal and action. `;
 
-} catch (error) {
-  
-}
+      await mailFunc.sendEmail({
+        template: 'generic',
+        subject: 'Shipment Assignment for LoadBoarding Services',
+        toEmail: companyCarrier.ContactEmail,
+        msg: {
+          name: companyUser.FullName,
+          msg: msgCarrier,
+          // url: url,
+        },
+        filename: 'shipper_carrier_agreement.pdf',
+      });
 
-
- 
-  
-
-  const url = `${process.env.BASE_URL}` + `auth/verify/${token}`;
-  mailFunc.sendEmailMailGun({
-    template: 'email2',
-    subject: 'Welcome to Global Load Dispatch',
-    toEmail: Email,
-    msg: {
-      name: Name,
-      url: url,
-    },
-  });
-
-  if (token) {
-    jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, (err, decoded) => {
-      if (err) {
-        console.log('Activation error');
-        return res.status(401).json({
-          errors: 'Expired link. Signup again',
-        });
-      } else {
-        const { name, email, password } = jwt.decode(token);
-
-        console.log(email);
-        const user = new User({
-          name,
-          email,
-          password,
-        });
-
-        user.save((err, user) => {
-          if (err) {
-            console.log('Save error', errorHandler(err));
-            return res.status(401).json({
-              errors: errorHandler(err),
-            });
-          } else {
-            return res.json({
-              success: true,
-              data: user,
-              message: 'Signup success',
-            });
-          }
-        });
-      }
+      res.status(200).send({
+        message: `Sent Reminder Email  to ${companyCarrier.CompanyName} `,
+      });
+    }
+  } catch (error) {
+    console.log(`err.message`, error.message);
+    res.status(500).send({
+      message: `${error.message} -Bad Operation` || 'Some error occurred while retrieving records.',
     });
-  } else {
-    return res.json({
-      message: 'error happening please try again',
+  }
+};
+
+exports.contractSigned = async (req, res) => {
+  const CompanyId = req.body.CompanyId;
+  const UserId = req.body.UserId;
+  const ShipmentId = req.body.ShipmentId;
+
+  try {
+    const IsAssignedShipment = await AssignShipment.findOne({
+      where: {
+        ShipmentId: ShipmentId,
+        IsAssigned: true,
+        CompanyId: CompanyId,
+        IsContractSigned: false,
+        IsContractAccepted: false,
+      },
+    });
+    if (!IsAssignedShipment) {
+      return res.status(200).send({
+        message: `No Assignment has been confirmed as done.kindly contact administrator for help`,
+      });
+    }
+    if (IsAssignedShipment) {
+      const companyCarrier = await Company.findOne({ where: { CompanyId: IsAssignedShipment.CompanyId } });
+
+      const user = await User.findOne({ where: { UserId: UserId } });
+
+      const companyUser = await User.findOne({
+        where: { CompanyId: IsAssignedShipment.CompanyId },
+        order: [['createdAt', 'ASC']],
+      });
+
+      const companyShipper = await Company.findOne({ where: { CompanyId: user.CompanyId } });
+
+      //Update AssignShipment Table
+
+      const assignShipment = await AssignShipment.update(
+        {
+          IsContractSigned: true,
+
+          // AssignedCarrier: CompanyId,
+        },
+
+        { where: { ShipmentId: ShipmentId, IsAssigned: true, CompanyId: CompanyId } },
+      );
+
+      //Send Mail to Carrier
+      const msgCarrier = `Company (${companyShipper.CompanyName}) has recieved your copy of the agreement, and thus officially look to complete all documentation processes. `;
+
+      await mailFunc.sendEmail({
+        template: 'generic',
+        subject: 'Shipment Assignment for LoadBoarding Services',
+        toEmail: companyCarrier.ContactEmail ? companyCarrier.ContactEmail : companyUser.Email,
+        msg: {
+          name: companyUser.FullName,
+          msg: msgCarrier,
+          // url: url,
+          //filename: 'shipper_carrier_agreement.pdf',
+        },
+      });
+
+      res.status(200).send({
+        message: `Contract signed between ${companyCarrier.CompanyName} and ${companyShipper.CompanyName}`,
+      });
+    }
+  } catch (error) {
+    console.log(`err.message`, error.message);
+    res.status(500).send({
+      message: `${error.message} -Bad Operation` || 'Some error occurred while retrieving records.',
+    });
+  }
+};
+
+exports.contractAccepted = async (req, res) => {
+  const CompanyId = req.body.CompanyId;
+  const UserId = req.body.UserId;
+  const ShipmentId = req.body.ShipmentId;
+
+  try {
+    const IsAssignedShipment = await AssignShipment.findOne({
+      where: {
+        ShipmentId: ShipmentId,
+        IsAssigned: true,
+        CompanyId: CompanyId,
+        IsContractSigned: true,
+        IsContractAccepted: false,
+      },
+    });
+    if (IsAssignedShipment) {
+      const companyCarrier = await Company.findOne({ where: { CompanyId: IsAssignedShipment.CompanyId } });
+
+      const user = await User.findOne({ where: { UserId: UserId } });
+
+      const companyUser = await User.findOne({
+        where: { CompanyId: IsAssignedShipment.CompanyId },
+        order: [['createdAt', 'ASC']],
+      });
+
+      const companyShipper = await Company.findOne({ where: { CompanyId: user.CompanyId } });
+
+      const assignShipment = await AssignShipment.update(
+        {
+          IsContractAccepted: true,
+
+          // AssignedCarrier: CompanyId,
+        },
+
+        { where: { ShipmentId: ShipmentId, IsAssigned: true, CompanyId: CompanyId, IsContractSigned: true } },
+      );
+
+      //Send Mail to Carrier
+      const msgCarrier = `Company (${companyShipper.CompanyName}) has accepted the agreement, and thus officially given the nod for your service to commence.Good luck and success in your execution. `;
+
+      await mailFunc.sendEmail({
+        template: 'generic',
+        subject: 'Shipment Assignment for LoadBoarding Services',
+        toEmail: companyCarrier.ContactEmail ? companyCarrier.ContactEmail : companyUser.Email,
+        msg: {
+          name: companyUser.FullName,
+          msg: msgCarrier,
+          // url: url,
+          //filename: 'shipper_carrier_agreement.pdf',
+        },
+      });
+
+      res.status(200).send({
+        message: `Contract accepted between ${companyCarrier.CompanyName} and ${companyShipper.CompanyName}`,
+      });
+    }
+  } catch (error) {
+    console.log(`err.message`, error.message);
+    res.status(500).send({
+      message: `${error.message} -Bad Operation` || 'Some error occurred while retrieving records.',
     });
   }
 };
@@ -1417,6 +1705,9 @@ exports.findAllShipmentsInterest = (req, res) => {
       {
         model: User,
         attributes: ['FullName'],
+      },
+      {
+        model: Company,
       },
       {
         model: Shipment,
@@ -1451,6 +1742,9 @@ exports.findAllShipmentsInterestByShipmentId = (req, res) => {
       {
         model: User,
         attributes: ['FullName'],
+      },
+      {
+        model: Company,
       },
       {
         model: Shipment,

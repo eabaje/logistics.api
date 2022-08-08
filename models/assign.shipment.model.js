@@ -8,10 +8,10 @@ module.exports = (sequelize, DataTypes) => {
     // VehicleId: { type: DataTypes.STRING },
     // DriverId: { type: DataTypes.STRING, default: null },
     IsAssigned: { type: DataTypes.BOOLEAN },
-
     AssignedDate: { type: DataTypes.DATE },
-    IsContractSigned: { type: DataTypes.BOOLEAN, default: false },
     AssignedTo: { type: DataTypes.STRING },
+    IsContractSigned: { type: DataTypes.BOOLEAN, default: false },
+    IsContractAccepted: { type: DataTypes.BOOLEAN, default: false },
     createdAt: { type: DataTypes.DATE },
     updatedAt: { type: DataTypes.DATE },
   });

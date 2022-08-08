@@ -43,6 +43,30 @@ const TRIP_STATUS = [
   { value: 'Cancelled', text: 'Cancelled Shipment' },
 ];
 
+const TRACK_SHIPMENT_STATUS = [
+  { value: 'Interested', text: 'Placed Interest' },
+  { value: 'NotInterested', text: 'Withdraw Interest' },
+  { value: 'RestoredInterest', text: 'Restored Interest' },
+  { value: 'NotAssigned', text: 'Not Assigned' },
+  { value: 'Assigned', text: 'Assigned Shipment' },
+  { value: 'AssignedDriverShipment', text: 'Assigned Driver Shipment' },
+  { value: 'Dispatched', text: 'Dispatched Shipment' },
+  { value: 'SubmitForPickedUp', text: 'Submit for Picked Up' },
+  { value: 'ConfirmPickedUp', text: 'Confirm Picked Up' },
+  { value: 'Delivered', text: 'Delivered Shipment' },
+  { value: 'ConfirmDelivered', text: 'Confirmed Delivered Delivery' },
+  { value: 'Cancelled', text: 'Cancelled Shipment' },
+];
+const ROLES = [
+  { value: 'admin', text: 'Administrator' },
+  { value: 'auditor', text: 'Auditor' },
+  { value: 'carrier', text: 'Carrier' },
+  { value: 'shipper', text: 'Shipper' },
+  { value: 'driver', text: 'driver ' },
+  { value: 'broker', text: 'Broker' },
+];
 module.exports = {
   TRIP_STATUS,
+  ROLES,
+  TRACK_SHIPMENT_STATUS,
 };

@@ -157,7 +157,6 @@ exports.findAll = (req, res) => {
     include: [
       {
         model: Company,
-        attributes: ['CompanyName', 'CompanyType', 'CompanyId'],
       },
       {
         model: Role,
@@ -189,7 +188,6 @@ exports.findAllBySearch = (req, res) => {
     include: [
       {
         model: Company,
-        attributes: ['CompanyName'],
       },
       {
         model: Role,
@@ -221,7 +219,6 @@ exports.findOne = (req, res) => {
     include: [
       {
         model: Company,
-        attributes: ['CompanyName'],
       },
       {
         model: Role,

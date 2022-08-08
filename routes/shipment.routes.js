@@ -9,6 +9,8 @@ module.exports = function (app) {
 
   app.get('/api/shipment/findOne/:shipmentId', controller.findOne);
 
+  app.get('/api/shipment/findAll/:userId', controller.findAll);
+
   app.get('/api/shipment/findAll', controller.findAll);
 
   app.get('/api/shipment/findAllAssignShipment', controller.findAllAssignShipment);
@@ -52,6 +54,12 @@ module.exports = function (app) {
   app.post('/api/shipment/cancelShipment', controller.cancelShipment);
 
   app.post('/api/shipment/archiveShipment', controller.archiveShipment);
+
+  app.post('/api/shipment/sendRemindEmail', controller.sendRemindEmail);
+
+  app.post('/api/shipment/contractSigned', controller.contractSigned);
+
+  app.post('/api/shipment/contractAccepted', controller.contractAccepted);
 
   app.post('/api/shipment/create', controller.create);
 

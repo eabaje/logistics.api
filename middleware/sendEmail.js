@@ -34,15 +34,22 @@ const sendEmail = async (options) => {
     attachments: options.filename
       ? [
           {
-            filename: options.attachments.filename, // <= Here: made sure file name match  __dirname,
-            path: path.resolve(`../uploads/docs/${options.filename}`), // <= Here
+            filename: options.filename, // <= Here: made sure file name match  __dirname,
+            path: path.resolve(`./uploads/docs/${options.filename}`), // <= Here
             contentType: 'application/pdf',
           },
         ]
       : null,
   };
 
-  await transporter.sendMail(msg);
+  // transporter.sendMail(msg);
+  transporter.sendMail(msg, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent successfully: ' + info.response);
+    }
+  });
 };
 
 const sendEmailMailGun = async (options) => {
