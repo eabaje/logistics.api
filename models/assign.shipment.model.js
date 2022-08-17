@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     AssignedDate: { type: DataTypes.DATE },
     AssignedTo: { type: DataTypes.STRING },
     IsContractSigned: { type: DataTypes.BOOLEAN, default: false },
+    IsContractConfirmed: { type: DataTypes.BOOLEAN, default: false },
     IsContractAccepted: { type: DataTypes.BOOLEAN, default: false },
     createdAt: { type: DataTypes.DATE },
     updatedAt: { type: DataTypes.DATE },

@@ -231,6 +231,8 @@ exports.update = (req, res) => {
       }
     })
     .catch((err) => {
+      console.log('id', id);
+      console.log('err', err);
       res.status(500).send({
         message: 'Error updating Shipment with id=' + id,
       });
@@ -779,15 +781,18 @@ exports.assignCompanyShipment = async (req, res) => {
 
     //Send Mail to Carrier
     const msgCarrier = `Congratulations! You have been assigned shipment with ref:${ShipmentId} for Load Boarding Services .Find Attached an agreement for you to sign.Kindly check the details `;
-
+    const urlCarrier =
+      process.env.ADMIN_URL +
+      `/user/user-contract/?shipmentId=${ShipmentId}&userId=${UserId}&companyId=${CompanyId}&action=sign`;
     await mailFunc.sendEmail({
-      template: 'interest',
+      template: 'shipment',
       subject: 'Shipment Assignment for LoadBoarding Services',
       toEmail: companyCarrier.ContactEmail,
       msg: {
         name: companyUser.FullName,
         msg: msgCarrier,
-        url: url,
+        urlShipmentInfo: url,
+        urlShipmentContract: urlCarrier,
       },
       filename: 'shipper_carrier_agreement.pdf',
     });
@@ -1560,6 +1565,7 @@ exports.contractSigned = async (req, res) => {
   const CompanyId = req.body.CompanyId;
   const UserId = req.body.UserId;
   const ShipmentId = req.body.ShipmentId;
+  const Role = req.body.Role;
 
   try {
     const IsAssignedShipment = await AssignShipment.findOne({
@@ -1567,8 +1573,6 @@ exports.contractSigned = async (req, res) => {
         ShipmentId: ShipmentId,
         IsAssigned: true,
         CompanyId: CompanyId,
-        IsContractSigned: false,
-        IsContractAccepted: false,
       },
     });
     if (!IsAssignedShipment) {
@@ -1577,9 +1581,23 @@ exports.contractSigned = async (req, res) => {
       });
     }
     if (IsAssignedShipment) {
+      if (Role === 'carrier' && IsAssignedShipment.IsContractSigned === true) {
+        return res.status(200).send({
+          message: `Contract has been signed already.`,
+        });
+      }
+
+      if (Role === 'shipper' && IsAssignedShipment.IsContractConfirmed === true) {
+        return res.status(200).send({
+          message: `Contract has been confirmed already.`,
+        });
+      }
+
       const companyCarrier = await Company.findOne({ where: { CompanyId: IsAssignedShipment.CompanyId } });
 
-      const user = await User.findOne({ where: { UserId: UserId } });
+      const shipment = await Shipment.findOne({ where: { ShipmentId: ShipmentId } });
+
+      const user = await User.findOne({ where: { UserId: shipment.UserId } });
 
       const companyUser = await User.findOne({
         where: { CompanyId: IsAssignedShipment.CompanyId },
@@ -1590,37 +1608,36 @@ exports.contractSigned = async (req, res) => {
 
       //Update AssignShipment Table
 
+      const updateVar = Role === 'carrier' ? { IsContractSigned: true } : { IsContractConfirmed: true };
+      console.log('updatevar', updateVar);
       const assignShipment = await AssignShipment.update(
-        {
-          IsContractSigned: true,
-
-          // AssignedCarrier: CompanyId,
-        },
+        updateVar,
 
         { where: { ShipmentId: ShipmentId, IsAssigned: true, CompanyId: CompanyId } },
       );
 
-      //Send Mail to Carrier
-      const msgCarrier = `Company (${companyShipper.CompanyName}) has recieved your copy of the agreement, and thus officially look to complete all documentation processes. `;
+      if (assignShipment.IsContractConfirmed === true) {
+        //Send Mail to Carrier
+        const msgCarrier = `Company (${companyShipper.CompanyName}) has recieved your copy of the agreement, and thus officially look to complete all documentation processes. `;
 
-      await mailFunc.sendEmail({
-        template: 'generic',
-        subject: 'Shipment Assignment for LoadBoarding Services',
-        toEmail: companyCarrier.ContactEmail ? companyCarrier.ContactEmail : companyUser.Email,
-        msg: {
-          name: companyUser.FullName,
-          msg: msgCarrier,
-          // url: url,
-          //filename: 'shipper_carrier_agreement.pdf',
-        },
-      });
-
+        await mailFunc.sendEmail({
+          template: 'generic',
+          subject: 'Shipment Assignment for LoadBoarding Services',
+          toEmail: companyCarrier.ContactEmail ? companyCarrier.ContactEmail : companyUser.Email,
+          msg: {
+            name: companyUser.FullName,
+            msg: msgCarrier,
+            // url: url,
+            //filename: 'shipper_carrier_agreement.pdf',
+          },
+        });
+      }
       res.status(200).send({
         message: `Contract signed between ${companyCarrier.CompanyName} and ${companyShipper.CompanyName}`,
       });
     }
   } catch (error) {
-    console.log(`err.message`, error.message);
+    console.log(`err.message`, error);
     res.status(500).send({
       message: `${error.message} -Bad Operation` || 'Some error occurred while retrieving records.',
     });
