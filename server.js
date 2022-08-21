@@ -34,6 +34,11 @@ const UserSubscription = db.usersubscription;
 //   initial();
 // });
 
+// db.sequelize.sync({ alter: true }).then(() => {
+//   console.log('Drop and Resync Database with { force: true }');
+//   // initial();
+// });
+
 // app.use(
 //   session({
 //     secret: 's3cr3t',

@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
     AssignedShipment: { type: DataTypes.BOOLEAN },
     AssignedCarrier: { type: DataTypes.INTEGER },
     ShipmentDate: { type: DataTypes.DATEONLY },
-    ShipmentDocs: { type: DataTypes.STRING },
+    ShipmentDocs: { type: DataTypes.TEXT },
     ShipmentStatus: { type: DataTypes.STRING },
     IsAchived: { type: DataTypes.BOOLEAN, defaultValue: false },
     IsArchived: { type: DataTypes.BOOLEAN, defaultValue: false },

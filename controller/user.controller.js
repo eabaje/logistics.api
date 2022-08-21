@@ -601,46 +601,104 @@ exports.vetCompany = (req, res) => {
     });
 };
 
-exports.uploadCompanyDoc = (req, res) => {
+exports.uploadCompanyDoc = async (req, res) => {
   // console.log('req.body.UserId', req.body.UserId);
-  User.findOne({
-    where: {
-      UserId: req.body.UserId,
-    },
-  }).then((user) => {
-    if (user) {
-      console.log('user', user);
-      const uploadFile = req.file ? req.file : null;
+  try {
+    console.log('req', req.body.file);
+    // const shipmentDetailArrayLength = req.body.vehicle.length;
 
-      const picpath = uploadFile ? `${user.CompanyId}/${user.Email}/${uploadFile.originalname}` : '';
+    // if (shipmentDetailArrayLength <= 0) {
+    // }
 
-      var condition = req.body.FileType === 'image' ? { UserPicUrl: picpath } : { UserPicUrl: picpath };
-      console.log('condition', condition);
-      User.update(condition, {
-        where: { UserId: req.body.UserId },
-      })
-        .then((num) => {
-          if (num == 1) {
-            res.send({
-              message: 'File uploaded successfully.',
-            });
-          } else {
-            res.send({
-              message: `Cannot update Driver with id=${id}. Maybe Driver was not found or req.body is empty!`,
-            });
-          }
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message: 'Error updating Driver with id=' + id,
-          });
-        });
-    } else {
-      res.status(500).send({
-        message: 'Error updating the record',
-      });
-    }
-  });
+    // await req.body.document.map((vehicle, index) => {
+    //   const shipmentDetail = {
+    //     ShipmentId: newShipment.ShipmentId,
+    //     VehicleType: vehicle.VehicleType,
+    //     VIN: vehicle.VIN,
+    //     VehicleMake: vehicle.VehicleMake,
+    //     VehicleColor: vehicle.VehicleColor,
+    //     VehicleModel: vehicle.VehicleModel,
+
+    //     VehicleModelYear: vehicle.VehicleModelYear,
+    //     // PurchaseYear: vehicle.VehicleType,
+    //   };
+
+    //   const newShipmentDetails = ShipmentDetail.create(shipmentDetail);
+    // });
+  } catch (error) {
+    console.log(`An error occurred during processing: ${error.message}`);
+  }
+
+  // const { filename: image } = req.file;
+  //   const RefId = req.body.RefId;
+  //   const uploadUrl = req.body.uploadUrl;
+
+  //   // const dir = `./uploads/${req.body.CompanyId}/document`;
+  //   const dir = `${process.env.UPLOADS_URL}/${req.body.CompanyId}/document`;
+  //   fs.exists(dir, (exist) => {
+  //     if (!exist) {
+  //       return fs.mkdir(dir, { recursive: true }, (err, info) => {
+  //         console.log(err);
+  //       });
+  //     }
+  //   });
+  //   // const dir = `${process.env.UPLOADS_URL}/${UploadType}/${RefId}`;
+
+  //   try {
+
+  // await req.body.document.map((vehicle, index) => {
+  //   const shipmentDetail = {
+  //     ShipmentId: newShipment.ShipmentId,
+  //     VehicleType: vehicle.VehicleType,
+  //     VIN: vehicle.VIN,
+  //     VehicleMake: vehicle.VehicleMake,
+  //     VehicleColor: vehicle.VehicleColor,
+  //     VehicleModel: vehicle.VehicleModel,
+
+  //     VehicleModelYear: vehicle.VehicleModelYear,
+  //     // PurchaseYear: vehicle.VehicleType,
+  //   };
+
+  //   const newShipmentDetails = ShipmentDetail.create(shipmentDetail);
+  // });
+
+  //     const picName = req.file.fieldname + '-' + Date.now();
+  //     const picurl = picName + path.extname(req.file.originalname);
+  //     const thumbnailurl = picName + '_thumb' + path.extname(req.file.originalname);
+  //     const thumbpath = path.resolve(`${dir}/${thumbnailurl}`);
+  //     const picpath = path.resolve(`${dir}/${picurl}`);
+  //     console.log(`imagefile0`, picpath);
+
+  //     await sharp(req.file.buffer)
+  //       .resize({ fit: sharp.fit.contain, width: 200 })
+  //       .toFormat('jpeg')
+  //       .jpeg({ quality: 90 })
+  //       .toFile(thumbpath);
+
+  //     await sharp(req.file.buffer)
+  //       .resize({ fit: sharp.fit.contain, width: 500 })
+  //       .toFormat('jpeg')
+  //       .jpeg({ quality: 90 })
+  //       .toFile(picpath);
+
+  //     console.log(`imagefile`, req.file);
+  //     // ImgPath=
+  //     // ThumbPath
+  //     Media.create({
+  //       RefId: req.body.RefId,
+  //       FileName: req.file.originalname,
+  //       FileType: req.file.mimetype,
+  //       ImgPath: `${dir}/${picurl}`,
+  //       ThumbPath: `${dir}/${thumbnailurl}`,
+  //       UploadDate: new Date(),
+  //     });
+
+  //     return res.status(200).send({
+  //       filename: picurl,
+  //     });
+  //   } catch (error) {
+  //     console.log(`An error occurred during processing: ${error.message}`);
+  //   }
 };
 
 exports.findCompany = (req, res) => {

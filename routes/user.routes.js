@@ -5,11 +5,36 @@ const path = require('path');
 const fs = require('fs');
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (req, res, cb) {
     // console.log('req.body', req.body);
     const { Email, CompanyId } = req.body;
 
-    const dir = `./uploads/profile/${req.body.CompanyId}/${req.body.Email}`;
+    const dir = `./uploads/${req.body.CompanyId}/profile/${req.body.Email}`;
+    fs.exists(dir, (exist) => {
+      if (!exist) {
+        return fs.mkdir(dir, { recursive: true }, (error) => cb(error, dir));
+      }
+      // fs.access(dir, fs.F_OK, (err) => {
+      //   if (err) {
+      //     //  console.error(err)
+      //     // return fs.mkdirSync(dir, (error) => cb(error, dir));
+      //     return fs.mkdirSync(dir, { recursive: true });
+      //   }
+      cb(null, dir);
+      //file exists
+    });
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const docuStorage = multer.diskStorage({
+  destination: function (req, res, cb) {
+    console.log('req.body', req.body.CompanyId);
+    const { Email, CompanyId } = req.body;
+
+    const dir = `./uploads/${req.body.CompanyId}/document`;
     fs.exists(dir, (exist) => {
       if (!exist) {
         return fs.mkdir(dir, { recursive: true }, (error) => cb(error, dir));
@@ -36,9 +61,14 @@ const filter = (req, file, cb) => {
     cb(new Error('Only images are allowed!'));
   }
 };
-
+const memStorage = multer.memoryStorage();
 const imageUploader = multer({
   storage,
+  // fileFilter: filter,
+});
+
+const docUploader = multer({
+  storage: docuStorage,
   // fileFilter: filter,
 });
 
@@ -47,14 +77,6 @@ module.exports = function (app) {
     res.header('Access-Control-Allow-Headers', 'x-access-token, Origin, Content-Type, Accept');
     next();
   });
-
-  // app.get("/api/user/all", controller.allAccess);
-
-  // app.get("/api/user/",[authJwt.verifyToken],controller.userBoard);
-
-  // app.get("/api/user/mod",[authJwt.verifyToken, authJwt.isModerator],controller.moderatorBoard);
-
-  // app.get("/api/user/admin",[authJwt.verifyToken, authJwt.isAdmin],controller.adminBoard);
 
   app.post('/api/user/create', controller.create);
 
@@ -74,7 +96,8 @@ module.exports = function (app) {
     imageUploader.single('file'),
     controller.updateFile,
   );
-
+  //docUploader.single('file'),
+  app.post('/api/user/uploadCompanyDoc', docUploader.array('file'), controller.uploadCompanyDoc);
   app.post('/api/user/delete', [authJwt.verifyToken], controller.delete);
 
   app.post('/api/user/deleteAll', controller.deleteAll);

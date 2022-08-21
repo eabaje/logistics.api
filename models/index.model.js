@@ -40,6 +40,7 @@ db.sequelize = sequelize;
 
 db.carrier = require('./carrier.model.js')(sequelize, Sequelize);
 db.company = require('./company.model.js')(sequelize, Sequelize);
+db.companydoc = require('./company.doc.model.js')(sequelize, Sequelize);
 db.driver = require('./driver.model.js')(sequelize, Sequelize);
 db.vehicle = require('./vehicle.model.js')(sequelize, Sequelize);
 db.user = require('./user.model.js')(sequelize, Sequelize);
